@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<Import Project="..\tests.targets" />
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(DotNetCoreVersion)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(DotNetCoreVersion)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\RoyalCode.Searches.Abstractions\RoyalCode.Searches.Abstractions.csproj" />
+	  <ProjectReference Include="..\RoyalCode.Searches.Persistence.Abstractions\RoyalCode.Searches.Persistence.Abstractions.csproj" />
+	  <ProjectReference Include="..\RoyalCode.Searches.Persistence.EntityFramework\RoyalCode.Searches.Persistence.EntityFramework.csproj" />
+	  <ProjectReference Include="..\RoyalCode.Searches.Persistence.Linq\RoyalCode.Searches.Persistence.Linq.csproj" />
+	</ItemGroup>
+
+</Project>

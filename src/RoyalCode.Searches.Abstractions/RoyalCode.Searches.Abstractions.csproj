@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\base.targets" />
+
+	<PropertyGroup>
+		<TargetFrameworks>$(LibTargets)</TargetFrameworks>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<Version>$(LibVer)$(LibPreview)</Version>
+		<AssemblyVersion>$(LibVer)</AssemblyVersion>
+		<FileVersion>$(LibVer)</FileVersion>
+		<Description>
+			Abstract components for Search entities by filters objects.
+		</Description>
+		<PackageTags>RoyalCode Enterprise-Patterns Repository Searchable Search CQRS Query-Pattern</PackageTags>
+	</PropertyGroup>
+
+	<!-- if dotnet standard 2.1 then include system.text.json version 6 -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<PackageReference Include="System.Text.Json" Version="6.0.0" />
+	</ItemGroup>
+	
+</Project>
