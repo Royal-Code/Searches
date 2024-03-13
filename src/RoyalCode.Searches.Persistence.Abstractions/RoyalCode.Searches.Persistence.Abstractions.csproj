@@ -7,9 +7,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Version>$(LibVer)$(LibPreview)</Version>
-		<AssemblyVersion>$(LibVer)</AssemblyVersion>
-		<FileVersion>$(LibVer)</FileVersion>
 		<Description>
 			Persistence abstract components for search entities by filters using linq specifiers and queryables.
 		</Description>

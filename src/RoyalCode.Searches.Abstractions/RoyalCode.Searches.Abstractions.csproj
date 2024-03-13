@@ -7,9 +7,6 @@
 	</PropertyGroup>
 	
 	<PropertyGroup>
-		<Version>$(LibVer)$(LibPreview)</Version>
-		<AssemblyVersion>$(LibVer)</AssemblyVersion>
-		<FileVersion>$(LibVer)</FileVersion>
 		<Description>
 			Abstract components for Search entities by filters objects.
 		</Description>

@@ -7,9 +7,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Version>$(LibVer)$(LibPreview)</Version>
-		<AssemblyVersion>$(LibVer)</AssemblyVersion>
-		<FileVersion>$(LibVer)</FileVersion>
 		<Description>
 			Persistence components implementation with EntityFrameworkCore,
 			including the handling of Searchable, Filters and Specifiers.
@@ -21,7 +18,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(DotNetCoreVersion)" />
-		<PackageReference Include="RoyalCode.OperationHint.Abstractions" Version="1.0.0-preview-4.0" />
+		<PackageReference Include="RoyalCode.OperationHint.Abstractions" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

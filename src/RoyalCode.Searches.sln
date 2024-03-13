@@ -7,11 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.Abstract
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".items", ".items", "{45312F31-98C1-4E24-9BC9-0784C6378797}"
 	ProjectSection(SolutionItems) = preProject
-		asp.targets = asp.targets
 		base.targets = base.targets
 		Directory.Build.props = Directory.Build.props
 		icon.png = icon.png
-		libs.targets = libs.targets
 		tests.targets = tests.targets
 	EndProjectSection
 EndProject
