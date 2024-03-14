@@ -3,6 +3,7 @@ using RoyalCode.Searches.Persistence.Abstractions;
 using RoyalCode.Searches.Persistence.Abstractions.Pipeline;
 using RoyalCode.Searches.Persistence.Linq;
 using RoyalCode.Searches.Persistence.Linq.Filter;
+using System.Runtime.CompilerServices;
 
 namespace RoyalCode.Searches.Persistence.EntityFramework;
 
@@ -22,6 +23,21 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
     { }
 
     /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Any(SearchCriteria searchCriteria)
+    {
+        return PrepareQuery(searchCriteria).Any();
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<bool> AnyAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    {
+        return PrepareQuery(searchCriteria).AnyAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ICollection<TEntity> Execute(SearchCriteria searchCriteria)
     {
         return PrepareQuery(searchCriteria).ToList();
@@ -33,5 +49,51 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
         CancellationToken cancellationToken = default)
     {
         return await PrepareQuery(searchCriteria).ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public TEntity? First(SearchCriteria searchCriteria)
+    {
+        return PrepareQuery(searchCriteria).FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<TEntity?> FirstAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    {
+        return PrepareQuery(searchCriteria).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RemoveAll(SearchCriteria searchCriteria)
+    {
+        var query = PrepareQuery(searchCriteria);
+        var removable = queryableProvider.GetRemovable();
+        removable.RemoveAll(query);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task RemoveAllAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    {
+        var query = PrepareQuery(searchCriteria);
+        var removable = queryableProvider.GetRemovable();
+        return removable.RemoveAllAsync(query, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public TEntity Single(SearchCriteria searchCriteria)
+    {
+        return PrepareQuery(searchCriteria).Single();
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task<TEntity> SingleAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    {
+        return PrepareQuery(searchCriteria).SingleAsync(cancellationToken);
     }
 }

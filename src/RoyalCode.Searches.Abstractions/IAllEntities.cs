@@ -55,4 +55,73 @@ public interface IAllEntities<TEntity>
     ///     A collection of the entities.
     /// </returns>
     Task<ICollection<TEntity>> CollectAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Apply the filters and sorting and verify if there are any entities that meet the criteria.
+    /// </summary>
+    /// <returns>
+    ///     True if there are entities that meet the criteria, otherwise false.
+    /// </returns>
+    bool Exists();
+
+    /// <summary>
+    /// Apply the filters and sorting and verify if there are any entities that meet the criteria.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     True if there are entities that meet the criteria, otherwise false.
+    /// </returns>
+    Task<bool> ExistsAsync(CancellationToken cancellationToken = default);
+
+    // Opções First, FirstAsync, Single, SingleAsync, e OrDefault.
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria.
+    /// </summary>
+    /// <returns>
+    ///     The entity or null if there are no entities that meet the criteria.
+    /// </returns>
+    TEntity? First();
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The entity or null if there are no entities that meet the criteria.
+    /// </returns>
+    Task<TEntity?> FirstAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria,
+    /// or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </summary>
+    /// <returns>
+    ///     The entity that meets the criteria 
+    ///     or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </returns>
+    TEntity Single();
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria,
+    /// or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The entity that meets the criteria
+    ///     or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </returns>
+    Task<TEntity> SingleAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Apply the filters and sorting and delete all the entities that meet the criteria.
+    /// </summary>
+    void DeleteAll();
+
+    /// <summary>
+    /// Apply the filters and sorting and delete all the entities that meet the criteria.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task DeleteAllAsync(CancellationToken cancellationToken = default);
 }

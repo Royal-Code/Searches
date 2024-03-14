@@ -4,6 +4,7 @@ using RoyalCode.Searches.Persistence.Linq;
 
 namespace RoyalCode.Searches.Persistence.EntityFramework;
 
+/// <inheritdoc />
 internal sealed class QueryableProvider<TDbContext, TEntity> : IQueryableProvider<TEntity>
     where TDbContext : DbContext
     where TEntity : class
@@ -19,6 +20,7 @@ internal sealed class QueryableProvider<TDbContext, TEntity> : IQueryableProvide
         this.hintPerformer = hintPerformer;
     }
 
+    /// <inheritdoc />
     public IQueryable<TEntity> GetQueryable()
     {
         if (tracking)
@@ -30,5 +32,11 @@ internal sealed class QueryableProvider<TDbContext, TEntity> : IQueryableProvide
         }
 
         return db.Set<TEntity>().AsNoTracking();
+    }
+
+    /// <inheritdoc />
+    public IRemovable<TEntity> GetRemovable()
+    {
+        return new Removable<TEntity>(db);
     }
 }

@@ -63,7 +63,7 @@ public abstract class SearchPipelineBase<TEntity>
         var baseQuery = queryableProvider.GetQueryable();
 
         var queryFilters = criteria.Filters.Where(f => f.ModelType == typeof(TEntity)).ToList();
-        if (queryFilters.Any())
+        if (queryFilters.Count is not 0)
         {
             var handler = new SpecifierHandler<TEntity>(specifierFactory, baseQuery);
             foreach (var searchFilter in queryFilters)
