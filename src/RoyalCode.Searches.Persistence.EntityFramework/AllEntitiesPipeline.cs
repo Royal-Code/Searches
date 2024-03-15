@@ -96,4 +96,87 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
     {
         return PrepareQuery(searchCriteria).SingleAsync(cancellationToken);
     }
+
+    public void UpdateAll(SearchCriteria searchCriteria, Action<TEntity> updateAction)
+    {
+        var query = PrepareQuery(searchCriteria);
+        foreach(var entity in query)
+        {
+            updateAction(entity);
+        }
+    }
+
+    public async Task UpdateAllAsync(
+        SearchCriteria searchCriteria,
+        Action<TEntity> updateAction,
+        CancellationToken cancellationToken = default)
+    {
+        var query = PrepareQuery(searchCriteria);
+        await foreach (var entity in query.AsAsyncEnumerable())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            updateAction(entity);
+        }
+    }
+
+    public void UpdateAll<TData>(SearchCriteria searchCriteria, TData data, Action<TEntity, TData> updateAction)
+    {
+        var query = PrepareQuery(searchCriteria);
+        foreach(var entity in query)
+        {
+            updateAction(entity, data);
+        }
+    }
+
+    public async Task UpdateAllAsync<TData>(
+        SearchCriteria searchCriteria,
+        TData data,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default)
+    {
+        var query = PrepareQuery(searchCriteria);
+        await foreach (var entity in query.AsAsyncEnumerable())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            updateAction(entity, data);
+        }
+    }
+
+    public void UpdateAll<TData, TId>(
+        SearchCriteria searchCriteria,
+        IEnumerable<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction)
+        where TData : class
+    {
+        var query = PrepareQuery(searchCriteria);
+        foreach (var entity in query)
+        {
+            var entityId = entityIdGet(entity);
+            var data = collection.FirstOrDefault(d => Equals(dataIdGet(d), entityId));
+            if (data is not null)
+                updateAction(entity, data);
+        }
+    }
+
+    public async Task UpdateAllAsync<TData, TId>(
+        SearchCriteria searchCriteria,
+        IEnumerable<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default)
+        where TData : class
+    {
+        var query = PrepareQuery(searchCriteria);
+        await foreach (var entity in query.AsAsyncEnumerable())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var entityId = entityIdGet(entity);
+            var data = collection.FirstOrDefault(d => Equals(dataIdGet(d), entityId));
+            if (data is not null)
+                updateAction(entity, data);
+        }
+    }
 }

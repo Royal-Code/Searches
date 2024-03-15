@@ -112,4 +112,10 @@ public class AllEntities<TEntity> : IAllEntities<TEntity>
         var pipeline = factory.CreateAllEntities<TEntity>();
         return pipeline.RemoveAllAsync(criteria, cancellationToken);
     }
+
+    public void UpdateAll(Action<TEntity> updateAction)
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        pipeline.UpdateAll(criteria, update);
+    }
 }
