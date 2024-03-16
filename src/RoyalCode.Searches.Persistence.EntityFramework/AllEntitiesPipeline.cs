@@ -97,6 +97,8 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
         return PrepareQuery(searchCriteria).SingleAsync(cancellationToken);
     }
 
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateAll(SearchCriteria searchCriteria, Action<TEntity> updateAction)
     {
         var query = PrepareQuery(searchCriteria);
@@ -106,19 +108,21 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
         }
     }
 
+    /// <inheritdoc />
     public async Task UpdateAllAsync(
         SearchCriteria searchCriteria,
         Action<TEntity> updateAction,
         CancellationToken cancellationToken = default)
     {
         var query = PrepareQuery(searchCriteria);
-        await foreach (var entity in query.AsAsyncEnumerable())
+        await foreach (var entity in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
         {
-            cancellationToken.ThrowIfCancellationRequested();
             updateAction(entity);
         }
     }
 
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateAll<TData>(SearchCriteria searchCriteria, TData data, Action<TEntity, TData> updateAction)
     {
         var query = PrepareQuery(searchCriteria);
@@ -128,6 +132,8 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
         }
     }
 
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public async Task UpdateAllAsync<TData>(
         SearchCriteria searchCriteria,
         TData data,
@@ -135,16 +141,16 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
         CancellationToken cancellationToken = default)
     {
         var query = PrepareQuery(searchCriteria);
-        await foreach (var entity in query.AsAsyncEnumerable())
+        await foreach (var entity in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
         {
-            cancellationToken.ThrowIfCancellationRequested();
             updateAction(entity, data);
         }
     }
 
+    /// <inheritdoc />
     public void UpdateAll<TData, TId>(
         SearchCriteria searchCriteria,
-        IEnumerable<TData> collection,
+        ICollection<TData> collection,
         Func<TEntity, TId> entityIdGet,
         Func<TData, TId> dataIdGet,
         Action<TEntity, TData> updateAction)
@@ -157,12 +163,17 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
             var data = collection.FirstOrDefault(d => Equals(dataIdGet(d), entityId));
             if (data is not null)
                 updateAction(entity, data);
+            else
+                throw new ArgumentOutOfRangeException(
+                    nameof(collection), 
+                    $"The collection does not contain any data with the id '{entityId}'");
         }
     }
 
+    /// <inheritdoc />
     public async Task UpdateAllAsync<TData, TId>(
         SearchCriteria searchCriteria,
-        IEnumerable<TData> collection,
+        ICollection<TData> collection,
         Func<TEntity, TId> entityIdGet,
         Func<TData, TId> dataIdGet,
         Action<TEntity, TData> updateAction,
@@ -170,13 +181,16 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
         where TData : class
     {
         var query = PrepareQuery(searchCriteria);
-        await foreach (var entity in query.AsAsyncEnumerable())
+        await foreach (var entity in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var entityId = entityIdGet(entity);
             var data = collection.FirstOrDefault(d => Equals(dataIdGet(d), entityId));
             if (data is not null)
                 updateAction(entity, data);
+            else
+                throw new ArgumentOutOfRangeException(
+                    nameof(collection), 
+                    $"The collection does not contain any data with the id '{entityId}'");
         }
     }
 }

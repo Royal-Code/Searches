@@ -124,4 +124,76 @@ public interface IAllEntities<TEntity>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task DeleteAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Apply the filters and sorting and update all the entities that meet the criteria.
+    /// </summary>
+    /// <param name="updateAction">The action to update the entities.</param>
+    void UpdateAll(Action<TEntity> updateAction);
+    
+    /// <summary>
+    /// Apply the filters and sorting and update all the entities that meet the criteria.
+    /// </summary>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task UpdateAllAsync(
+        Action<TEntity> updateAction,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Apply the filters and sorting and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="data">The data used to update the entities.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    void UpdateAll<TData>(TData data, Action<TEntity, TData> updateAction);
+    
+    /// <summary>
+    /// Apply the filters and sorting and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="data">The data used to update the entities.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task UpdateAllAsync<TData>(
+        TData data,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Apply the filters and sorting and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="collection">A collection of data used to update the entities.</param>
+    /// <param name="entityIdGet">The function to get the entity id.</param>
+    /// <param name="dataIdGet">The function to get the data id.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <typeparam name="TId">The type of the id.</typeparam>
+    void UpdateAll<TData, TId>(
+        ICollection<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction)
+        where TData : class;
+    
+    /// <summary>
+    /// Apply the filters and sorting and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="collection">The collection of data used to update the entities.</param>
+    /// <param name="entityIdGet">The function to get the entity id.</param>
+    /// <param name="dataIdGet">The function to get the data id.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <typeparam name="TId">The type of the id.</typeparam>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAllAsync<TData, TId>(
+        ICollection<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default)
+        where TData : class;
 }

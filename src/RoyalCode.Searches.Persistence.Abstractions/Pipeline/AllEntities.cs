@@ -113,9 +113,61 @@ public class AllEntities<TEntity> : IAllEntities<TEntity>
         return pipeline.RemoveAllAsync(criteria, cancellationToken);
     }
 
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateAll(Action<TEntity> updateAction)
     {
         var pipeline = factory.CreateAllEntities<TEntity>();
-        pipeline.UpdateAll(criteria, update);
+        pipeline.UpdateAll(criteria, updateAction);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task UpdateAllAsync(Action<TEntity> updateAction, CancellationToken cancellationToken = default)
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        return pipeline.UpdateAllAsync(criteria, updateAction, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void UpdateAll<TData>(TData data, Action<TEntity, TData> updateAction)
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        pipeline.UpdateAll(criteria, data, updateAction);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task UpdateAllAsync<TData>(TData data, Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default)
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        return pipeline.UpdateAllAsync(criteria, data, updateAction, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void UpdateAll<TData, TId>(
+        ICollection<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction) where TData : class
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        pipeline.UpdateAll(criteria, collection, entityIdGet, dataIdGet, updateAction);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task UpdateAllAsync<TData, TId>(
+        ICollection<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default) where TData : class
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        return pipeline.UpdateAllAsync(criteria, collection, entityIdGet, dataIdGet, updateAction, cancellationToken);
     }
 }

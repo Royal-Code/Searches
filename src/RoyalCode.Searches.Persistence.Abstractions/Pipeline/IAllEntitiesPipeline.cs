@@ -88,4 +88,86 @@ public interface IAllEntitiesPipeline<TEntity>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task RemoveAllAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Execute the query and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    void UpdateAll(SearchCriteria searchCriteria, Action<TEntity> updateAction);
+
+    /// <summary>
+    /// Execute the query and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAllAsync(
+        SearchCriteria searchCriteria,
+        Action<TEntity> updateAction,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Execute the query and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="data">The data used to update the entities.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    void UpdateAll<TData>(SearchCriteria searchCriteria, TData data, Action<TEntity, TData> updateAction);
+
+    /// <summary>
+    /// Execute the query and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="data">The data used to update the entities.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAllAsync<TData>(
+        SearchCriteria searchCriteria,
+        TData data,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="collection">A collection of data used to update the entities.</param>
+    /// <param name="entityIdGet">A function to get the entity id.</param>
+    /// <param name="dataIdGet">A function to get the data id.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <typeparam name="TId">The type of the id.</typeparam>
+    void UpdateAll<TData, TId>(
+        SearchCriteria searchCriteria,
+        ICollection<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction)
+        where TData : class;
+
+    /// <summary>
+    /// Update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="collection">The collection of data used to update the entities.</param>
+    /// <param name="entityIdGet">The function to get the entity id.</param>
+    /// <param name="dataIdGet">The function to get the data id.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <typeparam name="TId">The type of the id.</typeparam>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAllAsync<TData, TId>(
+        SearchCriteria searchCriteria,
+        ICollection<TData> collection,
+        Func<TEntity, TId> entityIdGet,
+        Func<TData, TId> dataIdGet,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default)
+        where TData : class;
 }
