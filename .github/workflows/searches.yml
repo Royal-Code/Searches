@@ -19,7 +19,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
-          include-prerelease: true
 
       - name: Build and pack Searches Abstractions
         run: sudo dotnet build ./src/RoyalCode.Searches.Abstractions/RoyalCode.Searches.Abstractions.csproj -c Release
