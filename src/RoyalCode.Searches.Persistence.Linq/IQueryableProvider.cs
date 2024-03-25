@@ -4,7 +4,7 @@ namespace RoyalCode.Searches.Persistence.Linq;
 /// Component to provide a <see cref="IQueryable{T}"/> for an entity.
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
-public interface IQueryableProvider<out TEntity>
+public interface IQueryableProvider<TEntity>
     where TEntity : class
 {
     /// <summary>
@@ -12,4 +12,10 @@ public interface IQueryableProvider<out TEntity>
     /// </summary>
     /// <returns>An <see cref="IQueryable{T}"/> instance.</returns>
     IQueryable<TEntity> GetQueryable();
+
+    /// <summary>
+    /// Get a new queryable for the entity embedded in a removable component.
+    /// </summary>
+    /// <returns></returns>
+    IRemovable<TEntity> GetRemovable();
 }

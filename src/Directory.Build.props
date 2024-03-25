@@ -5,7 +5,7 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<SearchesVer>1.0.0</SearchesVer>
-		<SearchesPreview>-preview-4.0</SearchesPreview>
+		<SearchesPreview>-preview-5.0</SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net6'">6.0.0</DotNetCoreVersion>
