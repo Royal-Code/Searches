@@ -72,15 +72,13 @@ public static class AllEntitiesExtensions
         private static Action<IAllEntities<TEntity>, ICollection<TData>, Action<TEntity,TData>> Create()
         {
             // get the property Id from TEntity
-            var idProperty = typeof(TEntity).GetProperty("Id");
-            if (idProperty is null)
-                throw new InvalidOperationException("The entity does not have a property Id.");
-            
+            var idProperty = typeof(TEntity).GetProperty("Id")
+                ?? throw new InvalidOperationException("The entity does not have a property Id.");
+
             // get the property Id from TData
-            var dataIdProperty = typeof(TData).GetProperty("Id");
-            if (dataIdProperty is null)
-                throw new InvalidOperationException("The data does not have a property Id.");
-            
+            var dataIdProperty = typeof(TData).GetProperty("Id")
+                ?? throw new InvalidOperationException("The data does not have a property Id.");
+
             // validate types of the id properties
             if (idProperty.PropertyType != dataIdProperty.PropertyType)
                 throw new InvalidOperationException("The type of the id properties are different.");
@@ -128,15 +126,13 @@ public static class AllEntitiesExtensions
         private static Func<IAllEntities<TEntity>,ICollection<TData>,Action<TEntity,TData>,Task> CreateAsync()
         {
             // get the property Id from TEntity
-            var idProperty = typeof(TEntity).GetProperty("Id");
-            if (idProperty is null)
-                throw new InvalidOperationException("The entity does not have a property Id.");
-            
+            var idProperty = typeof(TEntity).GetProperty("Id")
+                ?? throw new InvalidOperationException("The entity does not have a property Id.");
+
             // get the property Id from TData
-            var dataIdProperty = typeof(TData).GetProperty("Id");
-            if (dataIdProperty is null)
-                throw new InvalidOperationException("The data does not have a property Id.");
-            
+            var dataIdProperty = typeof(TData).GetProperty("Id")
+                ?? throw new InvalidOperationException("The data does not have a property Id.");
+
             // validate types of the id properties
             if (idProperty.PropertyType != dataIdProperty.PropertyType)
                 throw new InvalidOperationException("The type of the id properties are different.");

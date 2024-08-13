@@ -1,5 +1,4 @@
-﻿
-namespace RoyalCode.Searches.Abstractions;
+﻿namespace RoyalCode.Searches.Abstractions;
 
 /// <summary>
 /// <para>
@@ -130,17 +129,7 @@ public interface IAllEntities<TEntity>
     /// </summary>
     /// <param name="updateAction">The action to update the entities.</param>
     void UpdateAll(Action<TEntity> updateAction);
-    
-    /// <summary>
-    /// Apply the filters and sorting and update all the entities that meet the criteria.
-    /// </summary>
-    /// <param name="updateAction">The action to update the entities.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAllAsync(
-        Action<TEntity> updateAction,
-        CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Apply the filters and sorting and update all entities that meet the criteria.
     /// </summary>
@@ -148,20 +137,7 @@ public interface IAllEntities<TEntity>
     /// <param name="updateAction">The action to update the entities.</param>
     /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
     void UpdateAll<TData>(TData data, Action<TEntity, TData> updateAction);
-    
-    /// <summary>
-    /// Apply the filters and sorting and update all entities that meet the criteria.
-    /// </summary>
-    /// <param name="data">The data used to update the entities.</param>
-    /// <param name="updateAction">The action to update the entities.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAllAsync<TData>(
-        TData data,
-        Action<TEntity, TData> updateAction,
-        CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Apply the filters and sorting and update all entities that meet the criteria.
     /// </summary>
@@ -177,6 +153,29 @@ public interface IAllEntities<TEntity>
         Func<TData, TId> dataIdGet,
         Action<TEntity, TData> updateAction)
         where TData : class;
+
+    /// <summary>
+    /// Apply the filters and sorting and update all the entities that meet the criteria.
+    /// </summary>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task UpdateAllAsync(
+        Action<TEntity> updateAction,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Apply the filters and sorting and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="data">The data used to update the entities.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task UpdateAllAsync<TData>(
+        TData data,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Apply the filters and sorting and update all entities that meet the criteria.

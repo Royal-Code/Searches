@@ -123,27 +123,10 @@ public class AllEntities<TEntity> : IAllEntities<TEntity>
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task UpdateAllAsync(Action<TEntity> updateAction, CancellationToken cancellationToken = default)
-    {
-        var pipeline = factory.CreateAllEntities<TEntity>();
-        return pipeline.UpdateAllAsync(criteria, updateAction, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateAll<TData>(TData data, Action<TEntity, TData> updateAction)
     {
         var pipeline = factory.CreateAllEntities<TEntity>();
         pipeline.UpdateAll(criteria, data, updateAction);
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task UpdateAllAsync<TData>(TData data, Action<TEntity, TData> updateAction,
-        CancellationToken cancellationToken = default)
-    {
-        var pipeline = factory.CreateAllEntities<TEntity>();
-        return pipeline.UpdateAllAsync(criteria, data, updateAction, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -156,6 +139,23 @@ public class AllEntities<TEntity> : IAllEntities<TEntity>
     {
         var pipeline = factory.CreateAllEntities<TEntity>();
         pipeline.UpdateAll(criteria, collection, entityIdGet, dataIdGet, updateAction);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task UpdateAllAsync(Action<TEntity> updateAction, CancellationToken cancellationToken = default)
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        return pipeline.UpdateAllAsync(criteria, updateAction, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Task UpdateAllAsync<TData>(TData data, Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default)
+    {
+        var pipeline = factory.CreateAllEntities<TEntity>();
+        return pipeline.UpdateAllAsync(criteria, data, updateAction, cancellationToken);
     }
 
     /// <inheritdoc />

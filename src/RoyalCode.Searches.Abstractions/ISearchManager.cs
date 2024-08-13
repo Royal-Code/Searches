@@ -1,16 +1,14 @@
-﻿// Ignore Spelling: Searchable
-
-namespace RoyalCode.Searches.Abstractions;
+﻿namespace RoyalCode.Searches.Abstractions;
 
 /// <summary>
 /// <para>
-///     Represents a search component for a persistence unit.
+///     A service for persistence components that allow search operations to be carried out.
 /// </para>
 /// <para>
 ///     The search component is used to create a search for a specific entity type.
 /// </para>
 /// </summary>
-public interface ISearchable
+public interface ISearchManager
 {
     /// <summary>
     /// <para>
@@ -25,7 +23,7 @@ public interface ISearchable
     /// <exception cref="InvalidOperationException">
     ///     If entity is not part of the persistence unit or there is no search component for it.
     /// </exception>
-    ISearch<TEntity> CreateSearch<TEntity>() where TEntity : class;
+    ISearch<TEntity> Search<TEntity>() where TEntity : class;
 
     /// <summary>
     /// <para>

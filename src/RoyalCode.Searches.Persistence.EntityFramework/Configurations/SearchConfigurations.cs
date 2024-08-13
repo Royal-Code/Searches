@@ -23,6 +23,7 @@ public class SearchConfigurations<TDbContext> : ISearchConfigurations<TDbContext
 
         services.AddSearchesLinq();
         services.TryAddTransient<IPipelineFactory<TDbContext>, PipelineFactory<TDbContext>>();
+        services.TryAddTransient<ISearchManager<TDbContext>, SearchManager<TDbContext>>();
     }
 
     /// <inheritdoc />

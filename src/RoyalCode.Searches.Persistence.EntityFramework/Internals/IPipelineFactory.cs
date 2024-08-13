@@ -11,6 +11,6 @@ namespace RoyalCode.Searches.Persistence.EntityFramework.Internals;
 /// <typeparam name="TDbContext">
 ///     The <see cref="DbContext"/> type to use for the search pipelines and searches for all entities.
 /// </typeparam>
-internal interface IPipelineFactory<TDbContext> : IPipelineFactory
+public interface IPipelineFactory<TDbContext> : IPipelineFactory
     where TDbContext : DbContext
 { }
