@@ -13,6 +13,6 @@ namespace RoyalCode.Searches.Persistence.EntityFramework;
 /// <typeparam name="TDbContext">
 ///     The <see cref="DbContext"/> type that defines the persistence unit.
 /// </typeparam>
-public interface ISearchable<TDbContext> : ISearchable
+public interface ISearchManager<TDbContext> : ISearchManager
     where TDbContext : DbContext
 { }

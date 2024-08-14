@@ -1,11 +1,11 @@
 <Project>
 	<PropertyGroup>
-		<LibTargets>netstandard2.1;net6;net7;net8</LibTargets>
-		<AspTargets>net6;net7;net8</AspTargets>
+		<LibTargets>net8</LibTargets>
+		<AspTargets>net8</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
 		<SearchesVer>1.0.0</SearchesVer>
-		<SearchesPreview>-preview-4.0</SearchesPreview>
+		<SearchesPreview>-preview-6.0</SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net6'">6.0.0</DotNetCoreVersion>
