@@ -8,7 +8,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// Extensions methods for <see cref="IServiceCollection"/>.
 /// </summary>
 public static class EntityFrameworkSearchesServiceCollectionExtensions
-
 {
     /// <summary>
     /// <para>

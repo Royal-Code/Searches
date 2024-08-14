@@ -13,6 +13,5 @@ public sealed class OrderByNotSupportedException : ArgumentException
     /// <param name="typeName">The type name that not supports the order by.</param>
     public OrderByNotSupportedException(string orderBy, string typeName)
         : base(string.Format("The order by '{0}' is not supported for the type '{1}'.", orderBy, typeName), orderBy)
-    {
-    }
+    { }
 }
