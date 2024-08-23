@@ -10,14 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".items", ".items", "{45312F
 		base.targets = base.targets
 		Directory.Build.props = Directory.Build.props
 		icon.png = icon.png
+		..\.github\workflows\searches.yml = ..\.github\workflows\searches.yml
 		tests.targets = tests.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.Persistence.Linq", "RoyalCode.Searches.Persistence.Linq\RoyalCode.Searches.Persistence.Linq.csproj", "{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.Linq", "RoyalCode.Searches.Linq\RoyalCode.Searches.Linq.csproj", "{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.Persistence.Abstractions", "RoyalCode.Searches.Persistence.Abstractions\RoyalCode.Searches.Persistence.Abstractions.csproj", "{DDAB919D-3519-4208-A2B1-DCE122228400}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.Core", "RoyalCode.Searches.Core\RoyalCode.Searches.Core.csproj", "{DDAB919D-3519-4208-A2B1-DCE122228400}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.Persistence.EntityFramework", "RoyalCode.Searches.Persistence.EntityFramework\RoyalCode.Searches.Persistence.EntityFramework.csproj", "{DEAF76E8-950F-4D38-B98B-9099C9F190ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.Searches.EntityFramework", "RoyalCode.Searches.EntityFramework\RoyalCode.Searches.EntityFramework.csproj", "{DEAF76E8-950F-4D38-B98B-9099C9F190ED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{EB20012D-6B82-492A-A7C8-9B45D10C0364}"
 EndProject

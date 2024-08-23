@@ -78,9 +78,9 @@ public class SortingTests
     [InlineData("", false, null, ListSortDirection.Ascending)]
     [InlineData(" ", false, null, ListSortDirection.Ascending)]
     public void TryParse_NotJsonStrings(
-        string orderby,
+        string? orderby,
         bool expectedResult,
-        string expectedOrderBy,
+        string? expectedOrderBy,
         ListSortDirection expectedDirection)
     {
         // arrange

@@ -9,8 +9,8 @@
 		<Copyright>Royal Code Copyright ©  2024</Copyright>
 		<RepositoryUrl>https://github.com/Royal-Code/Searches</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Configurations>Debug;Release</Configurations>
 		<PackageIcon>icon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -20,10 +20,6 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="../icon.png" Pack="true" PackagePath="/"/>
+		<None Include="../../README.md" Pack="true" PackagePath="/"/>
 	</ItemGroup>
-	<PropertyGroup>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net6'">6.0.0</DotNetCoreVersion>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net7'">7.0.0</DotNetCoreVersion>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.0</DotNetCoreVersion>
-	</PropertyGroup>
 </Project>

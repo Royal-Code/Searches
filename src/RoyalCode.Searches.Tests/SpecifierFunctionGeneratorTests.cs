@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RoyalCode.Searches.Abstractions;
-using RoyalCode.Searches.Persistence.Linq;
-using RoyalCode.Searches.Persistence.Linq.Filter;
+using RoyalCode.Searches.Linq;
+using RoyalCode.Searches.Linq.Filter;
 using System.Collections;
 using System.Linq.Expressions;
 

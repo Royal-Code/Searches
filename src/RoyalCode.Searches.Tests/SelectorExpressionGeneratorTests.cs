@@ -1,5 +1,5 @@
 ﻿
-using RoyalCode.Searches.Persistence.Linq.Selector;
+using RoyalCode.Searches.Linq.Selector;
 
 namespace RoyalCode.Persistence.Tests.Selectors;
 
