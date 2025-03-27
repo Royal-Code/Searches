@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
-		<LibTargets>net8</LibTargets>
-		<AspTargets>net8</AspTargets>
+		<LibTargets>net8;net9</LibTargets>
+		<AspTargets>net8;net9</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
 		<SearchesVer>1.0.0</SearchesVer>
@@ -9,5 +9,6 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.0</DotNetCoreVersion>
+		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9'">9.0.0</DotNetCoreVersion>
 	</PropertyGroup>
 </Project>
