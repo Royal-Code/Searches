@@ -35,8 +35,7 @@ public static class EntityFrameworkSearchesServiceCollectionExtensions
         Action<ISearchConfigurations<TDbContext>> configureAction)
         where TDbContext : DbContext
     {
-        if (configureAction is null)
-            throw new ArgumentNullException(nameof(configureAction));
+        ArgumentNullException.ThrowIfNull(configureAction);
 
         configureAction(new SearchConfigurations<TDbContext>(services));
         return services;

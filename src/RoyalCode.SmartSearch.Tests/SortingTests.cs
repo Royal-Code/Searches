@@ -7,6 +7,11 @@ namespace RoyalCode.SmartSearch.Tests;
 
 public class SortingTests
 {
+    private readonly static JsonSerializerOptions jsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     [Fact]
     public void Deserialize_ResultList_With_Sorting_MustBeEquivalent()
     {
@@ -17,8 +22,8 @@ public class SortingTests
             Count = 1,
             ItemsPerPage = 1,
             Pages = 1,
-            Sortings = new List<ISorting>
-            {
+            Sortings =
+            [
                 new Sorting
                 {
                     OrderBy = "Name",
@@ -29,40 +34,36 @@ public class SortingTests
                     OrderBy = "Id",
                     Direction = ListSortDirection.Descending
                 }
-            },
-            Items = new List<TestModel>
-            {
-                new TestModel
+            ],
+            Items =
+            [
+                new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Mateus"
                 },
-                new TestModel
+                new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Marcos"
                 },
-                new TestModel
+                new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Lucas"
                 },
-                new TestModel
+                new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "João"
                 }
-            }
+            ]
         };
 
-        var json = JsonSerializer.Serialize(expected, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        var json = JsonSerializer.Serialize(expected, jsonOptions);
 
         // act
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-        var result = JsonSerializer.Deserialize<ResultList<TestModel>>(json, options);
+        var result = JsonSerializer.Deserialize<ResultList<TestModel>>(json, jsonOptions);
 
         // assert
         result.Should().BeEquivalentTo(expected);

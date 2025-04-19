@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using RoyalCode.Persistence.Tests.Specifiers;
 using RoyalCode.SmartSearch.Abstractions;
 
 namespace RoyalCode.SmartSearch.Tests;
@@ -13,7 +12,7 @@ namespace RoyalCode.SmartSearch.Tests;
 public class AllEntitiesTests
 {
     // configure test container
-    private IServiceProvider CreateServiceProvider(string name)
+    private static IServiceProvider CreateServiceProvider(string name)
     {
         ServiceCollection services = new();
 
@@ -61,7 +60,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -109,7 +108,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -118,8 +117,7 @@ public class AllEntitiesTests
         ICollection<SimpleModel> result = await all.FilterBy(filter).CollectAsync();
 
         // assert
-        result.Should().HaveCount(1);
-        result.Should().ContainSingle(x => x.Id == 2);
+        result.Should().HaveCount(1).And.ContainSingle(x => x.Id == 2);
     }
 
     [Fact]
@@ -158,7 +156,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -206,7 +204,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -239,8 +237,9 @@ public class AllEntitiesTests
         SimpleModel? result = all.FilterBy(filter).First();
 
         // assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(2);
+
+        // assert
+        result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
     }
 
     [Fact]
@@ -255,7 +254,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -264,8 +263,7 @@ public class AllEntitiesTests
         SimpleModel? result = await all.FilterBy(filter).FirstAsync();
 
         // assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(2);
+        result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
     }
 
     [Fact]
@@ -304,7 +302,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -352,7 +350,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -399,7 +397,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 
@@ -446,7 +444,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 1, Name = "A" });
         context.Add(new SimpleModel { Id = 2, Name = "B" });
         context.Add(new SimpleModel { Id = 3, Name = "C" });
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
 

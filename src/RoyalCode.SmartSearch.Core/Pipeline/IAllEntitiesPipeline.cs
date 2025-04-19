@@ -100,37 +100,10 @@ public interface IAllEntitiesPipeline<TEntity>
     /// Execute the query and update all entities that meet the criteria.
     /// </summary>
     /// <param name="searchCriteria">The criteria for the query.</param>
-    /// <param name="updateAction">The action to update the entities.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
-    Task UpdateAllAsync(
-        SearchCriteria searchCriteria,
-        Action<TEntity> updateAction,
-        CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Execute the query and update all entities that meet the criteria.
-    /// </summary>
-    /// <param name="searchCriteria">The criteria for the query.</param>
     /// <param name="data">The data used to update the entities.</param>
     /// <param name="updateAction">The action to update the entities.</param>
     /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
     void UpdateAll<TData>(SearchCriteria searchCriteria, TData data, Action<TEntity, TData> updateAction);
-
-    /// <summary>
-    /// Execute the query and update all entities that meet the criteria.
-    /// </summary>
-    /// <param name="searchCriteria">The criteria for the query.</param>
-    /// <param name="data">The data used to update the entities.</param>
-    /// <param name="updateAction">The action to update the entities.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
-    /// <returns>A task that represents the asynchronous operation.</returns>
-    Task UpdateAllAsync<TData>(
-        SearchCriteria searchCriteria,
-        TData data,
-        Action<TEntity, TData> updateAction,
-        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Update all entities that meet the criteria.
@@ -149,6 +122,33 @@ public interface IAllEntitiesPipeline<TEntity>
         Func<TData, TId> dataIdGet,
         Action<TEntity, TData> updateAction)
         where TData : class;
+
+    /// <summary>
+    /// Execute the query and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAllAsync(
+        SearchCriteria searchCriteria,
+        Action<TEntity> updateAction,
+        CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Execute the query and update all entities that meet the criteria.
+    /// </summary>
+    /// <param name="searchCriteria">The criteria for the query.</param>
+    /// <param name="data">The data used to update the entities.</param>
+    /// <param name="updateAction">The action to update the entities.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAllAsync<TData>(
+        SearchCriteria searchCriteria,
+        TData data,
+        Action<TEntity, TData> updateAction,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Update all entities that meet the criteria.

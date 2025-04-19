@@ -52,9 +52,9 @@ public interface IResultList
 public interface IResultList<out TModel> : IResultList
 {
     /// <summary>
-    /// Collection of the searched models.
+    /// List of the searched models.
     /// </summary>
-    IEnumerable<TModel> Items { get; }
+    IReadOnlyList<TModel> Items { get; }
 
     /// <summary>
     /// Gets a value from the projection if it exists and is of the type entered,

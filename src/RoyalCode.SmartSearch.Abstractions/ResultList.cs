@@ -32,7 +32,7 @@ public class ResultList<TModel> : IResultList<TModel>
     public Dictionary<string, object> Projections { get; init; } = null!;
 
     /// <inheritdoc />
-    public IEnumerable<TModel> Items { get; init; } = null!;
+    public IReadOnlyList<TModel> Items { get; init; } = null!;
 
     /// <inheritdoc />
     public T GetProjection<T>(string name, T? defaultValue = default)

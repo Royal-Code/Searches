@@ -1,7 +1,6 @@
-﻿
-using RoyalCode.SmartSearch.Linq.Selector;
+﻿using RoyalCode.SmartSearch.Linq.Selector;
 
-namespace RoyalCode.Persistence.Tests.Selectors;
+namespace RoyalCode.SmartSearch.Tests;
 
 public class SelectorExpressionGeneratorTests
 {
@@ -81,12 +80,6 @@ public class SelectorExpressionGeneratorTests
         // Assert
         Assert.NotNull(dto);
         Assert.Equal(entity.Id, dto!.Id);
-
-        var q = new List<EntityWithNullable>().AsQueryable();
-        q.Select(e => new DtoWithoutNullable()
-        {
-            Id = e.Id ?? default,
-        });
     }
 
     [Fact]
@@ -200,7 +193,7 @@ public class SelectorExpressionGeneratorTests
         var entity = new EntityWithCollectionOfInt()
         {
             Id = 1,
-            Values = new List<int>() { 1, 2, 3 }
+            Values = [1, 2, 3]
         };
 
         // Act
@@ -227,12 +220,12 @@ public class SelectorExpressionGeneratorTests
         var entity = new EntityWithCollectionOfItem()
         {
             Id = 1,
-            Values = new List<EntityItem>()
-            {
+            Values =
+            [
                 new EntityItem() { Id = 1, Name = "Name1" },
                 new EntityItem() { Id = 2, Name = "Name2" },
                 new EntityItem() { Id = 3, Name = "Name3" }
-            }
+            ]
         };
 
         // Act
@@ -263,46 +256,46 @@ public class SelectorExpressionGeneratorTests
             SubValue = new EntitySubTypeWithCollection()
             {
                 Id = 2,
-                CollectionOfSubItems = new List<EntityItemWithSubType>()
-                {
-                    new EntityItemWithSubType() 
+                CollectionOfSubItems =
+                [
+                    new() 
                     { 
                         Id = 3,
-                        PropertyWithInt = new EntityWithCollectionOfInt() { Id = 4, Values = new List<int>() { 1, 2, 3 } },
-                        PropertyWithItem = new EntityWithCollectionOfItem()
+                        PropertyWithInt = new() { Id = 4, Values = [1, 2, 3] },
+                        PropertyWithItem = new()
                         {
                             Id = 5, 
-                            Values = new List<EntityItem>()
-                            {
+                            Values =
+                            [
                                 new EntityItem() { Id = 6, Name = "Name1" },
                                 new EntityItem() { Id = 7, Name = "Name2" },
                                 new EntityItem() { Id = 8, Name = "Name3" }
-                            }
+                            ]
                         },
                     },
-                    new EntityItemWithSubType()
+                    new()
                     {
                         Id = 9,
-                        PropertyWithInt = new EntityWithCollectionOfInt() { Id = 10, Values = new List<int>() { 4, 5, 6 } },
-                        PropertyWithItem = new EntityWithCollectionOfItem()
+                        PropertyWithInt = new() { Id = 10, Values = [4, 5, 6] },
+                        PropertyWithItem = new()
                         {
                             Id = 11, 
-                            Values = new List<EntityItem>()
-                            {
+                            Values =
+                            [
                                 new EntityItem() { Id = 12, Name = "Name4" },
                                 new EntityItem() { Id = 13, Name = "Name5" },
                                 new EntityItem() { Id = 14, Name = "Name6" }
-                            }
+                            ]
                         },
                     },
-                }
+                ]
             },
-            SubTypes = new List<EntitySubType>()
-            {
-                new EntitySubType() { Id = 15, Name = "Name1" },
-                new EntitySubType() { Id = 16, Name = "Name2" },
-                new EntitySubType() { Id = 17, Name = "Name3" }
-            }
+            SubTypes =
+            [
+                new() { Id = 15, Name = "Name1" },
+                new() { Id = 16, Name = "Name2" },
+                new() { Id = 17, Name = "Name3" }
+            ]
         };
 
         // Act

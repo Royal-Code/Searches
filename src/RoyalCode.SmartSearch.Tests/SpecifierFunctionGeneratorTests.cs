@@ -6,7 +6,9 @@ using RoyalCode.SmartSearch.Linq.Filter;
 using System.Collections;
 using System.Linq.Expressions;
 
-namespace RoyalCode.Persistence.Tests.Specifiers;
+namespace RoyalCode.SmartSearch.Tests;
+
+#pragma warning disable CA1859 // Use of concrete type
 
 public class SpecifierFunctionGeneratorTests
 {
@@ -491,12 +493,8 @@ file class OperatorsFilter
     public IEnumerable<string> Tag { get; set; } = null!;
 }
 
-file class LocalDbContext : DbContext
+file class LocalDbContext(DbContextOptions<LocalDbContext> options) : DbContext(options)
 {
-    public LocalDbContext(DbContextOptions<LocalDbContext> options) : base(options)
-    {
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SimpleModel>();
@@ -513,63 +511,63 @@ file class ConfigurableEntity
 
     public List<SimpleModel> Models { get; set; } = null!;
 
-    public static List<ConfigurableEntity> List = new()
-    {
+    public static List<ConfigurableEntity> List =
+    [
         new ConfigurableEntity()
         {
             Id = 1,
             Name = "test 1",
-            Models = new List<SimpleModel>()
-            {
-                new SimpleModel()
+            Models =
+            [
+                new()
                 {
                     Id = 1,
                     Name = "Simple Model 1"
                 },
-                new SimpleModel()
+                new()
                 {
                     Id = 2,
                     Name = "Simple Model 2"
                 }
-            }
+            ]
         },
         new ConfigurableEntity()
         {
             Id = 2,
             Name = "test 2",
-            Models = new List<SimpleModel>()
-            {
-                new SimpleModel()
+            Models =
+            [
+                new()
                 {
                     Id = 3,
                     Name = "Simple Model 3"
                 },
-                new SimpleModel()
+                new()
                 {
                     Id = 4,
                     Name = "Simple Model 4"
                 }
-            }
+            ]
         },
         new ConfigurableEntity()
         {
             Id = 3,
             Name = "test 3",
-            Models = new List<SimpleModel>()
-            {
-                new SimpleModel()
+            Models =
+            [
+                new()
                 {
                     Id = 5,
                     Name = "Simple Model 5"
                 },
-                new SimpleModel()
+                new()
                 {
                     Id = 6,
                     Name = "Simple Model 6"
                 }
-            }
+            ]
         }
-    };
+    ];
 }
 
 file class ConfigurableFilter

@@ -92,8 +92,7 @@ public class SearchCriteria
     /// <exception cref="ArgumentNullException">If expression is null.</exception>
     public void SetSelectExpression<TEntity, TDto>(Expression<Func<TEntity, TDto>> selectExpression)
     {
-        if (selectExpression == null)
-            throw new ArgumentNullException(nameof(selectExpression));
+        ArgumentNullException.ThrowIfNull(selectExpression);
 
         Select = new SearchSelect(typeof(TEntity), typeof(TDto), selectExpression);
     }

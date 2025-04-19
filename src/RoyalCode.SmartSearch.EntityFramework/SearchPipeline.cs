@@ -9,6 +9,8 @@ using RoyalCode.SmartSearch.Linq.Filter;
 
 namespace RoyalCode.SmartSearch.EntityFramework;
 
+#pragma warning disable S3358 // ifs ternarios should not be nested
+
 /// <summary>
 /// <para>
 ///     Default implementation of <see cref="ISearchPipeline{TModel}"/>.
@@ -42,7 +44,7 @@ public sealed class SearchPipeline<TEntity> : SearchPipelineBase<TEntity>, ISear
 
         var list = executableQuery.ToList();
         var hasNextPage = list.Count > criteria.ItemsPerPage;
-        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage) : list;
+        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage).ToList() : list;
 
         var count = criteria.LastCount > 0
             ? criteria.LastCount
@@ -81,7 +83,7 @@ public sealed class SearchPipeline<TEntity> : SearchPipelineBase<TEntity>, ISear
 
         var list = await executableQuery.ToListAsync(token);
         var hasNextPage = list.Count > criteria.ItemsPerPage;
-        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage) : list;
+        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage).ToList() : list;
 
         var count = criteria.LastCount > 0
             ? criteria.LastCount
@@ -191,7 +193,7 @@ public sealed class SearchPipeline<TEntity, TDto> : SearchPipelineBase<TEntity>,
 
         var list = executableQuery.ToList();
         var hasNextPage = list.Count > criteria.ItemsPerPage;
-        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage) : list;
+        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage).ToList() : list;
 
         var count = criteria.LastCount > 0
             ? criteria.LastCount
@@ -228,7 +230,7 @@ public sealed class SearchPipeline<TEntity, TDto> : SearchPipelineBase<TEntity>,
 
         var list = await executableQuery.ToListAsync(token);
         var hasNextPage = list.Count > criteria.ItemsPerPage;
-        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage) : list;
+        var items = hasNextPage && criteria.Paginate ? list.Take(criteria.ItemsPerPage).ToList() : list;
 
         var count = criteria.LastCount > 0
             ? criteria.LastCount
