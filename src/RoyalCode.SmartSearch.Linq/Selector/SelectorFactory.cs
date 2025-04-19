@@ -4,7 +4,7 @@ namespace RoyalCode.SmartSearch.Linq.Selector;
 /// <summary>
 /// Default implementation of <see cref="ISelectorFactory"/>.
 /// </summary>
-internal class SelectorFactory : ISelectorFactory
+internal sealed class SelectorFactory : ISelectorFactory
 {
     private readonly SelectorsMap selectors;
     private readonly ISelectorGenerator? selectorGenerator;

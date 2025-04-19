@@ -25,7 +25,7 @@ namespace RoyalCode.SmartSearch.Linq.Sorter;
 /// </list>
 /// </summary>
 /// <typeparam name="TModel">The query source model type.</typeparam>
-public class DefaultSorter<TModel> : ISorter<TModel>
+public sealed class DefaultSorter<TModel> : ISorter<TModel>
     where TModel : class
 {
     private readonly IOrderByProvider provider;

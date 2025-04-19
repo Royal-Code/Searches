@@ -10,7 +10,7 @@ namespace RoyalCode.SmartSearch.EntityFramework;
 /// Default implementation for <see cref="ISearchManager{TDbContext}"/>.
 /// </summary>
 /// <typeparam name="TDbContext"></typeparam>
-public class SearchManager<TDbContext> : ISearchManager<TDbContext>
+public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
     where TDbContext : DbContext
 {
     private readonly IPipelineFactory<TDbContext> pipelineFactory;

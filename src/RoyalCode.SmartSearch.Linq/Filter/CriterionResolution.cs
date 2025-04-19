@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filter;
 
-internal class CriterionResolution
+internal sealed class CriterionResolution
 {
     private Delegate? predicateFactory;
 

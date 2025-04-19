@@ -11,7 +11,7 @@ namespace RoyalCode.SmartSearch.Abstractions;
 ///     It is design to retrieve the options from a query string and apply them to the search.
 /// </para>
 /// </summary>
-public class SearchOptions
+public sealed class SearchOptions
 {
     private List<Sorting>? sortings;
 

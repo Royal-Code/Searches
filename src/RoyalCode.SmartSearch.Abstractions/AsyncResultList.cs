@@ -8,7 +8,7 @@ namespace RoyalCode.SmartSearch.Abstractions;
 /// </para>
 /// </summary>
 /// <typeparam name="TModel">The result model type.</typeparam>
-public class AsyncResultList<TModel> : IAsyncResultList<TModel>
+public sealed class AsyncResultList<TModel> : IAsyncResultList<TModel>
 {
     /// <inheritdoc />
     public int Page { get; init; }

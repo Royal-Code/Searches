@@ -8,7 +8,7 @@ namespace RoyalCode.SmartSearch.Abstractions;
 ///     Default implementation of <see cref="ISorting"/>.
 /// </para>
 /// </summary>
-public class Sorting : ISorting
+public sealed class Sorting : ISorting
 {
     private static JsonSerializerOptions? jsonSerializerOptions;
 

@@ -14,4 +14,8 @@
 	  <ProjectReference Include="..\RoyalCode.SmartSearch.Linq\RoyalCode.SmartSearch.Linq.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Update="coverlet.collector" Version="6.0.4" />
+	</ItemGroup>
+
 </Project>

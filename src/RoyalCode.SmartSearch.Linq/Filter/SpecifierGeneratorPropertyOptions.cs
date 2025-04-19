@@ -3,6 +3,8 @@ using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filter;
 
+#pragma warning disable S2326
+
 /// <summary>
 /// <para>
 ///     Options used by the default <see cref="ISpecifierFunctionGenerator"/> 

@@ -15,7 +15,7 @@ public static class SearchesServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The services collection.</param>
     /// <returns>The same instance of the services collection.</returns>
-    public static IServiceCollection AddSearchesLinq(this IServiceCollection services)
+    public static IServiceCollection AddSmartSearchLinq(this IServiceCollection services)
     {
         if (services.Any(d => d.ImplementationType == typeof(SpecifierFactory)))
             return services;

@@ -6,7 +6,7 @@ namespace RoyalCode.SmartSearch.Linq.Selector;
 /// <summary>
 /// A class that maps the types of the entity and Dto to the selector (<see cref="ISelector{TEntity, TDto}"/>).
 /// </summary>
-internal class SelectorsMap
+internal sealed class SelectorsMap
 {
     public static SelectorsMap Instance { get; } = new();
 

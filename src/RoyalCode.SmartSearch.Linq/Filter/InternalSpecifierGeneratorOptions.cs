@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filter;
 
-internal class InternalSpecifierGeneratorOptions<TModel, TFilter> : ISpecifierGeneratorOptions<TModel, TFilter>
+internal sealed class InternalSpecifierGeneratorOptions<TModel, TFilter> : ISpecifierGeneratorOptions<TModel, TFilter>
     where TModel : class
     where TFilter : class
 {

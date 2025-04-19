@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace RoyalCode.SmartSearch.Linq.Selector.Converters;
 
-internal class EnumSelectorPropertyConverter : ISelectorPropertyConverter, ISelectorPropertyResolver
+internal sealed class EnumSelectorPropertyConverter : ISelectorPropertyConverter, ISelectorPropertyResolver
 {
     // check if the target (entity) property is an enum and the origin (DTO) property is a enum.
     // and check if the value type of the enums are the same.

@@ -22,7 +22,7 @@ public class AllEntities<TEntity> : IAllEntities<TEntity>
     /// <inheritdoc />
     public IAllEntities<TEntity> FilterBy<TFilter>(TFilter filter) where TFilter : class
     {
-        criteria.AddFilter(typeof(TEntity), filter);
+        criteria.AddFilter(filter);
         return this;
     }
 

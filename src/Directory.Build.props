@@ -8,7 +8,7 @@
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.0</DotNetCoreVersion>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9'">9.0.0</DotNetCoreVersion>
+		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.2</DotNetCoreVersion>
+		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9'">9.0.4</DotNetCoreVersion>
 	</PropertyGroup>
 </Project>

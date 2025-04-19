@@ -8,20 +8,20 @@ namespace RoyalCode.SmartSearch.Core;
 /// <summary>
 /// The criteria for performing the search.
 /// </summary>
-public class SearchCriteria
+public sealed class SearchCriteria
 {
-    private List<SearchFilter>? filters;
+    private List<ISearchFilter>? filters;
     private List<ISorting>? sortings;
 
     /// <summary>
     /// Get all filters.
     /// </summary>
-    public IEnumerable<SearchFilter> Filters => filters ?? Enumerable.Empty<SearchFilter>();
+    public IReadOnlyList<ISearchFilter> Filters => filters ?? [];
 
     /// <summary>
     /// Get all sortings.
     /// </summary>
-    public IEnumerable<ISorting> Sortings => sortings ?? Enumerable.Empty<ISorting>();
+    public IReadOnlyList<ISorting> Sortings => sortings ?? [];
 
     /// <summary>
     /// Information about the select expression.
@@ -64,13 +64,12 @@ public class SearchCriteria
     /// <summary>
     /// Adds a new filter to specify the search.
     /// </summary>
-    /// <param name="modelType">The query model type.</param>
     /// <param name="filter">The filter instance.</param>
-    public void AddFilter<TFilter>(Type modelType, TFilter filter)
+    public void AddFilter<TFilter>(TFilter filter)
         where TFilter : class
     {
         filters ??= [];
-        filters.Add(new SearchFilter<TFilter>(modelType, filter));
+        filters.Add(new SearchFilter<TFilter>(filter));
     }
 
     /// <summary>
@@ -94,7 +93,7 @@ public class SearchCriteria
     {
         ArgumentNullException.ThrowIfNull(selectExpression);
 
-        Select = new SearchSelect(typeof(TEntity), typeof(TDto), selectExpression);
+        Select = new SearchSelect(selectExpression);
     }
 
     /// <summary>

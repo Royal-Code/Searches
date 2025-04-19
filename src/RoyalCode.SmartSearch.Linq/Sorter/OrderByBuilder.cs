@@ -9,7 +9,7 @@ namespace RoyalCode.SmartSearch.Linq.Sorter;
 /// Used by the <see cref="DefaultSorter{TModel}"/>.
 /// </summary>
 /// <typeparam name="TModel"></typeparam>
-internal class OrderByBuilder<TModel> : IOrderByBuilder<TModel>
+internal sealed class OrderByBuilder<TModel> : IOrderByBuilder<TModel>
 {
     private readonly IQueryable<TModel> query;
     private IOrderedQueryable<TModel>? ordered;

@@ -8,7 +8,7 @@ using RoyalCode.SmartSearch.Linq;
 namespace RoyalCode.SmartSearch.EntityFramework.Configurations;
 
 /// <inheritdoc />
-public class SearchConfigurations<TDbContext> : ISearchConfigurations<TDbContext>
+public sealed class SearchConfigurations<TDbContext> : ISearchConfigurations<TDbContext>
     where TDbContext : DbContext
 {
     private readonly IServiceCollection services;
@@ -21,7 +21,7 @@ public class SearchConfigurations<TDbContext> : ISearchConfigurations<TDbContext
     {
         this.services = services;
 
-        services.AddSearchesLinq();
+        services.AddSmartSearchLinq();
         services.TryAddTransient<IPipelineFactory<TDbContext>, PipelineFactory<TDbContext>>();
         services.TryAddTransient<ISearchManager<TDbContext>, SearchManager<TDbContext>>();
     }

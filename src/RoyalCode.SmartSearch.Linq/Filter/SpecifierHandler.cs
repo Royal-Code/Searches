@@ -11,7 +11,7 @@ namespace RoyalCode.SmartSearch.Linq.Filter;
 /// </para>
 /// </summary>
 /// <typeparam name="TModel">The query model type.</typeparam>
-public class SpecifierHandler<TModel> : ISpecifierHandler
+public sealed class SpecifierHandler<TModel> : ISpecifierHandler
     where TModel : class
 {
     private readonly ISpecifierFactory factory;

@@ -35,7 +35,7 @@ public class ResultList<TModel> : IResultList<TModel>
     public IReadOnlyList<TModel> Items { get; init; } = null!;
 
     /// <inheritdoc />
-    public T GetProjection<T>(string name, T? defaultValue = default)
+    public virtual T GetProjection<T>(string name, T? defaultValue = default)
     {
         throw new NotImplementedException();
     }

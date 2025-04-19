@@ -7,7 +7,7 @@ namespace RoyalCode.SmartSearch.Linq.Sorter;
 /// Default implementation of <see cref="IOrderByGenerator"/>, using <see cref="PropertySelection"/> for
 /// lookup of properties.
 /// </summary>
-public class DefaultOrderByGenerator : IOrderByGenerator
+public sealed class DefaultOrderByGenerator : IOrderByGenerator
 {
     /// <inheritdoc/>
     public Expression? Generate<TModel>(string orderBy) where TModel : class

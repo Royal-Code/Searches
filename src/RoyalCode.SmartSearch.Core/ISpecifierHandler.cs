@@ -5,7 +5,7 @@ namespace RoyalCode.SmartSearch.Core;
 ///     A handler for applying filters to queries.
 /// </para>
 /// <para>
-///     This component is used by the <see cref="SearchFilter"/>,
+///     This component is used by the <see cref="ISearchFilter"/>,
 ///     which stores the filter that will be used in the query specification.
 /// </para>
 /// </summary>

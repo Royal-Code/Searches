@@ -12,7 +12,7 @@ namespace RoyalCode.SmartSearch.Linq.Filter;
 ///     Generates a function that apply filters in a query.
 /// </para>
 /// </summary>
-public class DefaultSpecifierFunctionGenerator : ISpecifierFunctionGenerator
+public sealed class DefaultSpecifierFunctionGenerator : ISpecifierFunctionGenerator
 {
     #region Static Helpers
 

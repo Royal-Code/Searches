@@ -1,10 +1,9 @@
-﻿using RoyalCode.SmartSearch.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 namespace RoyalCode.SmartSearch.Linq.Selector;
 
-internal class InternalSelector<TEntity, TDto> : ISelector<TEntity, TDto>
+internal sealed class InternalSelector<TEntity, TDto> : ISelector<TEntity, TDto>
      where TEntity : class
         where TDto : class
 {

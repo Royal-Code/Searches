@@ -1,10 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RoyalCode.SmartSearch.Abstractions;
 using RoyalCode.SmartSearch.EntityFramework;
 using RoyalCode.SmartSearch.EntityFramework.Configurations;
 using RoyalCode.SmartSearch.EntityFramework.Internals;
 using RoyalCode.SmartSearch.Linq;
+using RoyalCode.SmartSearch.Linq.Filter;
+using RoyalCode.SmartSearch.Linq.Selector;
+using RoyalCode.SmartSearch.Linq.Sorter;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -58,11 +62,34 @@ public static class EntityFrameworkSearchesServiceCollectionExtensions
     public static IServiceCollection AddSearchManager<TDbContext>(this IServiceCollection services)
         where TDbContext : DbContext
     {
-        services.AddSearchesLinq();
+        services.AddSmartSearchLinq();
         services.TryAddTransient<IPipelineFactory<TDbContext>, PipelineFactory<TDbContext>>();
         services.TryAddTransient<ISearchManager<TDbContext>, SearchManager<TDbContext>>();
         services.TryAddTransient<ISearchManager, SearchManager<TDbContext>>();
 
         return services;
+    }
+
+    /// <summary>
+    /// <para>
+    ///     Creates a new <see cref="ISearch{TEntity}"/> for the entity <typeparamref name="TEntity"/>
+    ///     using the <see cref="DbContext"/> used by the unit of work.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <param name="db"></param>
+    /// <returns></returns>
+    public static ISearch<TEntity> Search<TEntity>(this DbContext db)
+        where TEntity : class
+    {
+        var specifierFactory = db.GetService<ISpecifierFactory>();
+        var orderByFactory = db.GetService<IOrderByProvider>();
+        var selectorFactory = db.GetService<ISelectorFactory>();
+
+        var pipelineFacotry = new PipelineFactory<DbContext>(db, specifierFactory, orderByFactory, selectorFactory);
+
+        var search = new InternalSearch<DbContext, TEntity>(pipelineFacotry);
+
+        return search;
     }
 }

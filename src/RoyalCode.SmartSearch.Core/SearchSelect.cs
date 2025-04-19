@@ -5,7 +5,19 @@ namespace RoyalCode.SmartSearch.Core;
 /// <summary>
 /// Information about the select to be applied to the query.
 /// </summary>
-/// <param name="EntityType">The query entity type.</param>
-/// <param name="DtoType">The DTO type to be selected.</param>
-/// <param name="SelectExpression">The select expression.</param>
-public record SearchSelect(Type EntityType, Type DtoType, Expression SelectExpression);
+public sealed class SearchSelect
+{
+    /// <summary>
+    /// Creates a new instance of <see cref="SearchSelect"/>.
+    /// </summary>
+    /// <param name="selectExpression"></param>
+    public SearchSelect(Expression selectExpression)
+    {
+        SelectExpression = selectExpression;
+    }
+
+    /// <summary>
+    /// The expression to be used in the select operation.
+    /// </summary>
+    public Expression SelectExpression { get; }
+}

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace RoyalCode.SmartSearch.Linq.Selector.Converters;
 
-internal class NullableSelectorPropertyConverter : ISelectorPropertyConverter, ISelectorPropertyResolver
+internal sealed class NullableSelectorPropertyConverter : ISelectorPropertyConverter, ISelectorPropertyResolver
 {
     public bool CanConvert(PropertyMatch selection, ISelectResolver resolver, out ISelectorPropertyConverter? converter)
     {

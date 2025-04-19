@@ -62,7 +62,7 @@ public abstract class SearchPipelineBase<TEntity>
     {
         var baseQuery = queryableProvider.GetQueryable();
 
-        var queryFilters = criteria.Filters.Where(f => f.ModelType == typeof(TEntity)).ToList();
+        var queryFilters = criteria.Filters;
         if (queryFilters.Count is not 0)
         {
             var handler = new SpecifierHandler<TEntity>(specifierFactory, baseQuery);
@@ -74,13 +74,12 @@ public abstract class SearchPipelineBase<TEntity>
             baseQuery = handler.Query;
         }
 
-        var sortedQuery = criteria.Sortings.Any()
-            ? sorter.OrderBy(baseQuery, criteria.Sortings)
-            : criteria.Paginate
+        if (criteria.Sortings.Count is not 0)
+            return sorter.OrderBy(baseQuery, criteria.Sortings);
+
+        return criteria.Paginate
                 ? sorter.DefaultOrderBy(baseQuery)
                 : baseQuery;
-
-        return sortedQuery;
     }
 
     /// <summary>
