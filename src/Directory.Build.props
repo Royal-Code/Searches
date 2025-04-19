@@ -4,8 +4,8 @@
 		<AspTargets>net8;net9</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>1.0.0</SearchesVer>
-		<SearchesPreview>-preview7.0</SearchesPreview>
+		<SearchesVer>0.7.0</SearchesVer>
+		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.0</DotNetCoreVersion>

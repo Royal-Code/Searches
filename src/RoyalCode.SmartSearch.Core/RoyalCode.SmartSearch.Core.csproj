@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\base.targets" />
+
+	<PropertyGroup>
+		<TargetFrameworks>$(AspTargets)</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Description>
+			Persistence abstract components for search entities by filters using linq specifiers and queryables.
+		</Description>
+		<PackageTags>
+			RoyalCode Enterprise-Patterns Repository Searchable Search Specifier Filter-Specifier-Pattern Specification
+		</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RoyalCode.Extensions.PropertySelection" Version="1.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(DotNetCoreVersion)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RoyalCode.SmartSearch.Abstractions\RoyalCode.SmartSearch.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>
