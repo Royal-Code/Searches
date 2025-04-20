@@ -21,7 +21,7 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Set permissions
-        run: sudo mkdir "/Release" & chmod -R 777 /Release
+        run: sudo mkdir /Release & chmod -R 777 /Release
 
       - name: Build and pack SmartSearch Abstractions
         run: dotnet build ./src/RoyalCode.SmartSearch.Abstractions/RoyalCode.SmartSearch.Abstractions.csproj -c Release
