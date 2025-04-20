@@ -21,16 +21,16 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Build and pack SmartSearch Abstractions
-        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.Abstractions/RoyalCode.SmartSearch.Abstractions.csproj -c Release
+        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.Abstractions/RoyalCode.SmartSearch.Abstractions.csproj -c Release -o ./publish/Abstractions
         
       - name: Build and pack SmartSearch Persistence Abstractions
-        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.Core/RoyalCode.SmartSearch.Core.csproj -c Release
+        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.Core/RoyalCode.SmartSearch.Core.csproj -c Release -o ./publish/Core
       
       - name: Build and pack SmartSearch Persistence Linq
-        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.Linq/RoyalCode.SmartSearch.Linq.csproj -c Release
+        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.Linq/RoyalCode.SmartSearch.Linq.csproj -c Release -o ./publish/Linq
         
       - name: Build and pack SmartSearch Persistence EntityFramework
-        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.EntityFramework/RoyalCode.SmartSearch.EntityFramework.csproj -c Release
+        run: sudo -E dotnet build ./src/RoyalCode.SmartSearch.EntityFramework/RoyalCode.SmartSearch.EntityFramework.csproj -c Release -o ./publish/EntityFramework
         
       - name: Publish
         run: sudo -E sudo dotnet nuget push ./**/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
