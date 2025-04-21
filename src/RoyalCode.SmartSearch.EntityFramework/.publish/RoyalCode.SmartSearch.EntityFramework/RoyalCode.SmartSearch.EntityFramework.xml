@@ -1,0 +1,343 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RoyalCode.SmartSearch.EntityFramework</name>
+    </assembly>
+    <members>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1">
+            <summary>
+            Default implementation of <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1"/>.
+            </summary>
+            <typeparam name="TEntity">The entity type</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.#ctor(RoyalCode.SmartSearch.Linq.IQueryableProvider{`0},RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory,RoyalCode.SmartSearch.Linq.ISorter{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.Any(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.AnyAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.Execute(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.ExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.First(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.FirstAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.RemoveAll(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.RemoveAllAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.Single(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.SingleAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.UpdateAll(RoyalCode.SmartSearch.Core.SearchCriteria,System.Action{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.UpdateAllAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Action{`0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.UpdateAll``1(RoyalCode.SmartSearch.Core.SearchCriteria,``0,System.Action{`0,``0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.UpdateAllAsync``1(RoyalCode.SmartSearch.Core.SearchCriteria,``0,System.Action{`0,``0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.UpdateAll``2(RoyalCode.SmartSearch.Core.SearchCriteria,System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.AllEntitiesPipeline`1.UpdateAllAsync``2(RoyalCode.SmartSearch.Core.SearchCriteria,System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.Configurations.ISearchConfigurations`1">
+            <summary>
+                Configure searches for the unit of work.
+            </summary>
+            <typeparam name="TDbContext">The type of the database context.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.Configurations.ISearchConfigurations`1.Add``1">
+            <summary>
+            Add a search for an entity as a service, related to <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> used by the unit of work.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <returns>The same instance.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.Configurations.SearchConfigurations`1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.Configurations.SearchConfigurations`1.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Creates a new instance of <see cref="T:RoyalCode.SmartSearch.EntityFramework.Configurations.SearchConfigurations`1"/>.
+            </summary>
+            <param name="services">The service collection to register the searches as a service.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.Configurations.SearchConfigurations`1.Add``1">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.Internals.IAllEntities`2">
+            <summary>
+            <para>
+                Represents a search for all entities of a specific type using the Entity Framework Core.
+            </para>
+            </summary>
+            <typeparam name="TDbContext">The type of the database context.</typeparam>
+            <typeparam name="TEntity">The type of the entity.</typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.Internals.IPipelineFactory`1">
+            <summary>
+                Factory to create search pipelines and searches for all entities using a specific <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/>.
+            </summary>
+            <typeparam name="TDbContext">
+                The <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> type to use for the search pipelines and searches for all entities.
+            </typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.Internals.ISearch`2">
+            <summary>
+            <para>
+                Represents a search for a specific entity type using the Entity Framework Core.
+            </para>    
+            </summary>
+            <typeparam name="TDbContext">The type of the database context.</typeparam>
+            <typeparam name="TEntity">The type of the entity.</typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.ISearchManager`1">
+            <summary>
+            <para>
+                Represents a search component for a persistence unit defined by a <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/>.
+            </para>
+            </summary>
+            <typeparam name="TDbContext">
+                The <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> type that defines the persistence unit.
+            </typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.PipelineFactory`1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.PipelineFactory`1.#ctor(`0,RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory,RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider,RoyalCode.SmartSearch.Linq.Selector.ISelectorFactory,RoyalCode.OperationHint.Abstractions.IHintPerformer)">
+            <summary>
+            <para>
+                Create a new instance of <see cref="T:RoyalCode.SmartSearch.EntityFramework.PipelineFactory`1"/>.
+            </para>
+            </summary>
+            <param name="db">The database context.</param>
+            <param name="specifierFactory">The specifier factory.</param>
+            <param name="orderByProvider">The order by provider.</param>
+            <param name="selectorFactory">The selector factory.</param>
+            <param name="hintPerformer">Optional, the hint performer.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.PipelineFactory`1.Create``1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.PipelineFactory`1.Create``2">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.PipelineFactory`1.CreateAllEntities``1">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.QueryableProvider`2">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.QueryableProvider`2.GetQueryable">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.QueryableProvider`2.GetRemovable">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.Removable`1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.Removable`1.RemoveAll(System.Linq.IQueryable{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.Removable`1.RemoveAllAsync(System.Linq.IQueryable{`0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.SearchManager`1">
+            <summary>
+            Default implementation for <see cref="T:RoyalCode.SmartSearch.EntityFramework.ISearchManager`1"/>.
+            </summary>
+            <typeparam name="TDbContext"></typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchManager`1.#ctor(RoyalCode.SmartSearch.EntityFramework.Internals.IPipelineFactory{`0})">
+            <summary>
+            Creates a new search manager with the pipeline factory for the <typeparamref name="TDbContext"/>.
+            </summary>
+            <param name="pipelineFactory"></param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchManager`1.All``1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchManager`1.Search``1">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`1">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1"/>.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`1.#ctor(RoyalCode.SmartSearch.Linq.IQueryableProvider{`0},RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory,RoyalCode.SmartSearch.Linq.ISorter{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`1.Execute(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`1.ExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`1.AsyncExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`2">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1"/> that selects a DTO from the entity.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <typeparam name="TDto">The selected DTO type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`2.#ctor(RoyalCode.SmartSearch.Linq.IQueryableProvider{`0},RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory,RoyalCode.SmartSearch.Linq.ISorter{`0},RoyalCode.SmartSearch.Linq.ISelector{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`2.Execute(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`2.ExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipeline`2.AsyncExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1">
+            <summary>
+            <para>
+                A base implementation for <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1"/> to share commons methods/operations.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The query source model type.</typeparam>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1.queryableProvider">
+            <summary>
+            <para>
+                The component that will provide the <see cref="T:System.Linq.IQueryable`1"/> to be used in the pipeline.
+            </para>
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1.specifierFactory">
+            <summary>
+            <para>
+                Factory to create the <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/> to be used in the pipeline.
+            </para>
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1.sorter">
+            <summary>
+            <para>
+                Component to apply the order by instructions.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1.#ctor(RoyalCode.SmartSearch.Linq.IQueryableProvider{`0},RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory,RoyalCode.SmartSearch.Linq.ISorter{`0})">
+            <summary>
+            Creates a new search pipeline that receives the dependencies.
+            </summary>
+            <param name="queryableProvider">Provides the query.</param>
+            <param name="specifierFactory">Provides the specifiers.</param>
+            <param name="sorter">Sort the query.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1.PrepareQuery(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Creates the query, apply the filters and sort.
+            </summary>
+            <param name="criteria">Search criteria.</param>
+            <returns>A prepared query.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SearchPipelineBase`1.CountPages(System.Int32,System.Int32)">
+            <summary>
+            Count the pages.
+            </summary>
+            <param name="count">The record count.</param>
+            <param name="itemsPerPage">How many items is listed per page.</param>
+            <returns>The total number of pages.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.EntityFramework.SelectorNotFoundException">
+            <summary>
+            Exception for when a selector is not informed for the search and also there is none configured for a given entity and DTO.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.EntityFramework.SelectorNotFoundException.#ctor(System.Type,System.Type)">
+            <summary>
+            Creates a new exception.
+            </summary>
+            <param name="entityType">The entity type.</param>
+            <param name="dtoType">The DTO type.</param>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.EntityFrameworkSearchesServiceCollectionExtensions">
+            <summary>
+            Extensions methods for <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.EntityFrameworkSearchesServiceCollectionExtensions.AddEntityFrameworkSearches``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RoyalCode.SmartSearch.EntityFramework.Configurations.ISearchConfigurations{``0}})">
+            <summary>
+            <para>
+                Add services for <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/> and <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/>
+                using entity framework and defining the <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> for performing the searches.
+            </para>
+            <para>
+                You can also use a <see cref="T:RoyalCode.SmartSearch.EntityFramework.ISearchManager`1"/> to create 
+                <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/> and <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/>
+                of entities related to the <typeparamref name="TDbContext"/>.
+            </para>
+            </summary>
+            <typeparam name="TDbContext">The <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> to use for performing the searches.</typeparam>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to add the services to.</param>
+            <param name="configureAction">The action to configure the <see cref="T:RoyalCode.SmartSearch.EntityFramework.Configurations.ISearchConfigurations`1"/>.</param>
+            <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> so that additional calls can be chained.</returns>
+            <exception cref="T:System.ArgumentNullException">
+                When <paramref name="configureAction"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.EntityFrameworkSearchesServiceCollectionExtensions.AddSearchManager``1(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            <para>
+                Adds services to work with <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/> and <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/>
+                using the entity framework.
+            </para>
+            <para>
+                It will be necessary to use <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearchManager"/> or <see cref="T:RoyalCode.SmartSearch.EntityFramework.ISearchManager`1"/>
+                to create <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/> and <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/>
+                of entities related to the <typeparamref name="TDbContext"/>.
+            </para>
+            </summary>
+            <typeparam name="TDbContext">The <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> to use for performing the searches.</typeparam>
+            <param name="services">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> to add the services to.</param>
+            <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> so that additional calls can be chained.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.EntityFrameworkSearchesServiceCollectionExtensions.Search``1(Microsoft.EntityFrameworkCore.DbContext)">
+            <summary>
+            <para>
+                Creates a new <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/> for the entity <typeparamref name="TEntity"/>
+                using the <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> used by the unit of work.
+            </para>
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="db"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

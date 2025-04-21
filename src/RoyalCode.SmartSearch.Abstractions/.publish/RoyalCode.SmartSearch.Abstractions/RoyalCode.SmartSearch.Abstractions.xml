@@ -1,0 +1,848 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RoyalCode.SmartSearch.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.AllEntitiesExtensions">
+            <summary>
+            Extension methods for <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/>.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.AllEntitiesExtensions.UpdateAll``2(RoyalCode.SmartSearch.Abstractions.IAllEntities{``0},System.Collections.Generic.ICollection{``1},System.Action{``0,``1})">
+            <summary>
+            Apply the filters and sorting and update all entities that meet the criteria.
+            </summary>
+            <param name="allEntities"></param>
+            <param name="data"></param>
+            <param name="updateAction"></param>
+            <typeparam name="TEntity"></typeparam>
+            <typeparam name="TData"></typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.AllEntitiesExtensions.UpdateAllWith``2(RoyalCode.SmartSearch.Abstractions.IAllEntities{``0},System.Collections.Generic.ICollection{``1},System.Action{``0,``1})">
+            <summary>
+            Apply the filters and sorting and update all entities that meet the criteria.
+            </summary>
+            <param name="allEntities"></param>
+            <param name="data"></param>
+            <param name="updateAction"></param>
+            <typeparam name="TEntity"></typeparam>
+            <typeparam name="TData"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Abstractions.IAsyncResultList`1"/>.
+            </para>
+            </summary>
+            <typeparam name="TModel">The result model type.</typeparam>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.Page">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.Count">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.ItemsPerPage">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.Pages">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.Sortings">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.Projections">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.AsyncResultList`1.Items">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.CriterionAttribute">
+            <summary>
+            <para>
+                Attribute that indicates that a property is a criterion.
+            </para>
+            <para>
+                This can be use in property of filters to automatic generate a filter function.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.CriterionAttribute.Operator">
+            <summary>
+            <para>
+                The operator used to filter.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.CriterionAttribute.Negation">
+            <summary>
+            <para>
+                Requires the use of the Not operator
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.CriterionAttribute.TargetProperty">
+            <summary>
+            <para>
+                The name of the target property.
+            </para>
+            <para>
+                Optional, when not informed then the property name will be used.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.CriterionAttribute.Ignore">
+            <summary>
+            <para>
+                Ignore the property. Do not use to apply filters.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.CriterionAttribute.IgnoreIfIsEmpty">
+            <summary>
+            <para>
+                Ignore the property if the value is null or empty.
+            </para>
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.CriterionOperator">
+            <summary>
+            <para>
+                The operator used to filter.
+            </para>
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.Auto">
+            <summary>
+                Automatic choice the operator.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.Equal">
+            <summary>
+                The criterion is equal to the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.GreaterThan">
+            <summary>
+                The criterion is greater than the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.GreaterThanOrEqual">
+            <summary>
+                The criterion is greater than or equal to the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.LessThan">
+            <summary>
+                The criterion is less than the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.LessThanOrEqual">
+            <summary>
+                The criterion is less than or equal to the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.In">
+            <summary>
+                The value is in the criterion.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.Like">
+            <summary>
+                The criterion is like the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.Contains">
+            <summary>
+               The criterion is contained in the value.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.StartsWith">
+            <summary>
+                The value starts with the criterion.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Abstractions.CriterionOperator.EndsWith">
+            <summary>
+                The value ends with the criterion.
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1">
+            <summary>
+            <para>
+                A search that returns all entities with purpose to edit them.
+            </para>
+            <para>
+                Filters and sorting can be applied, but the search engine must be able to apply them.
+            </para>
+            <para>
+                When used with a unit of work, all changes made to the entities must be saved.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.FilterBy``1(``0)">
+            <summary>
+            <para>
+                Adds a filter object to the search.
+            </para>
+            <para>
+                The search engine must be able to apply this filter, otherwise an exception will be throwed.
+            </para>
+            </summary>
+            <typeparam name="TFilter">The filter type.</typeparam>
+            <param name="filter">The filter object.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.OrderBy(RoyalCode.SmartSearch.Abstractions.ISorting)">
+            <summary>
+            <para>
+                Adds a sorting object to be applied to the search.
+            </para>
+            </summary>
+            <param name="sorting">The sorting object.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.Collect">
+            <summary>
+            Apply the filters and sorting and get all the entities that meet the criteria.
+            </summary>
+            <returns>
+                A collection of the entities.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.CollectAsync(System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and get all the entities that meet the criteria.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>
+                A collection of the entities.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.Exists">
+            <summary>
+            Apply the filters and sorting and verify if there are any entities that meet the criteria.
+            </summary>
+            <returns>
+                True if there are entities that meet the criteria, otherwise false.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.ExistsAsync(System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and verify if there are any entities that meet the criteria.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>
+                True if there are entities that meet the criteria, otherwise false.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.First">
+            <summary>
+            Apply the filters and sorting and get the first entity that meets the criteria.
+            </summary>
+            <returns>
+                The entity or null if there are no entities that meet the criteria.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.FirstAsync(System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and get the first entity that meets the criteria.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>
+                The entity or null if there are no entities that meet the criteria.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.Single">
+            <summary>
+            Apply the filters and sorting and get the first entity that meets the criteria,
+            or throw an exception if there are no entities that meet the criteria or more than one.
+            </summary>
+            <returns>
+                The entity that meets the criteria 
+                or throw an exception if there are no entities that meet the criteria or more than one.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.SingleAsync(System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and get the first entity that meets the criteria,
+            or throw an exception if there are no entities that meet the criteria or more than one.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>
+                The entity that meets the criteria
+                or throw an exception if there are no entities that meet the criteria or more than one.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.DeleteAll">
+            <summary>
+            Apply the filters and sorting and delete all the entities that meet the criteria.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.DeleteAllAsync(System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and delete all the entities that meet the criteria.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.UpdateAll(System.Action{`0})">
+            <summary>
+            Apply the filters and sorting and update all the entities that meet the criteria.
+            </summary>
+            <param name="updateAction">The action to update the entities.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.UpdateAll``1(``0,System.Action{`0,``0})">
+            <summary>
+            Apply the filters and sorting and update all entities that meet the criteria.
+            </summary>
+            <param name="data">The data used to update the entities.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.UpdateAll``2(System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0})">
+            <summary>
+            Apply the filters and sorting and update all entities that meet the criteria.
+            </summary>
+            <param name="collection">A collection of data used to update the entities.</param>
+            <param name="entityIdGet">The function to get the entity id.</param>
+            <param name="dataIdGet">The function to get the data id.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+            <typeparam name="TId">The type of the id.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.UpdateAllAsync(System.Action{`0},System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and update all the entities that meet the criteria.
+            </summary>
+            <param name="updateAction">The action to update the entities.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.UpdateAllAsync``1(``0,System.Action{`0,``0},System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and update all entities that meet the criteria.
+            </summary>
+            <param name="data">The data used to update the entities.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+            <returns>A task representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IAllEntities`1.UpdateAllAsync``2(System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0},System.Threading.CancellationToken)">
+            <summary>
+            Apply the filters and sorting and update all entities that meet the criteria.
+            </summary>
+            <param name="collection">The collection of data used to update the entities.</param>
+            <param name="entityIdGet">The function to get the entity id.</param>
+            <param name="dataIdGet">The function to get the data id.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+            <typeparam name="TId">The type of the id.</typeparam>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.IAsyncResultList`1">
+            <summary>
+            Component interface for async listing the result of a search.
+            </summary>
+            <typeparam name="TModel">Type of data listed by the result.</typeparam>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IAsyncResultList`1.Items">
+            <summary>
+            Async collection of the searched models.
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.IResultList">
+            <summary>
+            <para>
+                Component interface for listing the result of a search.
+            </para>
+            <para>
+                This interface is an abstraction for the component that contains the returned search items:
+                <see cref="T:RoyalCode.SmartSearch.Abstractions.IResultList`1"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList.Page">
+            <summary>
+            Number of the page displayed.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList.Count">
+            <summary>
+            Total number of records.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList.ItemsPerPage">
+            <summary>
+            Number of items displayed per page.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList.Pages">
+            <summary>
+            Number of pages.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList.Sortings">
+            <summary>
+            The sort objects applied to the search.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList.Projections">
+            <summary>
+            Projections carried out during the research.
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.IResultList`1">
+            <summary>
+            Component interface for listing the result of a search.
+            </summary>
+            <typeparam name="TModel">Type of data listed by the result.</typeparam>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.IResultList`1.Items">
+            <summary>
+            List of the searched models.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.IResultList`1.GetProjection``1(System.String,``0)">
+            <summary>
+            Gets a value from the projection if it exists and is of the type entered,
+            or returns the default value if the value does not exist or the type is different.
+            </summary>
+            <typeparam name="T">Projection value type.</typeparam>
+            <param name="name">Projection name.</param>
+            <param name="defaultValue">Default value.</param>
+            <returns>The projection value, or default value.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.ISearch`1">
+            <summary>
+            <para>
+                Component to perform entity searches, being able to apply multiple filters,
+                sorting, define paging, include projections, and determine which data must be selected.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.FilterBy``1(``0)">
+            <summary>
+            <para>
+                Adds a filter object to the search.
+            </para>
+            <para>
+                The search engine must be able to apply this filter, otherwise an exception will be throwed.
+            </para>
+            </summary>
+            <typeparam name="TFilter">The filter type.</typeparam>
+            <param name="filter">The filter object.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.OrderBy(RoyalCode.SmartSearch.Abstractions.ISorting)">
+            <summary>
+            <para>
+                Adds a sorting object to be applied to the search.
+            </para>
+            </summary>
+            <param name="sorting">The sorting object.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.Select``1">
+            <summary>
+            <para>
+                Requires a Select, adapting the Entity to a DTO.
+            </para>
+            <para>
+                In this method the adaptation of the entity to the DTO will be done by the search engine.
+            </para>
+            </summary>
+            <typeparam name="TDto">The Data Transfer Object type.</typeparam>
+            <returns>new instance of <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`2"/> with the same filters.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.Select``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            <para>
+                Requires a Select, adapting the Entity to a DTO.
+            </para>
+            <para>
+                In this method, the expression is required to adapt the entity to the DTO.
+            </para>
+            </summary>
+            <typeparam name="TDto">The Data Transfer Object type.</typeparam>
+            <param name="selectExpression">Expression to adapt the entity to the DTO.</param>
+            <returns>new instance of <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`2"/> with the same filters.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.ToList">
+            <summary>
+            It searches for the entities and returns them in a list of results.
+            </summary>
+            <returns>The result list.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.ToListAsync(System.Threading.CancellationToken)">
+            <summary>
+            It async searches for the entities and returns them in a list of results.
+            </summary>
+            <param name="token">The task cancellation token.</param>
+            <returns>A task to wait for the list of results.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`1.ToAsyncListAsync(System.Threading.CancellationToken)">
+            <summary>
+            Creates a result list that will return the searched entities asynchronously.
+            </summary>
+            <param name="token">The task cancellation token.</param>
+            <returns>A task to wait for the async list of results.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.ISearch`2">
+            <summary>
+            <para>
+                Component to perform entity searches, being able to apply multiple filters,
+                sorting, define paging, include projections, and determine which data must be selected.
+            </para>
+            <para>
+                Objects of this class is created by the <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/>.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <typeparam name="TDto">The Data Transfer Object type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`2.FilterBy``1(``0)">
+            <summary>
+            <para>
+                Adds a filter object to the search.
+            </para>
+            <para>
+                The search engine must be able to apply this filter, otherwise an exception will be throwed.
+            </para>
+            <para>
+                This filter will be applied against the <typeparamref name="TDto"/> query type.
+            </para>
+            </summary>
+            <typeparam name="TFilter">The filter type.</typeparam>
+            <param name="filter">The filter object.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`2.ToList">
+            <summary>
+            It searches for the entities and returns them in a list of results.
+            </summary>
+            <returns>The result list.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`2.ToListAsync(System.Threading.CancellationToken)">
+            <summary>
+            It async searches for the entities and returns them in a list of results.
+            </summary>
+            <param name="token">The task cancellation token.</param>
+            <returns>A task to wait for the list of results.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearch`2.ToAsyncListAsync(System.Threading.CancellationToken)">
+            <summary>
+            Creates a result list that will return the searched entities asynchronously.
+            </summary>
+            <param name="token">The task cancellation token.</param>
+            <returns>A task to wait for the async list of results.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.ISearchManager">
+            <summary>
+            <para>
+                A service for persistence components that allow search operations to be carried out.
+            </para>
+            <para>
+                The search component is used to create a search for a specific entity type.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearchManager.Search``1">
+            <summary>
+            <para>
+                Creates a new search for the entity.
+            </para>
+            <para>
+                There must be a search component for the persistence unit, otherwise an exception will be thrown.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <returns>A new instance of <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/>.</returns>
+            <exception cref="T:System.InvalidOperationException">
+                If entity is not part of the persistence unit or there is no search component for it.
+            </exception>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearchManager.All``1">
+            <summary>
+            <para>
+                Gets all entities of the persistence unit, where it is possible to add filters and sorters.
+            </para>
+            <para>
+                The purpose of <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/> is to query entities for update or delete.
+            </para>
+            <para>
+                When used with a unit of work, all changes made to the entities must be saved.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <returns>
+                A new instance of <see cref="T:RoyalCode.SmartSearch.Abstractions.IAllEntities`1"/>.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+                If entity is not part of the persistence unit or there is no search component for it.
+            </exception>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1">
+            <summary>
+            Options that can be applied into searches.
+            </summary>
+            <typeparam name="TSearch">The search component type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1.UsePages(System.Int32)">
+            <summary>
+            <para>
+                Defines that the query will be paged and determines the number of items per page.
+            </para>
+            <para>
+                The default value is 10 items per page.
+            </para>
+            <para>
+                When zero (0) is entered, it will not be paged.
+            </para>
+            </summary>
+            <param name="itemsPerPage">Items per page.</param>
+            <returns>The same instance of the search for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1.FetchPage(System.Int32)">
+            <summary>
+            The number of the page to be searched.
+            </summary>
+            <returns>The same instance of the search for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1.UseLastCount(System.Int32)">
+            <summary>
+            <para>
+                Updates the last record count.
+            </para>
+            <para>
+                Used to not count the records again.
+            </para>
+            </summary>
+            <returns>The same instance of the search for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1.UseCount(System.Boolean)">
+            <summary>
+            Whether to apply record counting.
+            </summary>
+            <param name="useCount">Whether to apply record counting.</param>
+            <returns>The same instance of the search for chaining calls.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.ISorting">
+            <summary>
+            Component that contains information about the sorting applied to a search/query.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ISorting.OrderBy">
+            <summary>
+            One or more property names on which the sorting should be done.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ISorting.Direction">
+            <summary>
+            <para>
+                Specifies the direction of a sort operation.
+            </para>
+            <para>
+                Ascending = 0, Descending = 1.
+            </para>
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.ResultList`1">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Abstractions.IResultList`1"/>.
+            </para>
+            </summary>
+            <typeparam name="TModel">The result model type.</typeparam>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.Page">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.Count">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.ItemsPerPage">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.Pages">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.Sortings">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.Projections">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.ResultList`1.Items">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.ResultList`1.GetProjection``1(System.String,``0)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.SearchExtensions">
+            <summary>
+            <para>
+                Extensions methods for <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1"/>, <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`1"/>
+                and <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearch`2"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.SearchExtensions.WithOptions``1(RoyalCode.SmartSearch.Abstractions.ISearch{``0},RoyalCode.SmartSearch.Abstractions.SearchOptions)">
+            <summary>
+            Applies the <see cref="T:RoyalCode.SmartSearch.Abstractions.SearchOptions"/> to the <see cref="T:RoyalCode.SmartSearch.Abstractions.ISearchOptions`1"/>.
+            </summary>
+            <typeparam name="T">The search object type.</typeparam>
+            <param name="search">The search.</param>
+            <param name="options">The options.</param>
+            <returns>The search with the options applied.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.SearchExtensions.OrderBy``1(RoyalCode.SmartSearch.Abstractions.ISearch{``0},RoyalCode.SmartSearch.Abstractions.ISorting[])">
+            <summary>
+            Applies a set of sorting to the search.
+            </summary>
+            <typeparam name="T">The search object type.</typeparam>
+            <param name="search">The search.</param>
+            <param name="sortings">The sortings.</param>
+            <returns>The search with the sortings applied.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.SearchOptions">
+            <summary>
+            <para>
+                A class that contains the options for a search.
+                It is used to define the search parameters.
+            </para>
+            <para>
+                It is design to retrieve the options from a query string and apply them to the search.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.SearchOptions.ItemsPerPage">
+            <summary>
+            <para>
+                Defines that the query will be paged and determines the number of items per page.
+            </para>
+            <para>
+                The default value is 10 items per page.
+            </para>
+            <para>
+                When zero (0) is entered, it will not be paged.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.SearchOptions.Page">
+            <summary>
+            The number of the page to be searched.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.SearchOptions.LastCount">
+            <summary>
+            <para>
+                Updates the last record count.
+            </para>
+            <para>
+                Used to not count the records again.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.SearchOptions.Count">
+            <summary>
+            Whether to apply record counting.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.SearchOptions.Sortings">
+            <summary>
+            The order by instructions for the search.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.SearchOptions.OrderBy(System.String)">
+            <summary>
+            Adds a new order by instruction.
+            </summary>
+            <param name="orderBy">The property name to be ordered.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.SearchOptions.OrderByDesc(System.String)">
+            <summary>
+            Adds a new order by instruction.
+            </summary>
+            <param name="orderBy">The property name to be ordered.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.SearchOptions.AllItens">
+            <summary>
+            Set properties to return all items.
+            </summary>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.SearchOptions.UpdateFromResult(RoyalCode.SmartSearch.Abstractions.IResultList)">
+            <summary>
+            Update the current options properties with values from the <see cref="T:RoyalCode.SmartSearch.Abstractions.IResultList"/>.
+            </summary>
+            <param name="resultList">A result list returned by an search execution.</param>
+            <returns>The same instance for chaining calls.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Abstractions.Sorting">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Abstractions.ISorting"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.Sorting.OrderBy">
+            <inheritdoc />
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Abstractions.Sorting.Direction">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.Sorting.TryParse(System.String,RoyalCode.SmartSearch.Abstractions.Sorting@)">
+            <summary>
+            <para>
+                Try parse a string to a <see cref="T:RoyalCode.SmartSearch.Abstractions.Sorting"/>.
+            </para>
+            <para>
+            <listheader>
+                Is accepted: 
+            </listheader>
+            <list type="bullet">
+            <item>
+                The pattern <c>{PropertyName}</c>, <c>{PropertyName} asc</c>, <c>{PropertyName}-asc</c>,
+                <c>{PropertyName} desc</c> or <c>{PropertyName}-desc</c>.
+            </item>
+            <item>
+                A json string with the pattern <c>{"OrderBy": "{PropertyName}", "Direction": "{Direction}"}</c>.
+            </item>
+            </list>
+            </para>
+            </summary>
+            <param name="orderBy">The string to be parsed.</param>
+            <param name="sorting">The <see cref="T:RoyalCode.SmartSearch.Abstractions.Sorting"/> parsed.</param>
+            <returns>
+                <c>true</c> if the string was parsed successfully; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Abstractions.Sorting.ToString">
+            <summary>
+            <para>
+                Generate a string representation of the <see cref="T:RoyalCode.SmartSearch.Abstractions.Sorting"/>.
+            </para>
+            <para>
+                When the <see cref="P:RoyalCode.SmartSearch.Abstractions.Sorting.Direction"/> is <see cref="F:System.ComponentModel.ListSortDirection.Descending"/>,
+                then the string will be <c>{OrderBy}-desc</c>.
+            </para>
+            <para>
+                When the <see cref="P:RoyalCode.SmartSearch.Abstractions.Sorting.Direction"/> is <see cref="F:System.ComponentModel.ListSortDirection.Ascending"/>,
+                then the string will be <c>{OrderBy}</c>.
+            </para>
+            </summary>
+            <returns>
+                A string representation of the <see cref="T:RoyalCode.SmartSearch.Abstractions.Sorting"/>.
+            </returns>
+        </member>
+    </members>
+</doc>

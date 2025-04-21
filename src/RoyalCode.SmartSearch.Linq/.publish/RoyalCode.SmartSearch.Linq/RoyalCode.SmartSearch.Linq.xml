@@ -1,0 +1,864 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RoyalCode.SmartSearch.Linq</name>
+    </assembly>
+    <members>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator">
+            <summary>
+            <para>
+                Generates a function that apply filters in a query.
+            </para>
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.IsEmptyMethod">
+            <summary>
+            MethodInfo referring to the generic function that checks whether a value is an empty representation of a type.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.IsNullOrWhiteSpaceMethod">
+            <summary>
+            MethodInfo for checks whether a string is an empty.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.AnyMethod">
+            <summary>
+            MethodInfo for checks whether a enumerable is empty.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.IsBlankMethod">
+            <summary>
+            MethodInfo for checks whether a date is empty.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.ContainsMethod">
+            <summary>
+            Contains Method of string.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.StartsWithMethod">
+            <summary>
+            StartsWith Method of string.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.EndsWithMethod">
+            <summary>
+            EndsWith Method of string.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.InMethod">
+            <summary>
+            Where method of <see cref="T:System.Linq.Enumerable"/> to call over <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.GreaterThenTypes">
+            <summary>
+            Types where "greater than" is applied to check that the value is not empty.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.Generate``2">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.CreateOperatorExpression(RoyalCode.SmartSearch.Abstractions.CriterionOperator,System.Boolean,System.Linq.Expressions.MemberExpression,System.Linq.Expressions.MemberExpression)">
+            <summary>
+            <para>
+                Creates the expression that performs the comparison between the model property and the filter property.
+            </para>
+            </summary>
+            <param name="operator">The operator to be used in the comparison.</param>
+            <param name="negation">Indicates whether the comparison should be negated.</param>
+            <param name="filterMemberAccess">The expression that represents the filter property.</param>
+            <param name="targetMemberAccess">The expression that represents the model property.</param>
+            <returns>The expression that performs the comparison.</returns>
+            <exception cref="T:System.InvalidOperationException">
+                The operator is not supported.
+            </exception>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.DiscoveryCriterionOperator(RoyalCode.SmartSearch.Abstractions.CriterionAttribute,System.Reflection.PropertyInfo)">
+            <summary>
+            Gets the operator of a condition for a filter from the <see cref="T:RoyalCode.SmartSearch.Abstractions.CriterionAttribute"/>.
+            </summary>
+            <param name="criterion"><see cref="T:RoyalCode.SmartSearch.Abstractions.CriterionAttribute"/>.</param>
+            <param name="filterProperty">The filter property.</param>
+            <returns>The operator of the condition that should be applied in the filter.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.GetMemberAccess(RoyalCode.Extensions.PropertySelection.PropertySelection,System.Linq.Expressions.Expression)">
+            <summary>
+            Gets the expression to access the member, checking if it is a Nullable to get the Value if it is.
+            </summary>
+            <param name="propertySelection">The property selection.</param>
+            <param name="parameterExpression">The parameter expression.</param>
+            <returns>The expression to access the member.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.GetMemberAccess(System.Reflection.PropertyInfo,System.Linq.Expressions.Expression)">
+            <summary>
+            Gets the expression to access the member, checking if it is a Nullable to get the Value if it is.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="parameterExpression">The parameter expression.</param>
+            <returns>The expression to access the member.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.GetIfIsEmptyConstraintExpression(System.Linq.Expressions.Expression,System.Linq.Expressions.Expression)">
+            <summary>
+            <para>
+                Creates a conditional expression to check whether the filter value is not empty.
+            </para>
+            <para>
+                The result is an IfThen expression.
+            </para>
+            </summary>
+            <param name="filterMemberAccess">Expression that returns the value of the filter property.</param>
+            <param name="assignExpression">Expression that will be executed if the condition is true.</param>
+            <returns>New IfThen expression with the generated condition.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierFunctionGenerator.CheckTypes(System.Type,System.Type)">
+            <summary>
+            It checks two types of data, the first from the filter property, the second, from the model property,
+            if they are compatible for applying a filter.
+            </summary>
+            <param name="filterPropertyType">The filter property type.</param>
+            <param name="modelPropertyType">The model property type.</param>
+            <returns>True if the types are compatible, otherwise false.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.DefaultSpecifierGenerator">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierGenerator"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory">
+            <summary>
+            A factory to create <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/> for a given model type and filter type.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory.GetSpecifier``2">
+            <summary>
+            <para>
+                Creates a new specifier for a given model type and filter type.
+            </para>
+            <para>
+                May be returned null if no specifier is configured for the model and filter, or throw an exception.
+            </para>
+            </summary>
+            <typeparam name="TModel">The model type.</typeparam>
+            <typeparam name="TFilter">The filter type.</typeparam>
+            <returns>A new specifier or null if not exists.</returns>
+            <exception cref="T:System.Exception">Optional, if no specifier is configured for the model and filter.</exception>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFunctionGenerator">
+            <summary>
+            <para>
+                Interface for generate functions to apply a filter in a query, used by <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/>.
+            </para>
+            <para>
+                This is used by internal components and should not be used directly from your code.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFunctionGenerator.Generate``2">
+            <summary>
+                Generate a function to apply a filter in a query.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <returns>The function or null if not exists.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierGenerator">
+            <summary>
+            <para>
+                Interface for generate a <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/>.
+            </para>
+            <para>
+                This is used by internal components and should not be used directly from your code.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.ISpecifierGenerator.Generate``2">
+            <summary>
+                Generate a <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/> for the model and filter.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <returns>The specifier or null if not exists.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierGeneratorOptions`2">
+            <summary>
+            <para>
+                Options used by the default <see cref="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFunctionGenerator"/> 
+                to generate the function for apply the filter into the model.
+            </para>
+            <para>
+                It is used for auto generated <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/>.
+            </para>
+            </summary>
+            <typeparam name="TModel"></typeparam>
+            <typeparam name="TFilter"></typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.ISpecifierGeneratorOptions`2.For``1(System.Linq.Expressions.Expression{System.Func{`1,``0}})">
+            <summary>
+            <para>
+                Determines the property of the filter to be configured.
+            </para>
+            </summary>
+            <typeparam name="TProperty">The type of the property.</typeparam>
+            <param name="selector">A expression that select the property.</param>
+            <returns>The options for the property.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.ISpecifierGeneratorOptions`2.For``1(System.Linq.Expressions.Expression{System.Func{`1,System.Nullable{``0}}})">
+            <summary>
+            <para>
+                Determines the property of the filter to be configured.
+            </para>
+            </summary>
+            <typeparam name="TProperty">The type of the property.</typeparam>
+            <param name="selector">A expression that select the property.</param>
+            <returns>The options for the property.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.SpecifierFactory">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory"/>.
+            </para>
+            <para>
+                This is a internal singleton service.
+            </para>
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.SpecifierGeneratorPropertyOptions`2">
+            <summary>
+            <para>
+                Options used by the default <see cref="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFunctionGenerator"/> 
+                to generate the function for apply the filter into the model.
+            </para>
+            <para>
+                It is used for autogenerated <see cref="T:RoyalCode.SmartSearch.Linq.ISpecifier`2"/>.
+            </para>
+            <para>
+                This options contains information a property of the filter.
+            </para>
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.SpecifierGeneratorPropertyOptions`3">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.SpecifierGeneratorPropertyOptions`3.Predicate(System.Func{`2,System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}}})">
+            <summary>
+            Adds a function that create the predicate to apply the filter into the model.
+            </summary>
+            <param name="predicateFactory">The function that create the predicate.</param>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.SpecifierHandler`1">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Core.ISpecifierHandler"/>
+                that applies the filters to a <see cref="T:System.Linq.IQueryable`1"/>,
+                retrieving the filters specifiers from the <see cref="T:RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory"/>,
+                which in turn knows how to apply the filter specification to the query.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query model type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.SpecifierHandler`1.#ctor(RoyalCode.SmartSearch.Linq.Filter.ISpecifierFactory,System.Linq.IQueryable{`0})">
+            <summary>
+            Creates a new specifier handler.
+            </summary>
+            <param name="factory">The specifier factory to create the specifiers.</param>
+            <param name="query">The query to apply the filters.</param>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Linq.Filter.SpecifierHandler`1.Query">
+            <summary>
+            The query to apply the filters, always updating it with the last filtered query.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Filter.SpecifierHandler`1.Handle``1(``0)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Filter.SpecifiersMap">
+            <summary>
+            <para>
+                A class that maps the types of the model and filter to the specifier.
+            </para>
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.IQueryableProvider`1">
+            <summary>
+            Component to provide a <see cref="T:System.Linq.IQueryable`1"/> for an entity.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.IQueryableProvider`1.GetQueryable">
+            <summary>
+            Get a new queryable for the entity.
+            </summary>
+            <returns>An <see cref="T:System.Linq.IQueryable`1"/> instance.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.IQueryableProvider`1.GetRemovable">
+            <summary>
+            Get a new queryable for the entity embedded in a removable component.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.IRemovable`1">
+            <summary>
+            Componente to provide a queryable and methods to remove entities from the database.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.IRemovable`1.RemoveAll(System.Linq.IQueryable{`0})">
+            <summary>
+            Remove all entities from the database filter by the queryable.
+            </summary>
+            <param name="entities">The query to filter the entities to be removed.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.IRemovable`1.RemoveAllAsync(System.Linq.IQueryable{`0},System.Threading.CancellationToken)">
+            <summary>
+            Remove all entities from the database filter by the queryable.
+            </summary>
+            <param name="entities">The query to filter the entities to be removed.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.ISearchConfigurations">
+            <summary>
+            <para>
+                Configure search components like specifier, order by and selector.
+            </para>
+            <para>
+                The configurations are global and will be used by all searches.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.AddSpecifier``2(System.Func{System.Linq.IQueryable{``0},``1,System.Linq.IQueryable{``0}})">
+            <summary>
+            Add a specifier function for the model and filter.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <param name="specifier">The specifier function that applies the filter over the model query.</param>
+            <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.AddSpecifier``2(RoyalCode.SmartSearch.Linq.ISpecifier{``0,``1})">
+            <summary>
+            Add a specifier for the model and filter.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <param name="specifier">The specifier that applies the filter over the model query.</param>
+            <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.ConfigureSpecifierGenerator``2(System.Action{RoyalCode.SmartSearch.Linq.Filter.ISpecifierGeneratorOptions{``0,``1}})">
+            <summary>
+            Configure the options for the specifier generator of the model and filter.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <param name="configure">The configuration action.</param>
+            <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.AddOrderBy``2(System.String,System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Add a Order By expression for the model and property (<paramref name="orderBy"/>).
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TProperty">The type of the property.</typeparam>
+            <param name="orderBy">The name of the property.</param>
+            <param name="expression">The expression that represents the property.</param>
+            <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.AddOrderBy``2(System.String,RoyalCode.SmartSearch.Linq.Sorter.IOrderByHandler{``0})">
+             <summary>
+             Add a Order By handler for the model and property (<paramref name="orderBy"/>).
+             </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+             <typeparam name="TProperty">The type of the property.</typeparam>
+             <param name="orderBy">The name of the property.</param>
+             <param name="handler">The handler that represents the property.</param>
+             <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.AddSelector``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Add a selector function expression for select values from the model to the DTO.
+            </summary>
+            <typeparam name="TEntity">The type of the model.</typeparam>
+            <typeparam name="TDto">The type of the DTO.</typeparam>
+            <param name="selector">The selector function.</param>
+            <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISearchConfigurations.AddSelector``2(RoyalCode.SmartSearch.Linq.ISelector{``0,``1})">
+            <summary>
+            Add a selector for select values from the model to the DTO.
+            </summary>
+            <typeparam name="TEntity">The type of the model.</typeparam>
+            <typeparam name="TDto">The type of the DTO.</typeparam>
+            <param name="selector">The selector.</param>
+            <returns>The same instance of the configuration.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.ISelector`2">
+            <summary>
+            <para>
+                Component interface to select one object from other, used in the <c>Select</c> method of a linq query.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type, the object to select values.</typeparam>
+            <typeparam name="TDto">The DTO type, the object to create and set values.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISelector`2.GetSelectExpression">
+            <summary>
+            <para>
+                Get a lambda function expression to select one object from other,
+                usually applicable to select a DTO from an entity.
+            </para>
+            <para>
+                This expression will be used in the <c>Select</c> method of a linq query.
+            </para>
+            </summary>
+            <returns>An expression to select a data model from another object type.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.ISorter`1">
+            <summary>
+            <para>
+                Interface of the component to apply the sort operation to a query.
+            </para>
+            <para>
+                It has a default implementation, <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1"/>,
+                which makes use of other abstract components to automate sorting.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query model type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISorter`1.OrderBy(System.Linq.IQueryable{`0},System.Collections.Generic.IEnumerable{RoyalCode.SmartSearch.Abstractions.ISorting})">
+            <summary>
+            <para>
+                Applies sorting to the <paramref name="query"/>
+                according to the definitions of <paramref name="sortings"/>.
+            </para>
+            </summary>
+            <param name="query">The query to sort.</param>
+            <param name="sortings">The soring definitions.</param>
+            <returns>A ordered query.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.ISorter`1.DefaultOrderBy(System.Linq.IQueryable{`0})">
+            <summary>
+            <para>
+                Applies a default sort to the query so that it can be possible to execute the paged query.
+            </para>
+            <para>
+                Normally this default sorting is done on top of the Id.
+            </para>
+            </summary>
+            <param name="query">The query to sort.</param>
+            <returns>A ordered query.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.ISpecifier`2">
+            <summary>
+            Component that applies the filtering conditions to the query,
+            where the query object is a <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <typeparam name="TModel">The model of the <see cref="T:System.Linq.IQueryable`1"/>.</typeparam>
+            <typeparam name="TFilter">The filter type.</typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.SearchesServiceCollectionExtensions">
+            <summary>
+            Extensions methods for <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.SearchesServiceCollectionExtensions.AddSmartSearchLinq(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Adds the essentials services for the searches with linq.
+            </summary>
+            <param name="services">The services collection.</param>
+            <returns>The same instance of the services collection.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectorPropertyConverter">
+            <summary>
+            <para>
+                Interface for a converter of <see cref="T:RoyalCode.Extensions.PropertySelection.PropertyMatch"/> to <see cref="T:System.Linq.Expressions.Expression"/>.
+            </para>
+            <para>
+                The expression is used to generate the selector of the <see cref="T:System.Linq.IQueryable`1"/>.
+            </para>
+            <para>
+                For each property of the DTO, the <see cref="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorExpressionGenerator"/> will try to find a converter
+                that can convert the <see cref="T:RoyalCode.Extensions.PropertySelection.PropertyMatch"/> target selection to an <see cref="T:System.Linq.Expressions.Expression"/>
+                to set the value of the DTO property.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectorPropertyConverter.GetExpression(RoyalCode.Extensions.PropertySelection.PropertyMatch,System.Linq.Expressions.Expression)">
+            <summary>
+            Get the <see cref="T:System.Linq.Expressions.Expression"/> for the <paramref name="selection"/>.
+            This expression must read the value of the <paramref name="selection"/> target selection
+            to set the value of the DTO property.
+            </summary>
+            <param name="selection">The selection to be converted.</param>
+            <param name="parameter">The target parameter of the expression.</param>
+            <returns>
+                An <see cref="T:System.Linq.Expressions.Expression"/> that reads the value of the <paramref name="selection"/> target selection
+                to set the value of the DTO property.
+            </returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectorPropertyResolver">
+            <summary>
+            <para>
+                Interface to resolve the properties of the <see cref="T:System.Linq.IQueryable`1"/> selector.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectorPropertyResolver.CanConvert(RoyalCode.Extensions.PropertySelection.PropertyMatch,RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectResolver,RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectorPropertyConverter@)">
+            <summary>
+            Check if the converter can convert the <paramref name="selection"/>.
+            </summary>
+            <param name="selection">The selection to be converted.</param>
+            <param name="resolver">The resolver of the properties.</param>
+            <param name="converter">A converter that can convert the <paramref name="selection"/>.</param>
+            <returns>
+                <c>true</c> if the converter can convert the <paramref name="selection"/>, otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectResolver">
+            <summary>
+            A component that solves the mapping between properties of two types to create a select expression 
+            of <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectResolver.GetResolutions(System.Type,System.Type,System.Collections.Generic.IEnumerable{RoyalCode.SmartSearch.Linq.Selector.Converters.SelectResolution}@,System.Reflection.ConstructorInfo@)">
+            <summary>
+            Get the resolutions for the mapping between properties of two types.
+            </summary>
+            <param name="entityType">The type of the entity, the source of the select expression.</param>
+            <param name="dtoType">The type of the DTO, the target of the select expression.</param>
+            <param name="ctor">
+                The constructor of the DTO, or null if the mapping cannot be resolved.
+            </param>
+            <param name="resolutions">
+                A list of resolutions for the mapping between properties of two types,
+                or null if the mapping cannot be resolved.
+            </param>
+            <returns>
+                Returns <c>true</c> when the mapping can be resolved, otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.Converters.SelectResolution">
+            <summary>
+            It contains the resolved properties for creating a select expression of the <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <param name="Match">The mapped properties.</param>
+            <param name="Converter">The converter, which generates the readout of the source type property.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.Converters.SelectResolution.#ctor(RoyalCode.Extensions.PropertySelection.PropertyMatch,RoyalCode.SmartSearch.Linq.Selector.Converters.ISelectorPropertyConverter)">
+            <summary>
+            It contains the resolved properties for creating a select expression of the <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <param name="Match">The mapped properties.</param>
+            <param name="Converter">The converter, which generates the readout of the source type property.</param>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Linq.Selector.Converters.SelectResolution.Match">
+            <summary>The mapped properties.</summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Linq.Selector.Converters.SelectResolution.Converter">
+            <summary>The converter, which generates the readout of the source type property.</summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorExpressionGenerator">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorExpressionGenerator"/>.
+            </para>
+            <para>
+                This implementation can resolve selectors of plain types, 
+                where the DTO has properties with the same type of entity's properties.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorExpressionGenerator.Generate``2">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorExpressionGenerator.GetResolutions(System.Type,System.Type,System.Collections.Generic.IEnumerable{RoyalCode.SmartSearch.Linq.Selector.Converters.SelectResolution}@,System.Reflection.ConstructorInfo@)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorGenerator">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorGenerator"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorGenerator.#ctor(System.IServiceProvider)">
+            <summary>
+            <para>
+                Create a new instance of <see cref="T:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorGenerator"/>.
+            </para>
+            </summary>
+            <param name="serviceProvider">The service provider for locate the selectors.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.DefaultSelectorGenerator.Generate``2">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorExpressionGenerator">
+            <summary>
+            <para>
+                A generator of expressions for the selection of the model (DTO) from other model (Entity).
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.ISelectorExpressionGenerator.Generate``2">
+            <summary>
+            <para>
+                Generate an expression for the selection of the model (DTO) from other model (Entity).
+            </para>
+            </summary>
+            <typeparam name="TEntity">The type of the entity.</typeparam>
+            <typeparam name="TDto">The type of the DTO.</typeparam>
+            <returns>The expression for the selection of the model (DTO) from other model (Entity).</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorFactory">
+            <summary>
+            A factory to create <see cref="T:RoyalCode.SmartSearch.Linq.ISelector`2"/>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.ISelectorFactory.Create``2">
+            <summary>
+            Create a selector for the entity type <typeparamref name="TEntity"/> and the DTO type <typeparamref name="TDto"/>.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <typeparam name="TDto">The DTO type.</typeparam>
+            <returns>The selector.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorGenerator">
+            <summary>
+            <para>
+                A generator of selectors.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.ISelectorGenerator.Generate``2">
+            <summary>
+            <para>
+                Generate a selector for the specified models types.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The type of the model.</typeparam>
+            <typeparam name="TDto">The type of the DTO.</typeparam>
+            <returns>The selector.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.SelectorFactory">
+            <summary>
+            Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Selector.ISelectorFactory"/>.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.SelectorFactory.Create``2">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.SelectorNotFoundException">
+            <summary>
+            Exception thrown when a selector is not found.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Selector.SelectorNotFoundException.#ctor(System.String)">
+            <summary>
+            Create a new instance of <see cref="T:RoyalCode.SmartSearch.Linq.Selector.SelectorNotFoundException"/>.
+            </summary>
+            <param name="message">The message of the exception.</param>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Selector.SelectorsMap">
+            <summary>
+            A class that maps the types of the entity and Dto to the selector (<see cref="T:RoyalCode.SmartSearch.Linq.ISelector`2"/>).
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.DefaultOrderByGenerator">
+            <summary>
+            Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByGenerator"/>, using <see cref="T:RoyalCode.Extensions.PropertySelection.PropertySelection"/> for
+            lookup of properties.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.DefaultOrderByGenerator.Generate``1(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1">
+            <summary>
+            <para>
+                Default implementation of <see cref="T:RoyalCode.SmartSearch.Linq.ISorter`1"/> using additional abstract componentes:
+            </para>
+            <list type="bullet">
+                <item>
+                    <term><see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider"/>: </term>
+                    <description>Used to find <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByHandler`1"/>.</description>
+                </item>
+                <item>
+                    <term><see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByHandler`1"/>: </term>
+                    <description>Used to apply the "Order By" through the <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByBuilder`1"/>.</description>
+                </item>
+                <item>
+                    <term><see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByBuilder`1"/>: </term>
+                    <description>Receives the "Order By" expression and applies it to the query.</description>
+                </item>
+            </list>
+            </summary>
+            <typeparam name="TModel">The query source model type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1.#ctor(RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider)">
+            <summary>
+            Creates a new sorter with the <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider"/> to get the handlers.
+            </summary>
+            <param name="provider">The order by handlers provider.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1.OrderBy(System.Linq.IQueryable{`0},System.Collections.Generic.IEnumerable{RoyalCode.SmartSearch.Abstractions.ISorting})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1.DefaultOrderBy(System.Linq.IQueryable{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.InvalidOrderByExpressionException">
+            <summary>
+            Exception thrown when the expression is not valid for the <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.OrderByHandler`2"/>.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.InvalidOrderByExpressionException.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.InvalidOrderByExpressionException"/>.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+            <param name="paramName">The name of the parameter that caused the current exception.</param>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByBuilder`1">
+            <summary>
+            <para>
+                Component for applying the sort expressions to the query.
+            </para>
+            <para>
+                This component is called by the <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByHandler`1"/>, which is liable for the expression.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query source model type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.IOrderByBuilder`1.Add``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Applies the sort expression to the query.
+            </summary>
+            <param name="keySelector">The sort expression.</param>
+            <typeparam name="TKey">Selected property type.</typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByGenerator">
+            <summary>
+            <para>
+                A generator to create a <see cref="T:System.Linq.Expressions.Expression"/> to order by a property.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.IOrderByGenerator.Generate``1(System.String)">
+            <summary>
+            <para>
+                Generate a <see cref="T:System.Linq.Expressions.Expression"/> to order by a property.
+            </para>
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <param name="orderBy">The name of the property to order by.</param>
+            <returns>The order by expression or null if the property is not found.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByHandler`1">
+            <summary>
+            <para>
+                A component capable of creating a query sort expression.
+            </para>
+            <para>
+                These expressions will be used in
+                the <c>OrderBy</c> or <c>OrderByDescending</c> methods of the <see cref="T:System.Linq.IQueryable`1"/>
+                and <c>ThenBy</c> or <c>ThenByDescending</c> methods of the <see cref="T:System.Linq.IOrderedQueryable`1"/>.
+            </para>
+            <para>
+                These components are managed and maintained by the <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.OrderByHandlersMap"/>.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query source model type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.IOrderByHandler`1.Handle(RoyalCode.SmartSearch.Linq.Sorter.IOrderByBuilder{`0})">
+            <summary>
+            Use the <paramref name="builder"/> to add a sort expression to the query.
+            </summary>
+            <param name="builder">Used to apply the expressions to the query.</param>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider">
+            <summary>
+            <para>
+                Manages and provides the query ordering handlers of a given data model.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider.GetHandler``1(System.String)">
+            <summary>
+            <para>
+                It tries to get an ordering handler configured for the data model,
+                according to a sort name that identifies how the query should be sorted.
+            </para>
+            <para>
+                May be returned null if no handler is configured for the order by identification, or throw an exception.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query source model type.</typeparam>
+            <param name="orderBy">A sort name that identifies how the query should be sorted.</param>
+            <returns>An ordering handler or null if not exists.</returns>
+            <exception cref="T:System.Exception">Optional, if no handler is configured for the order by identification.</exception>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.IOrderByProvider.GetDefaultHandler``1">
+            <summary>
+            <para>
+                It tries to get the default ordering handler configured for the data model.
+            </para>
+            <para>
+                The common property used as default is the "Id" property.
+            </para>
+            <para>
+                May be returned null if no default handler is configured for the data model, or throw an exception.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query source model type.</typeparam>
+            <returns>The default ordering handler or null if not exists.</returns>
+            <exception cref="T:System.Exception">Optional, if no handler is configured for the order by identification.</exception>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.OrderByBuilder`1">
+            <summary>
+            Internal implementation of <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.IOrderByBuilder`1"/>.
+            Used by the <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1"/>.
+            </summary>
+            <typeparam name="TModel"></typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.OrderByBuilder`1.#ctor(System.Linq.IQueryable{`0})">
+            <summary>
+            Creates a new builder.
+            </summary>
+            <param name="query">To original query to be ordered.</param>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Linq.Sorter.OrderByBuilder`1.CurrentDirection">
+            <summary>
+            <para>
+                The <see cref="T:System.ComponentModel.ListSortDirection"/> of the current <see cref="T:RoyalCode.SmartSearch.Abstractions.ISorting"/>.
+            </para>
+            <para>
+                Used internally by <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.DefaultSorter`1"/>.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Linq.Sorter.OrderByBuilder`1.OrderedQueryable">
+            <summary>
+            Returns the ordered query.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.OrderByBuilder`1.Add``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Linq.Sorter.OrderByNotSupportedException">
+            <summary>
+            Exception thrown when the order by is not supported for the type.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Linq.Sorter.OrderByNotSupportedException.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new instance of <see cref="T:RoyalCode.SmartSearch.Linq.Sorter.OrderByNotSupportedException"/>.
+            </summary>
+            <param name="orderBy">The order by parameter that is not supported.</param>
+            <param name="typeName">The type name that not supports the order by.</param>
+        </member>
+    </members>
+</doc>

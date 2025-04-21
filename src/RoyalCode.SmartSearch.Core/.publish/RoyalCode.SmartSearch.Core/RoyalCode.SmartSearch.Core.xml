@@ -1,0 +1,684 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RoyalCode.SmartSearch.Core</name>
+    </assembly>
+    <members>
+        <member name="T:RoyalCode.SmartSearch.Core.Extensions.EnumerableExtensions">
+            <summary>
+            Extension methods for <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.EnumerableExtensions.TryGetEnumerableGenericType(System.Type,System.Type@)">
+            <summary>
+            Try to get the generic type of an <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <param name="type">The type to get the generic type.</param>
+            <param name="underlyingType">The <c>T</c> of the <see cref="T:System.Collections.Generic.IEnumerable`1"/>.</param>
+            <returns>
+                Returns <c>true</c> if the type is an <see cref="T:System.Collections.Generic.IEnumerable`1"/>, 
+                <c>false</c> otherwise.
+            </returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Extensions.IsEmptyExtension">
+            <summary>
+            Class to check if some value is empty.
+            If it's null, it's empty.
+            If it's numeric and it's zero, it's empty.
+            If it is string and has no characters or only blanks, it will be empty.
+            If it is an enumerable and has no items, it is empty.
+            If it doesn't meet one of the above rules, it's not empty.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.IsEmptyExtension.IsEmpty(System.Object)">
+            <summary>
+            Check if some value is empty.
+            </summary>
+            <param name="expression">The value to be checked.</param>
+            <returns>True if the value is empty, false otherwise.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.IsEmptyExtension.VerifyCollection(System.Collections.IEnumerable)">
+            <summary>
+            Checks whether an enumerable is empty.
+            </summary>
+            <param name="source">IEnumerable</param>
+            <returns>True if it is empty, false otherwise.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.IsEmptyExtension.VerifyCollection(System.Collections.ICollection)">
+            <summary>
+            Checks whether an enumerable is empty.
+            </summary>
+            <param name="source">IEnumerable</param>
+            <returns>True if it is empty, false otherwise.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.IsEmptyExtension.IsBlank(System.DateTime)">
+            <summary>
+            Checks if a date is blank "01/01/0001" or 01/01/1970.
+            </summary>
+            <param name="date">Date to be checked.</param>
+            <returns>True if it is blank, false otherwise.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.IsEmptyExtension.IsBlank(System.Nullable{System.DateTime})">
+            <summary>
+            Checks if a nullable date is blank "01/01/0001" or "01/01/1753" or null.
+            </summary>
+            <param name="date">Nullable date to be checked.</param>
+            <returns>True if it is blank, false otherwise.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Extensions.NullableExtensions">
+            <summary>
+            Extension method to check if a type is nullable.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.NullableExtensions.IsNullableType(System.Type)">
+            <summary>
+            Check if a type is nullable.
+            </summary>
+            <param name="type">Type to check.</param>
+            <returns>True if it is nullable, false otherwise.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.NullableExtensions.IsNotNullableType(System.Type)">
+            <summary>
+            Check if a type is not nullable.
+            </summary>
+            <param name="type">Type to check.</param>
+            <returns>True if it is not nullable, false otherwise.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Extensions.NullableExtensions.GetNullableUnderlyingType(System.Type)">
+            <summary>
+            Try to get the underlying type of a nullable type.
+            </summary>
+            <param name="type">Type to check.</param>
+            <returns>The underlying type if it is nullable, null otherwise.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.IFilterSpecifier`2">
+            <summary>
+            Component that applies the filtering conditions to the query.
+            </summary>
+            <typeparam name="TQuery">The query type.</typeparam>
+            <typeparam name="TFilter">The filter type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.IFilterSpecifier`2.Specify(`0,`1)">
+            <summary>
+            Specify a query, apply the filter conditions to the query.
+            </summary>
+            <param name="query">The query object.</param>
+            <param name="filter">The filter object.</param>
+            <returns>A new (or the same) query object.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.ISearchFilter">
+            <summary>
+            Information about a filter to be applied to a query.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.ISearchFilter.ApplyFilter(RoyalCode.SmartSearch.Core.ISpecifierHandler)">
+            <summary>
+            Applies the filter to the query by passing the filter to the handler.
+            </summary>
+            <param name="handler">A handler for applying filters to queries.</param>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.ISpecifierHandler">
+            <summary>
+            <para>
+                A handler for applying filters to queries.
+            </para>
+            <para>
+                This component is used by the <see cref="T:RoyalCode.SmartSearch.Core.ISearchFilter"/>,
+                which stores the filter that will be used in the query specification.
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.ISpecifierHandler.Handle``1(``0)">
+            <summary>
+            Receives the filter object that will be used to specify the query.
+            </summary>
+            <param name="filter">The filter object.</param>
+            <typeparam name="TFilter">The filter type.</typeparam>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.#ctor(RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory)">
+            <summary>
+            Creates a new search with the <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1"/> to execute the query.
+            </summary>
+            <param name="factory">The pipeline factory for create the all entities pipeline.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.FilterBy``1(``0)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.OrderBy(RoyalCode.SmartSearch.Abstractions.ISorting)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.Collect">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.CollectAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.Exists">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.ExistsAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.First">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.FirstAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.Single">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.SingleAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.DeleteAll">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.DeleteAllAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.UpdateAll(System.Action{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.UpdateAll``1(``0,System.Action{`0,``0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.UpdateAll``2(System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.UpdateAllAsync(System.Action{`0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.UpdateAllAsync``1(``0,System.Action{`0,``0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.AllEntities`1.UpdateAllAsync``2(System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1">
+            <summary>
+            <para>
+                A search pipeline for executing queries from the input criteria and get all entities.
+            </para>
+            <para>
+                This component will perform the various steps necessary to execute the query.
+            </para>
+            </summary>
+            <typeparam name="TEntity">The entity type to query.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.Execute(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Execute the query and collect all entities.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <returns>A collection of the entities.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.ExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and collect all entities.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A collection of the entities.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.Any(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Execute the query and verify if there are any entities.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <returns>True if there are any entities, otherwise false.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.AnyAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and verify if there are any entities.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>True if there are any entities, otherwise false.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.First(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Execute the query and get the first entity.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <returns>The first entity that meets the criteria.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.FirstAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and get the first entity.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The first entity that meets the criteria.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.Single(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Execute the query and get the first entity or throw an exception if there are no entities or more than one.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <returns>The first entity that meets the criteria, or an exception if there are no entities or more than one.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.SingleAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and get the first entity or throw an exception if there are no entities or more than one.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The first entity that meets the criteria, or an exception if there are no entities or more than one.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.RemoveAll(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Execute the query and remove all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.RemoveAllAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and remove all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.UpdateAll(RoyalCode.SmartSearch.Core.SearchCriteria,System.Action{`0})">
+            <summary>
+            Execute the query and update all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="updateAction">The action to update the entities.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.UpdateAll``1(RoyalCode.SmartSearch.Core.SearchCriteria,``0,System.Action{`0,``0})">
+            <summary>
+            Execute the query and update all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="data">The data used to update the entities.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.UpdateAll``2(RoyalCode.SmartSearch.Core.SearchCriteria,System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0})">
+            <summary>
+            Update all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="collection">A collection of data used to update the entities.</param>
+            <param name="entityIdGet">A function to get the entity id.</param>
+            <param name="dataIdGet">A function to get the data id.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+            <typeparam name="TId">The type of the id.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.UpdateAllAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Action{`0},System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and update all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.UpdateAllAsync``1(RoyalCode.SmartSearch.Core.SearchCriteria,``0,System.Action{`0,``0},System.Threading.CancellationToken)">
+            <summary>
+            Execute the query and update all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="data">The data used to update the entities.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1.UpdateAllAsync``2(RoyalCode.SmartSearch.Core.SearchCriteria,System.Collections.Generic.ICollection{``0},System.Func{`0,``1},System.Func{``0,``1},System.Action{`0,``0},System.Threading.CancellationToken)">
+            <summary>
+            Update all entities that meet the criteria.
+            </summary>
+            <param name="searchCriteria">The criteria for the query.</param>
+            <param name="collection">The collection of data used to update the entities.</param>
+            <param name="entityIdGet">The function to get the entity id.</param>
+            <param name="dataIdGet">The function to get the data id.</param>
+            <param name="updateAction">The action to update the entities.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <typeparam name="TData">The type of the data used to update the entities.</typeparam>
+            <typeparam name="TId">The type of the id.</typeparam>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory">
+            <summary>
+            <para>
+                Factory to create search pipelines (<see cref="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1"/>),
+                and searches for all entities (<see cref="T:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1"/>).
+            </para>
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory.Create``1">
+            <summary>
+            Creates a <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1"/> to query entities.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <returns>A new instance of a pipeline to execute the search.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory.Create``2">
+            <summary>
+            Creates a new <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1"/> to select DTOs from the query of entities.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <typeparam name="TDto">The DTO (to be selected) type.</typeparam>
+            <returns>A new instance of a pipeline to execute the search.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory.CreateAllEntities``1">
+            <summary>
+            Creates a <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.IAllEntitiesPipeline`1"/> to query all entities.
+            </summary>
+            <typeparam name="TEntity">The entity type.</typeparam>
+            <returns>
+                A new instance of a pipeline to execute the search
+            </returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1">
+            <summary>
+            <para>
+                A search pipeline for executing queries from the input criteria.
+            </para>
+            <para>
+                This component will perform the various steps necessary to execute the query.
+            </para>
+            </summary>
+            <typeparam name="TModel">The query model type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1.Execute(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Execute the search and it returns a list of results.
+            </summary>
+            <param name="criteria">The criteria for the search.</param>
+            <returns>A list of results.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1.ExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Async execute the search and it returns a list of results.
+            </summary>
+            <param name="criteria">The criteria for the search.</param>
+            <param name="token">The task cancellation token.</param>
+            <returns>A task of a list of results.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.ISearchPipeline`1.AsyncExecuteAsync(RoyalCode.SmartSearch.Core.SearchCriteria,System.Threading.CancellationToken)">
+            <summary>
+            Async execute the search and it returns a list of results.
+            </summary>
+            <param name="criteria">The criteria for the search.</param>
+            <param name="token">The task cancellation token.</param>
+            <returns>A task of an async list of results.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Pipeline.Search`1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`1.#ctor(RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory)">
+            <summary>
+            Creates a new search with the <see cref="T:RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory"/> to execute the query.
+            </summary>
+            <param name="factory">A search pipeline factory.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`1.Select``1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`1.Select``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`1.ToList">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`1.ToListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`1.ToAsyncListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.Pipeline.Search`2">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`2.#ctor(RoyalCode.SmartSearch.Core.Pipeline.IPipelineFactory,RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Creates a new search.
+            </summary>
+            <param name="factory">The pipeline factory for create the search pipeline.</param>
+            <param name="criteria">The previous criteria.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`2.ToList">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`2.ToListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.Pipeline.Search`2.ToAsyncListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.SearchBase`1">
+            <inheritdoc />
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Core.SearchBase`1.criteria">
+            <summary>
+            The criteria for performing the search.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.UsePages(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.FetchPage(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.UseLastCount(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.UseCount(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.FilterBy``1(``0)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.OrderBy(RoyalCode.SmartSearch.Abstractions.ISorting)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.Select``1">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.Select``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.ToList">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.ToListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`1.ToAsyncListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.SearchBase`2">
+            <inheritdoc />
+        </member>
+        <member name="F:RoyalCode.SmartSearch.Core.SearchBase`2.criteria">
+            <summary>
+            The criteria for performing the search.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.#ctor(RoyalCode.SmartSearch.Core.SearchCriteria)">
+            <summary>
+            Initialize the base criteria with the <see cref="T:RoyalCode.SmartSearch.Core.SearchCriteria"/>.
+            </summary>
+            <param name="criteria"></param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.UsePages(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.FetchPage(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.UseLastCount(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.UseCount(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.FilterBy``1(``0)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.ToList">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.ToListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchBase`2.ToAsyncListAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.SearchCriteria">
+            <summary>
+            The criteria for performing the search.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Filters">
+            <summary>
+            Get all filters.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Sortings">
+            <summary>
+            Get all sortings.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Select">
+            <summary>
+            Information about the select expression.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.ItemsPerPage">
+            <summary>
+            <para>
+                Defines that the query will be paged and determines the number of items per page.
+            </para>
+            <para>
+                The default value is 10 items per page.
+            </para>
+            <para>
+                When zero (0) is entered, it will not be paged.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Page">
+            <summary>
+            The number of the page to be searched.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.LastCount">
+            <summary>
+            <para>
+                Updates the last record count.
+            </para>
+            <para>
+                Used to not count the records again.
+            </para>
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.UseCount">
+            <summary>
+            Whether to apply record counting.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchCriteria.AddFilter``1(``0)">
+            <summary>
+            Adds a new filter to specify the search.
+            </summary>
+            <param name="filter">The filter instance.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchCriteria.AddSorting(RoyalCode.SmartSearch.Abstractions.ISorting)">
+            <summary>
+            Add a sorting definition.
+            </summary>
+            <param name="sorting">The sorting definition.</param>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchCriteria.SetSelectExpression``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Set the select expression.
+            </summary>
+            <param name="selectExpression">The select expression.</param>
+            <typeparam name="TEntity">The query entity type.</typeparam>
+            <typeparam name="TDto">The select type.</typeparam>
+            <exception cref="T:System.ArgumentNullException">If expression is null.</exception>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Paginate">
+            <summary>
+            Whether the query should be paginated.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchCriteria.GetPageNumber">
+            <summary>
+            The number of the page that should be listed.
+            </summary>
+            <returns>The number of the page.</returns>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchCriteria.GetSkipCount">
+            <summary>
+            <para>
+                The number of records that must be skipped in the query because of pagination.
+            </para>
+            <para>
+                This calculation is performed using the page number and the quantity of items per page. 
+            </para>
+            <para>
+                When the query should not be paged, this value will always be zero.
+            </para>
+            </summary>
+            <returns>The number of records that must be skipped.</returns>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.SearchCriteria.Defaults">
+            <summary>
+            Default values for each new <see cref="T:RoyalCode.SmartSearch.Core.SearchCriteria"/> created.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Defaults.DefaultItemsPerPage">
+            <summary>
+            The default value of <see cref="P:RoyalCode.SmartSearch.Core.SearchCriteria.ItemsPerPage"/>.
+            </summary>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchCriteria.Defaults.DefaultUseCount">
+            <summary>
+            The default value of <see cref="P:RoyalCode.SmartSearch.Core.SearchCriteria.UseCount"/>.
+            </summary>
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.SearchFilter`1">
+            <summary>
+            Information about a filter to be applied to a query.
+            </summary>
+            <param name="Filter">The filter instance.</param>
+            <typeparam name="TFilter">The filter type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchFilter`1.#ctor(`0)">
+            <summary>
+            Information about a filter to be applied to a query.
+            </summary>
+            <param name="Filter">The filter instance.</param>
+            <typeparam name="TFilter">The filter type.</typeparam>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchFilter`1.ApplyFilter(RoyalCode.SmartSearch.Core.ISpecifierHandler)">
+            <inheritdoc />
+        </member>
+        <member name="T:RoyalCode.SmartSearch.Core.SearchSelect">
+            <summary>
+            Information about the select to be applied to the query.
+            </summary>
+        </member>
+        <member name="M:RoyalCode.SmartSearch.Core.SearchSelect.#ctor(System.Linq.Expressions.Expression)">
+            <summary>
+            Creates a new instance of <see cref="T:RoyalCode.SmartSearch.Core.SearchSelect"/>.
+            </summary>
+            <param name="selectExpression"></param>
+        </member>
+        <member name="P:RoyalCode.SmartSearch.Core.SearchSelect.SelectExpression">
+            <summary>
+            The expression to be used in the select operation.
+            </summary>
+        </member>
+    </members>
+</doc>
