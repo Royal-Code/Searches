@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using RoyalCode.SmartSearch.Abstractions;
 using RoyalCode.SmartSearch.Linq;
@@ -424,6 +425,11 @@ public class SpecifierFunctionGeneratorTests
         // assert
         Assert.Equal(expectedCount, query.Count());
     }
+
+    public void Factory_Must_UseTheSpecifierFilterMethod()
+    {
+        // todo
+    }
 }
 
 public class SimpleModel
@@ -440,6 +446,23 @@ public class SimpleModel
 public class SimpleFilter
 {
     public string Name { get; set; } = null!;
+}
+
+public class SimpleFilterManual
+{
+    public static bool Called { get; private set; } = false;
+
+    public string Name { get; set; } = null!;
+
+    public IQueryable<SimpleModel> Filter(IQueryable<SimpleModel> query)
+    {
+        Called = true;
+
+        if (Name is not null)
+            query = query.Where(m => m.Name.Contains(Name));
+
+        return query;
+    }
 }
 
 file class NullablePropertiesFilter
@@ -601,3 +624,4 @@ file class ExtendedFilter
 
     public string? Name { get; set; }
 }
+

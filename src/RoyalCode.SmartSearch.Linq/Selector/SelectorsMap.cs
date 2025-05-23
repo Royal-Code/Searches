@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 namespace RoyalCode.SmartSearch.Linq.Selector;
@@ -12,10 +13,20 @@ internal sealed class SelectorsMap
 
     private readonly Dictionary<(Type, Type), object> selectors = [];
 
-    public object this[(Type, Type) key] => selectors[key];
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool ContainsKey((Type, Type) key) => selectors.ContainsKey(key);
+    public bool TryGet<TEntity, TDto>([NotNullWhen(true)] out ISelector<TEntity, TDto>? selector)
+        where TEntity : class
+        where TDto : class
+    {
+        var key = (typeof(TEntity), typeof(TDto));
+        if (selectors.TryGetValue(key, out var value))
+        {
+            selector = (ISelector<TEntity, TDto>)value;
+            return true;
+        }
+        selector = null;
+        return false;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add((Type, Type) key, object value) => selectors.Add(key, value);

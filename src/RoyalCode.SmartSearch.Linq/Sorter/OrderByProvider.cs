@@ -16,13 +16,13 @@ internal sealed class OrderByProvider : IOrderByProvider
     public IOrderByHandler<TModel>? GetHandler<TModel>(string orderBy)
         where TModel : class
     {
-        if (handlers.Contains((typeof(TModel), orderBy)))
-            return (IOrderByHandler<TModel>)handlers[(typeof(TModel), orderBy)];
+        if (handlers.TryGet<TModel>(orderBy, out var handler)) 
+            return handler;
 
         var expression = generator?.Generate<TModel>(orderBy)
             ?? throw new OrderByNotSupportedException(orderBy, typeof(TModel).Name);
 
-        var handler = OrderByHandler.Create<TModel>(expression);
+        handler = OrderByHandler.Create<TModel>(expression);
         handlers.Add((typeof(TModel), orderBy), handler);
         return handler;
     }

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 namespace RoyalCode.SmartSearch.Linq.Sorter;
@@ -9,10 +10,19 @@ internal sealed class OrderByHandlersMap
 
     private readonly Dictionary<(Type, string), object> handlers = [];
 
-    public object this[(Type, string) key] => handlers[key];
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Contains((Type, string) key) => handlers.ContainsKey(key);
+    public bool TryGet<TModel>(string orderBy, [NotNullWhen(true)] out IOrderByHandler<TModel>? handler)
+        where TModel : class
+    {
+        var key = (typeof(TModel), orderBy);
+        if (handlers.TryGetValue(key, out var value))
+        {
+            handler = (IOrderByHandler<TModel>)value;
+            return true;
+        }
+        handler = null;
+        return false;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add((Type modelType, string orderBy) key, object handler) => handlers.Add(key, handler);

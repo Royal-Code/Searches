@@ -1,4 +1,6 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+
 namespace RoyalCode.SmartSearch.Linq.Filter;
 
 /// <summary>
@@ -28,14 +30,19 @@ internal sealed class SpecifierFactory : ISpecifierFactory
         where TModel : class
         where TFilter : class
     {
-        var key = (typeof(TModel), typeof(TFilter));
-        if (specifiers.ContainsKey(key))
-            return (ISpecifier<TModel, TFilter>)specifiers[key];
+        if (specifiers.TryGet<TModel, TFilter>(out var specifier))
+            return specifier;
 
-        var specifier = specifierGenerator?.Generate<TModel, TFilter>();
+        specifier = specifierGenerator?.Generate<TModel, TFilter>();
 
         if (specifier is null)
         {
+            if (TryFindByFilterMethod(out specifier))
+            {
+                specifiers.Add((typeof(TModel), typeof(TFilter)), specifier);
+                return specifier;
+            }
+
             var function = functionGenerator?.Generate<TModel, TFilter>();
             if (function is not null)
                 specifier = new InternalSpecifier<TModel, TFilter>(function);
@@ -43,10 +50,41 @@ internal sealed class SpecifierFactory : ISpecifierFactory
 
         if (specifier is not null)
         {
-            specifiers.Add(key, specifier);
+            specifiers.Add((typeof(TModel), typeof(TFilter)), specifier);
             return specifier;
         }
 
         throw new InvalidOperationException("No specifier configured for the model and filter.");
+    }
+
+    private static bool TryFindByFilterMethod<TModel, TFilter>([NotNullWhen(true)] out ISpecifier<TModel, TFilter>? specifier)
+        where TModel : class
+        where TFilter : class
+    {
+        specifier = null;
+
+        // using reflection, lookup for a method that has IQueryable<TModel> as parameter and return type.
+        // if exists, create a lambda function using expression that meets Func<IQueryable<TModel>, TFilter, IQueryable<TModel>>
+        // and create a InternalSpecifier<TModel, TFilter>.
+
+        var method = typeof(TModel).GetMethods()
+            .FirstOrDefault(m => m.ReturnType == typeof(IQueryable<TModel>) &&
+                                 m.GetParameters().Length == 2 &&
+                                 m.GetParameters()[0].ParameterType == typeof(IQueryable<TModel>) &&
+                                 m.GetParameters()[1].ParameterType == typeof(TFilter));
+        
+        if (method is not null)
+        {
+            var modelParamter = Expression.Parameter(typeof(IQueryable<TModel>), "model");
+            var filterParameter = Expression.Parameter(typeof(TFilter), "filter");
+            var callExpression = Expression.Call(method, modelParamter, filterParameter);
+
+            var expression = Expression.Lambda<Func<IQueryable<TModel>, TFilter, IQueryable<TModel>>>(callExpression, modelParamter, filterParameter);
+
+            specifier = new InternalSpecifier<TModel, TFilter>(expression.Compile());
+            return true;
+        }
+
+        return false;
     }
 }

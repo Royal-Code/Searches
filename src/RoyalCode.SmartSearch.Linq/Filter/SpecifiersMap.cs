@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace RoyalCode.SmartSearch.Linq.Filter;
 
@@ -13,10 +14,20 @@ internal sealed class SpecifiersMap
 
     private readonly Dictionary<(Type, Type), object> specifiers = new();
 
-    public object this[(Type, Type) key] => specifiers[key];
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool ContainsKey((Type, Type) key) => specifiers.ContainsKey(key);
+    public bool TryGet<TModel, TFilter>([NotNullWhen(true)] out ISpecifier<TModel, TFilter>? specifier)
+        where TModel : class
+        where TFilter : class
+    {
+        var key = (typeof(TModel), typeof(TFilter));
+        if (specifiers.TryGetValue(key, out var value))
+        {
+            specifier = (ISpecifier<TModel, TFilter>)value;
+            return true;
+        }
+        specifier = null;
+        return false;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add((Type, Type) key, object value) => specifiers.Add(key, value);
