@@ -17,14 +17,13 @@ namespace RoyalCode.SmartSearch.Linq.Selector;
 /// </summary>
 public sealed class DefaultSelectorExpressionGenerator : ISelectorExpressionGenerator, ISelectResolver
 {
-    private readonly IEnumerable<ISelectorPropertyResolver> propertyResolver
-        = new List<ISelectorPropertyResolver>()
-        {
+    private readonly IEnumerable<ISelectorPropertyResolver> propertyResolver =
+        [
             new NullableSelectorPropertyConverter(),
             new EnumSelectorPropertyConverter(),
             new SubSelectSelectorPropertyResolver(),
             new EnumerableSelectorPropertyResolver(),
-        };
+        ];
 
     /// <inheritdoc />
     public Expression<Func<TEntity, TDto>>? Generate<TEntity, TDto>()
