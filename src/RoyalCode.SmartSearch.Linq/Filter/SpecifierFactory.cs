@@ -67,19 +67,18 @@ internal sealed class SpecifierFactory : ISpecifierFactory
         // if exists, create a lambda function using expression that meets Func<IQueryable<TModel>, TFilter, IQueryable<TModel>>
         // and create a InternalSpecifier<TModel, TFilter>.
 
-        var method = typeof(TModel).GetMethods()
+        var method = typeof(TFilter).GetMethods()
             .FirstOrDefault(m => m.ReturnType == typeof(IQueryable<TModel>) &&
-                                 m.GetParameters().Length == 2 &&
-                                 m.GetParameters()[0].ParameterType == typeof(IQueryable<TModel>) &&
-                                 m.GetParameters()[1].ParameterType == typeof(TFilter));
+                                 m.GetParameters().Length == 1 &&
+                                 m.GetParameters()[0].ParameterType == typeof(IQueryable<TModel>));
         
         if (method is not null)
         {
-            var modelParamter = Expression.Parameter(typeof(IQueryable<TModel>), "model");
+            var queryParamter = Expression.Parameter(typeof(IQueryable<TModel>), "query");
             var filterParameter = Expression.Parameter(typeof(TFilter), "filter");
-            var callExpression = Expression.Call(method, modelParamter, filterParameter);
+            var callExpression = Expression.Call(filterParameter, method, queryParamter);
 
-            var expression = Expression.Lambda<Func<IQueryable<TModel>, TFilter, IQueryable<TModel>>>(callExpression, modelParamter, filterParameter);
+            var expression = Expression.Lambda<Func<IQueryable<TModel>, TFilter, IQueryable<TModel>>>(callExpression, queryParamter, filterParameter);
 
             specifier = new InternalSpecifier<TModel, TFilter>(expression.Compile());
             return true;
