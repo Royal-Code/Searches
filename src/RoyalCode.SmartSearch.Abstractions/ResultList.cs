@@ -26,7 +26,7 @@ public class ResultList<TModel> : IResultList<TModel>
 
     /// <inheritdoc />
     [JsonConverter(typeof(SortingsConverter))]
-    public IEnumerable<ISorting> Sortings { get; init; } = null!;
+    public IReadOnlyList<ISorting> Sortings { get; init; } = null!;
 
     /// <inheritdoc />
     public Dictionary<string, object> Projections { get; init; } = null!;

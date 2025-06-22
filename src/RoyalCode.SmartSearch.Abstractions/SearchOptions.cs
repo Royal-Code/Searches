@@ -16,6 +16,11 @@ public sealed class SearchOptions
     private List<Sorting>? sortings;
 
     /// <summary>
+    /// The number of the page to be searched.
+    /// </summary>
+    public int? Page { get; set; }
+
+    /// <summary>
     /// <para>
     ///     Defines that the query will be paged and determines the number of items per page.
     /// </para>
@@ -29,9 +34,29 @@ public sealed class SearchOptions
     public int? ItemsPerPage { get; set; }
 
     /// <summary>
-    /// The number of the page to be searched.
+    /// <para>
+    ///     Defines the number of records to be skipped in the search.
+    ///     When zero (0) is entered, it will not skip any records.
+    /// </para>
+    /// <para>
+    ///     When <see cref="Page"/> is informed, this property is ignored.
+    /// </para>
     /// </summary>
-    public int? Page { get; set; }
+    public int? Skip { get; set; }
+
+    /// <summary>
+    /// <para>
+    ///     Defines the number of records to be returned in the search.
+    /// </para>
+    /// <para>
+    ///     This property must be use with <see cref="Skip"/> to define the number of records to be returned
+    ///     after skipping the defined number of records.
+    /// </para>
+    /// <para>
+    ///     When <see cref="Page"/> is informed, this property is ignored.
+    /// </para>
+    /// </summary>
+    public int? Take { get; set; }
 
     /// <summary>
     /// <para>

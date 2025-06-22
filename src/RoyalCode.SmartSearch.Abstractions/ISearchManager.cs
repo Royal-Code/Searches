@@ -12,6 +12,19 @@ public interface ISearchManager
 {
     /// <summary>
     /// <para>
+    ///     Creates a new criteria for the entity.
+    /// </para>
+    /// <para>
+    ///     With the criteria, it is possible to apply filters, sorting, projections,
+    ///     and pagination, or collect entities directly from the persistence unit.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type.</typeparam>
+    /// <returns>A new instance of <see cref="ICriteria{TEntity}"/>.</returns>
+    ICriteria<TEntity> Criteria<TEntity>() where TEntity : class;
+
+    /// <summary>
+    /// <para>
     ///     Creates a new search for the entity.
     /// </para>
     /// <para>
@@ -23,6 +36,7 @@ public interface ISearchManager
     /// <exception cref="InvalidOperationException">
     ///     If entity is not part of the persistence unit or there is no search component for it.
     /// </exception>
+    [Obsolete("Use the Criteria method to get a ICriteria<TEntity> instance instead, and then get a Search<TEntity> orSearch<TEntity, TDto>.")]
     ISearch<TEntity> Search<TEntity>() where TEntity : class;
 
     /// <summary>

@@ -4,14 +4,14 @@ namespace RoyalCode.SmartSearch.Abstractions;
 
 /// <summary>
 /// <para>
-///     Extensions methods for <see cref="ISearchOptions{TSearch}"/>, <see cref="ISearch{TEntity}"/>
+///     Extensions methods for <see cref="ICriteriaOptions{TSearch}"/>, <see cref="ISearch{TEntity}"/>
 ///     and <see cref="ISearch{TEntity, TDto}"/>.
 /// </para>
 /// </summary>
 public static class SearchExtensions
 {
     /// <summary>
-    /// Applies the <see cref="SearchOptions"/> to the <see cref="ISearchOptions{TSearch}"/>.
+    /// Applies the <see cref="SearchOptions"/> to the <see cref="ICriteriaOptions{TSearch}"/>.
     /// </summary>
     /// <typeparam name="T">The search object type.</typeparam>
     /// <param name="search">The search.</param>

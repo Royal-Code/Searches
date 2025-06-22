@@ -12,6 +12,7 @@
 /// </para>
 /// </summary>
 /// <typeparam name="TEntity">The entity type</typeparam>
+[Obsolete("Use ICriteria")]
 public interface IAllEntities<TEntity>
     where TEntity : class
 {

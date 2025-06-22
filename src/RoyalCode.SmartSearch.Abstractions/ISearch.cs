@@ -9,7 +9,7 @@ namespace RoyalCode.SmartSearch.Abstractions;
 /// </para>
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
-public interface ISearch<TEntity> : ISearchOptions<ISearch<TEntity>>
+public interface ISearch<TEntity> : ICriteriaOptions<ISearch<TEntity>>
     where TEntity : class
 {
     /// <summary>
@@ -23,6 +23,7 @@ public interface ISearch<TEntity> : ISearchOptions<ISearch<TEntity>>
     /// <typeparam name="TFilter">The filter type.</typeparam>
     /// <param name="filter">The filter object.</param>
     /// <returns>The same instance for chaining calls.</returns>
+    [Obsolete("Use from Criteria")]
     ISearch<TEntity> FilterBy<TFilter>(TFilter filter)
         where TFilter : class;
 
@@ -33,6 +34,7 @@ public interface ISearch<TEntity> : ISearchOptions<ISearch<TEntity>>
     /// </summary>
     /// <param name="sorting">The sorting object.</param>
     /// <returns>The same instance for chaining calls.</returns>
+    [Obsolete("Use from Criteria")] 
     ISearch<TEntity> OrderBy(ISorting sorting);
 
     /// <summary>
@@ -94,7 +96,7 @@ public interface ISearch<TEntity> : ISearchOptions<ISearch<TEntity>>
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
 /// <typeparam name="TDto">The Data Transfer Object type.</typeparam>
-public interface ISearch<TEntity, TDto> : ISearchOptions<ISearch<TEntity, TDto>>
+public interface ISearch<TEntity, TDto> : ICriteriaOptions<ISearch<TEntity, TDto>>
     where TEntity : class
     where TDto : class
 {
@@ -112,13 +114,15 @@ public interface ISearch<TEntity, TDto> : ISearchOptions<ISearch<TEntity, TDto>>
     /// <typeparam name="TFilter">The filter type.</typeparam>
     /// <param name="filter">The filter object.</param>
     /// <returns>The same instance for chaining calls.</returns>
+    [Obsolete("Use from Criteria")]
     ISearch<TEntity, TDto> FilterBy<TFilter>(TFilter filter)
         where TFilter : class;
-    
+
     /// <summary>
     /// It searches for the entities and returns them in a list of results.
     /// </summary>
     /// <returns>The result list.</returns>
+    [Obsolete("Use from Criteria")] 
     IResultList<TDto> ToList();
 
     /// <summary>

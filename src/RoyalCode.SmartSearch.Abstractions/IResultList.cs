@@ -37,7 +37,7 @@ public interface IResultList
     /// The sort objects applied to the search.
     /// </summary>
     [JsonConverter(typeof(SortingsConverter))]
-    IEnumerable<ISorting> Sortings { get; }
+    IReadOnlyList<ISorting> Sortings { get; }
 
     /// <summary>
     /// Projections carried out during the research.
