@@ -4,6 +4,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>$(AspTargets)</TargetFrameworks>
+		<RootNamespace>RoyalCode.SmartSearch</RootNamespace>
 	</PropertyGroup>
 
 	<PropertyGroup>

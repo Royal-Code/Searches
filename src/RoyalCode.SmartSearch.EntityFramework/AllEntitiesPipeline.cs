@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoyalCode.SmartSearch.Core;
 using RoyalCode.SmartSearch.Core.Pipeline;
+using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filter;
 using System.Runtime.CompilerServices;
@@ -24,28 +24,28 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Any(SearchCriteria searchCriteria)
+    public bool Any(CriteriaOptions searchCriteria)
     {
         return PrepareQuery(searchCriteria).Any();
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<bool> AnyAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    public Task<bool> AnyAsync(CriteriaOptions searchCriteria, CancellationToken cancellationToken = default)
     {
         return PrepareQuery(searchCriteria).AnyAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ICollection<TEntity> Execute(SearchCriteria searchCriteria)
+    public ICollection<TEntity> Execute(CriteriaOptions searchCriteria)
     {
         return PrepareQuery(searchCriteria).ToList();
     }
 
     /// <inheritdoc />
     public async Task<ICollection<TEntity>> ExecuteAsync(
-        SearchCriteria searchCriteria,
+        CriteriaOptions searchCriteria,
         CancellationToken cancellationToken = default)
     {
         return await PrepareQuery(searchCriteria).ToListAsync(cancellationToken);
@@ -53,21 +53,21 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TEntity? First(SearchCriteria searchCriteria)
+    public TEntity? First(CriteriaOptions searchCriteria)
     {
         return PrepareQuery(searchCriteria).FirstOrDefault();
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<TEntity?> FirstAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    public Task<TEntity?> FirstAsync(CriteriaOptions searchCriteria, CancellationToken cancellationToken = default)
     {
         return PrepareQuery(searchCriteria).FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RemoveAll(SearchCriteria searchCriteria)
+    public void RemoveAll(CriteriaOptions searchCriteria)
     {
         var query = PrepareQuery(searchCriteria);
         var removable = queryableProvider.GetRemovable();
@@ -76,7 +76,7 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task RemoveAllAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    public Task RemoveAllAsync(CriteriaOptions searchCriteria, CancellationToken cancellationToken = default)
     {
         var query = PrepareQuery(searchCriteria);
         var removable = queryableProvider.GetRemovable();
@@ -85,21 +85,21 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TEntity Single(SearchCriteria searchCriteria)
+    public TEntity Single(CriteriaOptions searchCriteria)
     {
         return PrepareQuery(searchCriteria).Single();
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Task<TEntity> SingleAsync(SearchCriteria searchCriteria, CancellationToken cancellationToken = default)
+    public Task<TEntity> SingleAsync(CriteriaOptions searchCriteria, CancellationToken cancellationToken = default)
     {
         return PrepareQuery(searchCriteria).SingleAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void UpdateAll(SearchCriteria searchCriteria, Action<TEntity> updateAction)
+    public void UpdateAll(CriteriaOptions searchCriteria, Action<TEntity> updateAction)
     {
         var query = PrepareQuery(searchCriteria);
         foreach(var entity in query)
@@ -110,7 +110,7 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     public async Task UpdateAllAsync(
-        SearchCriteria searchCriteria,
+        CriteriaOptions searchCriteria,
         Action<TEntity> updateAction,
         CancellationToken cancellationToken = default)
     {
@@ -123,7 +123,7 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void UpdateAll<TData>(SearchCriteria searchCriteria, TData data, Action<TEntity, TData> updateAction)
+    public void UpdateAll<TData>(CriteriaOptions searchCriteria, TData data, Action<TEntity, TData> updateAction)
     {
         var query = PrepareQuery(searchCriteria);
         foreach(var entity in query)
@@ -135,7 +135,7 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
     /// <inheritdoc />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public async Task UpdateAllAsync<TData>(
-        SearchCriteria searchCriteria,
+        CriteriaOptions searchCriteria,
         TData data,
         Action<TEntity, TData> updateAction,
         CancellationToken cancellationToken = default)
@@ -149,7 +149,7 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     public void UpdateAll<TData, TId>(
-        SearchCriteria searchCriteria,
+        CriteriaOptions searchCriteria,
         ICollection<TData> collection,
         Func<TEntity, TId> entityIdGet,
         Func<TData, TId> dataIdGet,
@@ -172,7 +172,7 @@ public sealed class AllEntitiesPipeline<TEntity> : SearchPipelineBase<TEntity>, 
 
     /// <inheritdoc />
     public async Task UpdateAllAsync<TData, TId>(
-        SearchCriteria searchCriteria,
+        CriteriaOptions searchCriteria,
         ICollection<TData> collection,
         Func<TEntity, TId> entityIdGet,
         Func<TData, TId> dataIdGet,

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
@@ -9,34 +9,9 @@ namespace RoyalCode.SmartSearch.Abstractions;
 /// </para>
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
-public interface ISearch<TEntity> : ICriteriaOptions<ISearch<TEntity>>
+public interface ISearch<TEntity>
     where TEntity : class
 {
-    /// <summary>
-    /// <para>
-    ///     Adds a filter object to the search.
-    /// </para>
-    /// <para>
-    ///     The search engine must be able to apply this filter, otherwise an exception will be throwed.
-    /// </para>
-    /// </summary>
-    /// <typeparam name="TFilter">The filter type.</typeparam>
-    /// <param name="filter">The filter object.</param>
-    /// <returns>The same instance for chaining calls.</returns>
-    [Obsolete("Use from Criteria")]
-    ISearch<TEntity> FilterBy<TFilter>(TFilter filter)
-        where TFilter : class;
-
-    /// <summary>
-    /// <para>
-    ///     Adds a sorting object to be applied to the search.
-    /// </para>
-    /// </summary>
-    /// <param name="sorting">The sorting object.</param>
-    /// <returns>The same instance for chaining calls.</returns>
-    [Obsolete("Use from Criteria")] 
-    ISearch<TEntity> OrderBy(ISorting sorting);
-
     /// <summary>
     /// <para>
     ///     Requires a Select, adapting the Entity to a DTO.
@@ -83,6 +58,44 @@ public interface ISearch<TEntity> : ICriteriaOptions<ISearch<TEntity>>
     /// <param name="token">The task cancellation token.</param>
     /// <returns>A task to wait for the async list of results.</returns>
     Task<IAsyncResultList<TEntity>> ToAsyncListAsync(CancellationToken token);
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria.
+    /// </summary>
+    /// <returns>
+    ///     The entity or null if there are no entities that meet the criteria.
+    /// </returns>
+    TEntity? FirstOrDefault();
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The entity or null if there are no entities that meet the criteria.
+    /// </returns>
+    Task<TEntity?> FirstDefaultAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria,
+    /// or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </summary>
+    /// <returns>
+    ///     The entity that meets the criteria 
+    ///     or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </returns>
+    TEntity Single();
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria,
+    /// or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The entity that meets the criteria
+    ///     or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </returns>
+    Task<TEntity> SingleAsync(CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -96,33 +109,14 @@ public interface ISearch<TEntity> : ICriteriaOptions<ISearch<TEntity>>
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
 /// <typeparam name="TDto">The Data Transfer Object type.</typeparam>
-public interface ISearch<TEntity, TDto> : ICriteriaOptions<ISearch<TEntity, TDto>>
+public interface ISearch<TEntity, TDto>
     where TEntity : class
     where TDto : class
 {
     /// <summary>
-    /// <para>
-    ///     Adds a filter object to the search.
-    /// </para>
-    /// <para>
-    ///     The search engine must be able to apply this filter, otherwise an exception will be throwed.
-    /// </para>
-    /// <para>
-    ///     This filter will be applied against the <typeparamref name="TDto"/> query type.
-    /// </para>
-    /// </summary>
-    /// <typeparam name="TFilter">The filter type.</typeparam>
-    /// <param name="filter">The filter object.</param>
-    /// <returns>The same instance for chaining calls.</returns>
-    [Obsolete("Use from Criteria")]
-    ISearch<TEntity, TDto> FilterBy<TFilter>(TFilter filter)
-        where TFilter : class;
-
-    /// <summary>
     /// It searches for the entities and returns them in a list of results.
     /// </summary>
     /// <returns>The result list.</returns>
-    [Obsolete("Use from Criteria")] 
     IResultList<TDto> ToList();
 
     /// <summary>
@@ -138,4 +132,42 @@ public interface ISearch<TEntity, TDto> : ICriteriaOptions<ISearch<TEntity, TDto
     /// <param name="token">The task cancellation token.</param>
     /// <returns>A task to wait for the async list of results.</returns>
     Task<IAsyncResultList<TDto>> ToAsyncListAsync(CancellationToken token);
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria.
+    /// </summary>
+    /// <returns>
+    ///     The entity or null if there are no entities that meet the criteria.
+    /// </returns>
+    TDto? FirstOrDefault();
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The entity or null if there are no entities that meet the criteria.
+    /// </returns>
+    Task<TDto?> FirstDefaultAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria,
+    /// or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </summary>
+    /// <returns>
+    ///     The entity that meets the criteria 
+    ///     or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </returns>
+    TDto Single();
+
+    /// <summary>
+    /// Apply the filters and sorting and get the first entity that meets the criteria,
+    /// or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The entity that meets the criteria
+    ///     or throw an exception if there are no entities that meet the criteria or more than one.
+    /// </returns>
+    Task<TDto> SingleAsync(CancellationToken cancellationToken = default);
 }

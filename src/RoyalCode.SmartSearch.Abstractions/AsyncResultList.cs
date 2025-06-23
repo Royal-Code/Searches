@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
@@ -23,8 +23,14 @@ public sealed class AsyncResultList<TModel> : IAsyncResultList<TModel>
     public int Pages { get; init; }
 
     /// <inheritdoc />
+    public int Skipped { get; }
+
+    /// <inheritdoc />
+    public int Taken { get; }
+
+    /// <inheritdoc />
     [JsonConverter(typeof(SortingsConverter))]
-    public IEnumerable<ISorting> Sortings { get; init; } = null!;
+    public IReadOnlyList<ISorting> Sortings { get; init; } = null!;
 
     /// <inheritdoc />
     public Dictionary<string, object> Projections { get; init; } = null!;

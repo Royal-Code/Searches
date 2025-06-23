@@ -1,4 +1,3 @@
-using RoyalCode.SmartSearch.Abstractions;
 using RoyalCode.SmartSearch.Linq.Sorter;
 
 namespace RoyalCode.SmartSearch.Linq;

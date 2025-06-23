@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using RoyalCode.SmartSearch.Core;
 using RoyalCode.SmartSearch.Core.Pipeline;
+using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filter;
 
@@ -58,7 +58,7 @@ public abstract class SearchPipelineBase<TEntity>
     /// <param name="criteria">Search criteria.</param>
     /// <returns>A prepared query.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected IQueryable<TEntity> PrepareQuery(SearchCriteria criteria)
+    protected IQueryable<TEntity> PrepareQuery(CriteriaOptions criteria)
     {
         var baseQuery = queryableProvider.GetQueryable();
 

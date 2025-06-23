@@ -1,17 +1,17 @@
-using RoyalCode.SmartSearch.Core;
+using RoyalCode.SmartSearch.Filtering;
 
 namespace RoyalCode.SmartSearch.Linq.Filter;
 
 /// <summary>
 /// <para>
-///     Default implementation of <see cref="ISpecifierHandler"/>
+///     Default implementation of <see cref="ISpecifier"/>
 ///     that applies the filters to a <see cref="IQueryable{T}"/>,
 ///     retrieving the filters specifiers from the <see cref="ISpecifierFactory"/>,
 ///     which in turn knows how to apply the filter specification to the query.
 /// </para>
 /// </summary>
 /// <typeparam name="TModel">The query model type.</typeparam>
-public sealed class SpecifierHandler<TModel> : ISpecifierHandler
+public sealed class SpecifierHandler<TModel> : ISpecifier
     where TModel : class
 {
     private readonly ISpecifierFactory factory;
@@ -33,7 +33,7 @@ public sealed class SpecifierHandler<TModel> : ISpecifierHandler
     public IQueryable<TModel> Query { get; private set; }
 
     /// <inheritdoc />
-    public void Handle<TFilter>(TFilter filter) where TFilter : class
+    public void Specify<TFilter>(TFilter filter) where TFilter : class
     {
         var specifier = factory.GetSpecifier<TModel, TFilter>();
         if (specifier is not null)

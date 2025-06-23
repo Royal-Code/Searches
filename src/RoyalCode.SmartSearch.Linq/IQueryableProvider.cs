@@ -12,10 +12,4 @@ public interface IQueryableProvider<TEntity>
     /// </summary>
     /// <returns>An <see cref="IQueryable{T}"/> instance.</returns>
     IQueryable<TEntity> GetQueryable();
-
-    /// <summary>
-    /// Get a new queryable for the entity embedded in a removable component.
-    /// </summary>
-    /// <returns></returns>
-    IRemovable<TEntity> GetRemovable();
 }

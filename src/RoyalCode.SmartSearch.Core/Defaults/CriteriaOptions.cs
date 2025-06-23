@@ -1,32 +1,25 @@
-// Ignore Spelling: Sortings
+using RoyalCode.SmartSearch.Filtering;
 
-using System.Linq.Expressions;
-using RoyalCode.SmartSearch.Abstractions;
-
-namespace RoyalCode.SmartSearch.Core;
+namespace RoyalCode.SmartSearch.Defaults;
 
 /// <summary>
-/// The criteria for performing the search.
+/// The criteria options for performing the search.
 /// </summary>
-public sealed class SearchCriteria
+public sealed class CriteriaOptions
 {
-    private List<ISearchFilter>? filters;
+    private List<IFilter>? filters;
     private List<ISorting>? sortings;
+    private bool trackingEnabled = true;
 
     /// <summary>
     /// Get all filters.
     /// </summary>
-    public IReadOnlyList<ISearchFilter> Filters => filters ?? [];
+    public IReadOnlyList<IFilter> Filters => filters ?? [];
 
     /// <summary>
     /// Get all sortings.
     /// </summary>
     public IReadOnlyList<ISorting> Sortings => sortings ?? [];
-
-    /// <summary>
-    /// Information about the select expression.
-    /// </summary>
-    public SearchSelect? Select { get; private set; }
 
     /// <summary>
     /// <para>
@@ -47,6 +40,16 @@ public sealed class SearchCriteria
     public int Page { get; set; }
 
     /// <summary>
+    /// The number of records to be skipped in the search.
+    /// </summary>
+    public int Skip { get; set; }
+
+    /// <summary>
+    /// The number of records to be returned in the search.
+    /// </summary>
+    public int Take { get; set; }
+
+    /// <summary>
     /// <para>
     ///     Updates the last record count.
     /// </para>
@@ -62,6 +65,14 @@ public sealed class SearchCriteria
     public bool UseCount { get; set; } = Defaults.DefaultUseCount;
 
     /// <summary>
+    /// Disables entity tracking for the query, which can improve performance for read-only operations.
+    /// </summary>
+    public void NoTracking()
+    {
+        trackingEnabled = false;
+    }
+
+    /// <summary>
     /// Adds a new filter to specify the search.
     /// </summary>
     /// <param name="filter">The filter instance.</param>
@@ -69,7 +80,7 @@ public sealed class SearchCriteria
         where TFilter : class
     {
         filters ??= [];
-        filters.Add(new SearchFilter<TFilter>(filter));
+        filters.Add(new EntityFilter<TFilter>(filter));
     }
 
     /// <summary>
@@ -83,23 +94,21 @@ public sealed class SearchCriteria
     }
 
     /// <summary>
-    /// Set the select expression.
+    /// Adds a sorting definition.
     /// </summary>
-    /// <param name="selectExpression">The select expression.</param>
-    /// <typeparam name="TEntity">The query entity type.</typeparam>
-    /// <typeparam name="TDto">The select type.</typeparam>
-    /// <exception cref="ArgumentNullException">If expression is null.</exception>
-    public void SetSelectExpression<TEntity, TDto>(Expression<Func<TEntity, TDto>> selectExpression)
+    /// <param name="sorting">The sorting definitions.</param>
+    public void AddSorting(IEnumerable<ISorting>? sorting)
     {
-        ArgumentNullException.ThrowIfNull(selectExpression);
-
-        Select = new SearchSelect(selectExpression);
+        if (sorting is null)
+            return;
+        sortings ??= [];
+        sortings.AddRange(sorting);
     }
 
     /// <summary>
     /// Whether the query should be paginated.
     /// </summary>
-    public bool Paginate => ItemsPerPage > 0;
+    public bool Paginate => Page > 0;
 
     /// <summary>
     /// The number of the page that should be listed.
@@ -119,10 +128,24 @@ public sealed class SearchCriteria
     /// </para>
     /// </summary>
     /// <returns>The number of records that must be skipped.</returns>
-    public int GetSkipCount() => Paginate ? ItemsPerPage * (GetPageNumber() - 1) : 0;
+    public int GetSkipCount() => Paginate ? ItemsPerPage * (GetPageNumber() - 1) : Skip;
 
     /// <summary>
-    /// Default values for each new <see cref="SearchCriteria"/> created.
+    /// Determines the number of items to retrieve in a paginated query.
+    /// </summary>
+    /// <returns>
+    ///     The number of items to retrieve. 
+    ///     <br />
+    ///     If pagination is enabled, returns the value of <see cref="ItemsPerPage"/>. 
+    ///     <br />
+    ///     If pagination is disabled and <see cref="Take"/> is greater than 0, returns the value of <see cref="Take"/>. 
+    ///     <br />
+    ///     Otherwise, returns <c>0</c>.
+    /// </returns>
+    public int GetTakeCount() => Paginate ? ItemsPerPage : Take > 0 ? Take : 0;
+
+    /// <summary>
+    /// Default values for each new <see cref="CriteriaOptions"/> created.
     /// </summary>
     public static class Defaults
     {

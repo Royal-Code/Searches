@@ -1,14 +1,14 @@
 ﻿// Ignore Spelling: sortings
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
-///     A class that contains the options for a search.
+///     A class that contains the options for a criteria and search.
 ///     It is used to define the search parameters.
 /// </para>
 /// <para>
-///     It is design to retrieve the options from a query string and apply them to the search.
+///     It is designed to retrieve the options from a query string and apply them to the search.
 /// </para>
 /// </summary>
 public sealed class SearchOptions

@@ -2,8 +2,8 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using RoyalCode.SmartSearch.Abstractions;
-using RoyalCode.SmartSearch.Core;
 using RoyalCode.SmartSearch.Core.Pipeline;
+using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filter;
 
@@ -32,7 +32,7 @@ public sealed class SearchPipeline<TEntity> : SearchPipelineBase<TEntity>, ISear
     { }
 
     /// <inheritdoc />
-    public IResultList<TEntity> Execute(SearchCriteria criteria)
+    public IResultList<TEntity> Execute(CriteriaOptions criteria)
     {
         var sortedQuery = PrepareQuery(criteria);
 
@@ -71,7 +71,7 @@ public sealed class SearchPipeline<TEntity> : SearchPipelineBase<TEntity>, ISear
     }
 
     /// <inheritdoc />
-    public async Task<IResultList<TEntity>> ExecuteAsync(SearchCriteria criteria, CancellationToken token)
+    public async Task<IResultList<TEntity>> ExecuteAsync(CriteriaOptions criteria, CancellationToken token)
     {
         var sortedQuery = PrepareQuery(criteria);
 
@@ -110,7 +110,7 @@ public sealed class SearchPipeline<TEntity> : SearchPipelineBase<TEntity>, ISear
     }
 
     /// <inheritdoc />
-    public async Task<IAsyncResultList<TEntity>> AsyncExecuteAsync(SearchCriteria criteria, CancellationToken token)
+    public async Task<IAsyncResultList<TEntity>> AsyncExecuteAsync(CriteriaOptions criteria, CancellationToken token)
     {
         var sortedQuery = PrepareQuery(criteria);
 
@@ -173,7 +173,7 @@ public sealed class SearchPipeline<TEntity, TDto> : SearchPipelineBase<TEntity>,
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private IQueryable<TDto> Select(IQueryable<TEntity> query, SearchCriteria criteria)
+    private IQueryable<TDto> Select(IQueryable<TEntity> query, CriteriaOptions criteria)
     {
         var selectExpression = (Expression<Func<TEntity, TDto>>?)criteria.Select?.SelectExpression
                                ?? selector?.GetSelectExpression()
@@ -183,7 +183,7 @@ public sealed class SearchPipeline<TEntity, TDto> : SearchPipelineBase<TEntity>,
     }
 
     /// <inheritdoc />
-    public IResultList<TDto> Execute(SearchCriteria criteria)
+    public IResultList<TDto> Execute(CriteriaOptions criteria)
     {
         var sortedQuery = PrepareQuery(criteria);
         var selectQuery = Select(sortedQuery, criteria);
@@ -220,7 +220,7 @@ public sealed class SearchPipeline<TEntity, TDto> : SearchPipelineBase<TEntity>,
     }
 
     /// <inheritdoc />
-    public async Task<IResultList<TDto>> ExecuteAsync(SearchCriteria criteria, CancellationToken token)
+    public async Task<IResultList<TDto>> ExecuteAsync(CriteriaOptions criteria, CancellationToken token)
     {
         var sortedQuery = PrepareQuery(criteria);
         var selectQuery = Select(sortedQuery, criteria);
@@ -257,7 +257,7 @@ public sealed class SearchPipeline<TEntity, TDto> : SearchPipelineBase<TEntity>,
     }
 
     /// <inheritdoc />
-    public async Task<IAsyncResultList<TDto>> AsyncExecuteAsync(SearchCriteria criteria, CancellationToken token)
+    public async Task<IAsyncResultList<TDto>> AsyncExecuteAsync(CriteriaOptions criteria, CancellationToken token)
     {
         var sortedQuery = PrepareQuery(criteria);
         var selectQuery = Select(sortedQuery, criteria);

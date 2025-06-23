@@ -4,6 +4,7 @@
 /// Componente to provide a queryable and methods to remove entities from the database.
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
+[Obsolete]
 public interface IRemovable<in TEntity>
     where TEntity : class
 {

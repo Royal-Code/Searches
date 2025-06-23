@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
@@ -10,7 +10,7 @@ namespace RoyalCode.SmartSearch.Abstractions;
 ///     will be tracked by the change tracker (e.g., in an ORM context such as Entity Framework).
 /// </para>
 /// <para>
-///     When using methods like <see cref="Collect"/>, <see cref="First"/>, or <see cref="Single"/>,
+///     When using methods like <see cref="Collect"/>, <see cref="FirstOrDefault"/>, or <see cref="Single"/>,
 ///     the returned entities are tracked by the change tracker, enabling change detection and persistence.
 /// </para>
 /// <para>
@@ -109,7 +109,7 @@ public interface ICriteria<TEntity> : ICriteriaOptions<ICriteria<TEntity>>
     /// <returns>
     ///     A collection of the entities.
     /// </returns>
-    ICollection<TEntity> Collect();
+    IReadOnlyList<TEntity> Collect();
 
     /// <summary>
     /// Apply the filters and sorting and get all the entities that meet the criteria.
@@ -118,7 +118,7 @@ public interface ICriteria<TEntity> : ICriteriaOptions<ICriteria<TEntity>>
     /// <returns>
     ///     A collection of the entities.
     /// </returns>
-    Task<ICollection<TEntity>> CollectAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<TEntity>> CollectAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Apply the filters and sorting and verify if there are any entities that meet the criteria.
@@ -137,15 +137,13 @@ public interface ICriteria<TEntity> : ICriteriaOptions<ICriteria<TEntity>>
     /// </returns>
     Task<bool> ExistsAsync(CancellationToken cancellationToken = default);
 
-    // Opções First, FirstAsync, Single, SingleAsync, e OrDefault.
-
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria.
     /// </summary>
     /// <returns>
     ///     The entity or null if there are no entities that meet the criteria.
     /// </returns>
-    TEntity? First();
+    TEntity? FirstOrDefault();
 
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria.
@@ -154,7 +152,7 @@ public interface ICriteria<TEntity> : ICriteriaOptions<ICriteria<TEntity>>
     /// <returns>
     ///     The entity or null if there are no entities that meet the criteria.
     /// </returns>
-    Task<TEntity?> FirstAsync(CancellationToken cancellationToken = default);
+    Task<TEntity?> FirstDefaultAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria,

@@ -1,4 +1,4 @@
-﻿namespace RoyalCode.SmartSearch.Abstractions;
+﻿namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// Options that can be applied into criteria or search components.
@@ -18,8 +18,9 @@ public interface ICriteriaOptions<out TSearch>
     /// </para>
     /// </summary>
     /// <param name="itemsPerPage">Items per page.</param>
+    /// <param name="pageNumber">The page number.</param>
     /// <returns>The same instance of the search for chaining calls.</returns>
-    TSearch UsePages(int itemsPerPage = 10);
+    TSearch UsePages(int itemsPerPage = 10, int pageNumber = 1);
 
     /// <summary>
     /// The number of the page to be searched.

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
@@ -32,6 +32,16 @@ public interface IResultList
     /// Number of pages.
     /// </summary>
     int Pages { get; }
+
+    /// <summary>
+    /// Number of items skipped in the result set.
+    /// </summary>
+    int Skipped { get; }
+
+    /// <summary>
+    /// Number of items taken from the result set.
+    /// </summary>
+    int Taken { get; }
 
     /// <summary>
     /// The sort objects applied to the search.

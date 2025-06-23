@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// Component that contains information about the sorting applied to a search/query.

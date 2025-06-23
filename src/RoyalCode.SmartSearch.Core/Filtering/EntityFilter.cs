@@ -1,16 +1,16 @@
-namespace RoyalCode.SmartSearch.Core;
+namespace RoyalCode.SmartSearch.Filtering;
 
 /// <summary>
 /// Information about a filter to be applied to a query.
 /// </summary>
 /// <param name="Filter">The filter instance.</param>
 /// <typeparam name="TFilter">The filter type.</typeparam>
-public class SearchFilter<TFilter>(TFilter Filter) : ISearchFilter
+public sealed class EntityFilter<TFilter>(TFilter Filter) : IFilter
     where TFilter : class
 {
     /// <inheritdoc />
-    public void ApplyFilter(ISpecifierHandler handler)
+    public void ApplyFilter(ISpecifier specifier)
     {
-        handler.Handle(Filter);
+        specifier.Specify(Filter);
     }
 }
