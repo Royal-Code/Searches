@@ -11,7 +11,8 @@ public interface ISearchConfigurations<out TDbContext> : ISearchConfigurations
     where TDbContext : DbContext
 {
     /// <summary>
-    /// Add a search for an entity as a service, related to <see cref="DbContext"/> used by the unit of work.
+    /// Add a <see cref="ICriteria{TEntity}"/> for an entity as a service,
+    /// related to <see cref="DbContext"/> used by the unit of work.
     /// </summary>
     /// <typeparam name="TEntity">The entity type.</typeparam>
     /// <returns>The same instance.</returns>

@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using RoyalCode.SmartSearch.Abstractions;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filtering;
 using System.Collections;
@@ -52,14 +50,14 @@ public class SpecifierFunctionGeneratorTests
         ServiceProvider provider = services.BuildServiceProvider();
 
         // act
-        var search = provider.GetService<ISearch<SimpleModel>>();
+        var search = provider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // assert
         Assert.NotNull(search);
 
         // act
         search!.FilterBy(new SimpleFilter());
-        var resultList = search.ToList();
+        var resultList = search.AsSearch().ToList();
 
         // assert
         Assert.NotNull(resultList);

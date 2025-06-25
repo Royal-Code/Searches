@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoyalCode.SmartSearch.Abstractions;
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 
-namespace RoyalCode.SmartSearch.EntityFramework;
+namespace RoyalCode.SmartSearch.EntityFramework.Services;
 
 /// <summary>
 /// <para>

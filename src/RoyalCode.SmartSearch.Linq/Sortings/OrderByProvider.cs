@@ -11,7 +11,9 @@ internal sealed class OrderByProvider : IOrderByProvider
         this.generator = generator;
     }
 
-    public IOrderByHandler<TModel> GetDefaultHandler<TModel>() where TModel : class => GetHandler<TModel>("Id")!;
+    public IOrderByHandler<TModel> GetDefaultHandler<TModel>() 
+        where TModel : class 
+        => GetHandler<TModel>(DefaultSorting.DefaultOrderBy)!;
 
     public IOrderByHandler<TModel>? GetHandler<TModel>(string orderBy)
         where TModel : class

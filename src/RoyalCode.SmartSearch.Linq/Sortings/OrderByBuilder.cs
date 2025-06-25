@@ -28,12 +28,12 @@ public ref struct OrderByBuilder<TModel>
     ///     The <see cref="ListSortDirection"/> of the current <see cref="ISorting"/>.
     /// </para>
     /// </summary>
-    internal ListSortDirection CurrentDirection { get; set; }
+    public ListSortDirection CurrentDirection { get; set; }
 
     /// <summary>
     /// Returns the ordered query.
     /// </summary>
-    internal readonly IQueryable<TModel> OrderedQueryable => ordered ?? query;
+    public readonly IQueryable<TModel> OrderedQueryable => ordered ?? query;
 
     /// <inheritdoc />
     public OrderByBuilder<TModel> Add<TKey>(Expression<Func<TModel, TKey>> keySelector)

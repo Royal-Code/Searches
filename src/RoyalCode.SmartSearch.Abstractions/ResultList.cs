@@ -25,17 +25,17 @@ public class ResultList<TModel> : IResultList<TModel>
     public int Pages { get; init; }
 
     /// <inheritdoc />
-    public int Skipped { get; }
+    public int Skipped { get; init; }
 
     /// <inheritdoc />
-    public int Taken { get; }
+    public int Taken { get; init; }
 
     /// <inheritdoc />
     [JsonConverter(typeof(SortingsConverter))]
     public IReadOnlyList<ISorting> Sortings { get; init; } = null!;
 
     /// <inheritdoc />
-    public Dictionary<string, object> Projections { get; init; } = null!;
+    public Dictionary<string, object>? Projections { get; init; } = null!;
 
     /// <inheritdoc />
     public IReadOnlyList<TModel> Items { get; init; } = null!;

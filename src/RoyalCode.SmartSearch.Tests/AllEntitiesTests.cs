@@ -1,8 +1,6 @@
-﻿
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using RoyalCode.SmartSearch.Abstractions;
 
 namespace RoyalCode.SmartSearch.Tests;
 
@@ -39,10 +37,10 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
-        ICollection<SimpleModel> result = all.Collect();
+        IReadOnlyList<SimpleModel> result = all.Collect();
 
         // assert
         result.Should().HaveCount(3);
@@ -62,10 +60,10 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
-        ICollection<SimpleModel> result = await all.CollectAsync();
+        IReadOnlyList<SimpleModel> result = await all.CollectAsync();
 
         // assert
         result.Should().HaveCount(3);
@@ -85,11 +83,11 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
-        ICollection<SimpleModel> result = all.FilterBy(filter).Collect();
+        IReadOnlyList<SimpleModel> result = all.FilterBy(filter).Collect();
 
         // assert
         result.Should().HaveCount(1);
@@ -110,11 +108,11 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
-        ICollection<SimpleModel> result = await all.FilterBy(filter).CollectAsync();
+        IReadOnlyList<SimpleModel> result = await all.FilterBy(filter).CollectAsync();
 
         // assert
         result.Should().HaveCount(1).And.ContainSingle(x => x.Id == 2);
@@ -134,7 +132,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
@@ -158,7 +156,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
@@ -182,7 +180,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "D" };
@@ -206,7 +204,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "D" };
@@ -230,11 +228,11 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
-        SimpleModel? result = all.FilterBy(filter).First();
+        SimpleModel? result = all.FilterBy(filter).FirstOrDefault();
 
         // assert
 
@@ -256,11 +254,11 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
-        SimpleModel? result = await all.FilterBy(filter).FirstAsync();
+        SimpleModel? result = await all.FilterBy(filter).FirstDefaultAsync();
 
         // assert
         result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
@@ -280,11 +278,11 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "D" };
-        SimpleModel? result = all.FilterBy(filter).First();
+        SimpleModel? result = all.FilterBy(filter).FirstOrDefault();
 
         // assert
         result.Should().BeNull();
@@ -304,11 +302,11 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "D" };
-        SimpleModel? result = await all.FilterBy(filter).FirstAsync();
+        SimpleModel? result = await all.FilterBy(filter).FirstDefaultAsync();
 
         // assert
         result.Should().BeNull();
@@ -328,7 +326,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
@@ -352,7 +350,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "B" };
@@ -376,7 +374,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         Action act = () => all.Single();
@@ -399,7 +397,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         Func<Task> act = () => all.SingleAsync();
@@ -422,7 +420,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         context.SaveChanges();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "D" };
@@ -446,7 +444,7 @@ public class AllEntitiesTests
         context.Add(new SimpleModel { Id = 3, Name = "C" });
         await context.SaveChangesAsync();
 
-        var all = scope.ServiceProvider.GetRequiredService<IAllEntities<SimpleModel>>();
+        var all = scope.ServiceProvider.GetRequiredService<ICriteria<SimpleModel>>();
 
         // act
         var filter = new SimpleFilter { Name = "D" };

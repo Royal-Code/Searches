@@ -23,10 +23,10 @@ public sealed class AsyncResultList<TModel> : IAsyncResultList<TModel>
     public int Pages { get; init; }
 
     /// <inheritdoc />
-    public int Skipped { get; }
+    public int Skipped { get; init; }
 
     /// <inheritdoc />
-    public int Taken { get; }
+    public int Taken { get; init; }
 
     /// <inheritdoc />
     [JsonConverter(typeof(SortingsConverter))]

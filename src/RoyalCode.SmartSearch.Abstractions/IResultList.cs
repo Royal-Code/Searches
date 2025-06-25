@@ -52,7 +52,7 @@ public interface IResultList
     /// <summary>
     /// Projections carried out during the research.
     /// </summary>
-    Dictionary<string, object> Projections { get; }
+    Dictionary<string, object>? Projections { get; }
 }
 
 /// <summary>
