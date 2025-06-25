@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using RoyalCode.SmartSearch.Abstractions;
 using RoyalCode.SmartSearch.Linq;
-using RoyalCode.SmartSearch.Linq.Filter;
+using RoyalCode.SmartSearch.Linq.Filtering;
 using System.Collections;
 using System.Linq.Expressions;
 

@@ -6,9 +6,8 @@ using RoyalCode.SmartSearch.EntityFramework;
 using RoyalCode.SmartSearch.EntityFramework.Configurations;
 using RoyalCode.SmartSearch.EntityFramework.Internals;
 using RoyalCode.SmartSearch.Linq;
-using RoyalCode.SmartSearch.Linq.Filter;
-using RoyalCode.SmartSearch.Linq.Selector;
-using RoyalCode.SmartSearch.Linq.Sorter;
+using RoyalCode.SmartSearch.Linq.Services;
+using RoyalCode.SmartSearch.Linq.Sortings;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

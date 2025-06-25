@@ -1,15 +1,13 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
-using RoyalCode.SmartSearch.Abstractions;
-using RoyalCode.SmartSearch.Core.Pipeline;
 using RoyalCode.SmartSearch.Defaults;
-using RoyalCode.SmartSearch.Linq;
-using RoyalCode.SmartSearch.Linq.Filter;
+using RoyalCode.SmartSearch.Linq.Mappings;
+using RoyalCode.SmartSearch.Linq.Services;
 
 namespace RoyalCode.SmartSearch.EntityFramework;
 
-#pragma warning disable S3358 // ifs ternarios should not be nested
+#pragma warning disable S3358 // ifs ternaries should not be nested
 
 /// <summary>
 /// <para>

@@ -1,4 +1,6 @@
-﻿namespace RoyalCode.SmartSearch.Mappings;
+﻿using System.Linq.Expressions;
+
+namespace RoyalCode.SmartSearch.Mappings;
 
 /// <summary>
 /// <para>
@@ -9,17 +11,20 @@
 /// </para>
 /// </summary>
 /// <typeparam name="TEntity">The entity type to select from.</typeparam>
-/// <typeparam name="TDto">The DTO type to project to.</typeparam>
+/// <typeparam name="TDto"> The data transfer object (DTO) type to project to.</typeparam>
 public interface ISearchSelect<TEntity, TDto>
     where TEntity : class
     where TDto : class
 {
     /// <summary>
-    /// Applies the select mapping to the specified <see cref="ISearchSelector{TEntity}"/>.
+    /// <para>
+    ///     Gets the expression used to project an entity of type <typeparamref name="TEntity"/>  into a data transfer
+    ///     object (DTO) of type <typeparamref name="TDto"/>.
+    /// </para>
+    /// <para>
+    ///     This expression is optional and can be used to customize the selection of properties from the entity
+    ///     to the DTO. When not provided, the default mapping will be used if available.
+    /// </para>
     /// </summary>
-    /// <param name="searchSelector">The search selector to apply the select mapping to.</param>
-    /// <remarks>
-    /// If a select expression was provided, it will be used; otherwise, the default mapping will be applied.
-    /// </remarks>
-    public void ApplySelect(ISearchSelector<TEntity> searchSelector);
+    Expression<Func<TEntity, TDto>>? SelectExpression { get; }
 }

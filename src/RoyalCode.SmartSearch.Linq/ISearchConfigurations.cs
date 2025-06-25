@@ -1,6 +1,6 @@
-﻿using RoyalCode.SmartSearch.Linq.Filter;
-using RoyalCode.SmartSearch.Linq.Selector;
-using RoyalCode.SmartSearch.Linq.Sorter;
+﻿using RoyalCode.SmartSearch.Linq.Filtering;
+using RoyalCode.SmartSearch.Linq.Mappings;
+using RoyalCode.SmartSearch.Linq.Sortings;
 using System.Linq.Expressions;
 
 namespace RoyalCode.SmartSearch.Linq;

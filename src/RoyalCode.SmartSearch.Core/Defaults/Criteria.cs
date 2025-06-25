@@ -70,6 +70,7 @@ public class Criteria<TEntity> : ICriteria<TEntity>
     public ICriteria<TEntity> UseLastCount(int lastCount)
     {
         options.LastCount = lastCount;
+        options.UseCount = true;
         return this;
     }
 

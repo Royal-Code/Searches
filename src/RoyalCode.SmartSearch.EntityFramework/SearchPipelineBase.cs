@@ -3,6 +3,8 @@ using RoyalCode.SmartSearch.Core.Pipeline;
 using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filter;
+using RoyalCode.SmartSearch.Linq.Filtering;
+using RoyalCode.SmartSearch.Linq.Services;
 
 namespace RoyalCode.SmartSearch.EntityFramework;
 
@@ -65,7 +67,7 @@ public abstract class SearchPipelineBase<TEntity>
         var queryFilters = criteria.Filters;
         if (queryFilters.Count is not 0)
         {
-            var handler = new SpecifierHandler<TEntity>(specifierFactory, baseQuery);
+            var handler = new FilterHandler<TEntity>(specifierFactory, baseQuery);
             foreach (var searchFilter in queryFilters)
             {
                 searchFilter.ApplyFilter(handler);

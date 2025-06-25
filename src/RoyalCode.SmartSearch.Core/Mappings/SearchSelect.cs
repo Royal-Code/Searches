@@ -38,18 +38,6 @@ public sealed class SearchSelect<TEntity, TDto> : ISearchSelect<TEntity, TDto>
     /// </summary>
     public SearchSelect() { }
 
-    /// <summary>
-    /// Applies the select mapping to the specified <see cref="ISearchSelector{TEntity}"/>.
-    /// </summary>
-    /// <param name="searchSelector">The search selector to apply the select mapping to.</param>
-    /// <remarks>
-    /// If a select expression was provided, it will be used; otherwise, the default mapping will be applied.
-    /// </remarks>
-    public void ApplySelect(ISearchSelector<TEntity> searchSelector)
-    {
-        if (selectExpression is null)
-            searchSelector.Select<TDto>();
-        else
-            searchSelector.Select(selectExpression);
-    }
+    /// <inheritdoc />
+    public Expression<Func<TEntity, TDto>>? SelectExpression => selectExpression;
 }

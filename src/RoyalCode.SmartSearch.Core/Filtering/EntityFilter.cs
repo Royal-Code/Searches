@@ -9,7 +9,7 @@ public sealed class EntityFilter<TFilter>(TFilter Filter) : IFilter
     where TFilter : class
 {
     /// <inheritdoc />
-    public void ApplyFilter(ISpecifier specifier)
+    public void ApplyFilter(IFilterHandler specifier)
     {
         specifier.Specify(Filter);
     }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RoyalCode.OperationHint.Abstractions;
-using RoyalCode.SmartSearch.Linq;
+using RoyalCode.SmartSearch.Linq.Services;
 
 namespace RoyalCode.SmartSearch.EntityFramework;
 

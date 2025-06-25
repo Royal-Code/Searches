@@ -9,5 +9,5 @@ public interface IFilter
     /// Applies the filter to the query by passing the filter to the handler.
     /// </summary>
     /// <param name="specifier">A specifier handler for applying filters to queries.</param>
-    void ApplyFilter(ISpecifier specifier);
+    void ApplyFilter(IFilterHandler specifier);
 }

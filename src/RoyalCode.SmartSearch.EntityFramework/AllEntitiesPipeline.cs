@@ -2,7 +2,7 @@
 using RoyalCode.SmartSearch.Core.Pipeline;
 using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq;
-using RoyalCode.SmartSearch.Linq.Filter;
+using RoyalCode.SmartSearch.Linq.Services;
 using System.Runtime.CompilerServices;
 
 namespace RoyalCode.SmartSearch.EntityFramework;

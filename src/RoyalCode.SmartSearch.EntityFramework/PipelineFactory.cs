@@ -2,9 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch.Core.Pipeline;
 using RoyalCode.SmartSearch.EntityFramework.Internals;
-using RoyalCode.SmartSearch.Linq.Filter;
-using RoyalCode.SmartSearch.Linq.Selector;
-using RoyalCode.SmartSearch.Linq.Sorter;
+using RoyalCode.SmartSearch.Linq.Services;
+using RoyalCode.SmartSearch.Linq.Sortings;
 
 namespace RoyalCode.SmartSearch.EntityFramework;
 

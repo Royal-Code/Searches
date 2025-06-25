@@ -9,7 +9,11 @@ public sealed class CriteriaOptions
 {
     private List<IFilter>? filters;
     private List<ISorting>? sortings;
-    private bool trackingEnabled = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether tracking is enabled.
+    /// </summary>
+    public bool TrackingEnabled { get; private set; } = true;
 
     /// <summary>
     /// Get all filters.
@@ -17,7 +21,7 @@ public sealed class CriteriaOptions
     public IReadOnlyList<IFilter> Filters => filters ?? [];
 
     /// <summary>
-    /// Get all sortings.
+    /// Get all sorting.
     /// </summary>
     public IReadOnlyList<ISorting> Sortings => sortings ?? [];
 
@@ -69,7 +73,7 @@ public sealed class CriteriaOptions
     /// </summary>
     public void NoTracking()
     {
-        trackingEnabled = false;
+        TrackingEnabled = false;
     }
 
     /// <summary>
