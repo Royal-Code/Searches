@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq.Services;
 using RoyalCode.SmartSearch.Linq.Sortings;
-using RoyalCode.SmartSearch.Services;
 
 namespace RoyalCode.SmartSearch.EntityFramework.Services;
 
@@ -20,14 +18,11 @@ namespace RoyalCode.SmartSearch.EntityFramework.Services;
 /// <typeparam name="TEntity">
 ///     The type of the entity for which queries are prepared. Must be a reference type.
 /// </typeparam>
-public sealed class CriteriaPerformer<TDbContext, TEntity> : ICriteriaPerformer<TDbContext, TEntity>
+public sealed class CriteriaPerformer<TDbContext, TEntity> : CriteriaPerformerBase<TEntity>, ICriteriaPerformer<TDbContext, TEntity>
     where TDbContext : DbContext
     where TEntity : class
 {
     private readonly TDbContext db;
-    private readonly ISpecifierFactory specifierFactory;
-    private readonly IOrderByProvider orderByProvider;
-    private readonly ISelectorFactory selectorFactory;
 
     /// <summary>
     /// Creates a new instance of <see cref="CriteriaPerformer{TDbContext, TEntity}"/>.
@@ -41,37 +36,14 @@ public sealed class CriteriaPerformer<TDbContext, TEntity> : ICriteriaPerformer<
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
         ISelectorFactory selectorFactory)
+        : base(specifierFactory, orderByProvider, selectorFactory)
     {
         this.db = db;
-        this.specifierFactory = specifierFactory;
-        this.orderByProvider = orderByProvider;
-        this.selectorFactory = selectorFactory;
     }
 
     /// <inheritdoc />
-    public IPreparedQuery<TEntity> Prepare(CriteriaOptions options)
-    {
-        var entities = options.TrackingEnabled 
+    protected override IQueryable<TEntity> GetQueryable(bool trackingEnabled)
+        => trackingEnabled
             ? db.Set<TEntity>()
             : db.Set<TEntity>().AsNoTracking();
-
-        var criteriaQuery = new CriteriaQuery<TEntity>(
-            entities,
-            specifierFactory,
-            orderByProvider,
-            selectorFactory);
-
-        foreach (var filter in options.Filters)
-            filter.ApplyFilter(criteriaQuery);
-
-        criteriaQuery.OrderBy(options.Sortings);
-        criteriaQuery.SetPageSkipTakeCount(
-            options.GetPageNumber(), 
-            options.GetSkipCount(),
-            options.GetTakeCount(), 
-            options.UseCount,
-            options.LastCount);
-
-        return criteriaQuery;
-    }
 }
