@@ -152,7 +152,7 @@ public interface ICriteria<TEntity> : ICriteriaOptions<ICriteria<TEntity>>
     /// <returns>
     ///     The entity or null if there are no entities that meet the criteria.
     /// </returns>
-    Task<TEntity?> FirstDefaultAsync(CancellationToken cancellationToken = default);
+    Task<TEntity?> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria,

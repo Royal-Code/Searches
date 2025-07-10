@@ -18,7 +18,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(DotNetCoreVersion)" />
-		<PackageReference Include="RoyalCode.OperationHint.Abstractions" Version="1.0.0" />
+		<PackageReference Include="RoyalCode.OperationHint.Abstractions" Version="$(OpHintVer)" />
 	</ItemGroup>
 
 	<ItemGroup>

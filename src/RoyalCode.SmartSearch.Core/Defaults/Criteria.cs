@@ -143,7 +143,7 @@ public class Criteria<TEntity> : ICriteria<TEntity>
     public TEntity? FirstOrDefault() => performer.Prepare(options).FirstOrDefault();
 
     /// <inheritdoc />
-    public async Task<TEntity?> FirstDefaultAsync(CancellationToken cancellationToken = default)
+    public async Task<TEntity?> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
         => await performer.Prepare(options).FirstOrDefaultAsync(cancellationToken);
 
     /// <inheritdoc />

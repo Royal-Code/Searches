@@ -258,7 +258,7 @@ public class AllEntitiesTests
 
         // act
         var filter = new SimpleFilter { Name = "B" };
-        SimpleModel? result = await all.FilterBy(filter).FirstDefaultAsync();
+        SimpleModel? result = await all.FilterBy(filter).FirstOrDefaultAsync();
 
         // assert
         result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
@@ -306,7 +306,7 @@ public class AllEntitiesTests
 
         // act
         var filter = new SimpleFilter { Name = "D" };
-        SimpleModel? result = await all.FilterBy(filter).FirstDefaultAsync();
+        SimpleModel? result = await all.FilterBy(filter).FirstOrDefaultAsync();
 
         // assert
         result.Should().BeNull();

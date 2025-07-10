@@ -10,8 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".items", ".items", "{45312F
 		base.targets = base.targets
 		Directory.Build.props = Directory.Build.props
 		icon.png = icon.png
-		tests.targets = tests.targets
 		..\.github\workflows\smart-search.yml = ..\.github\workflows\smart-search.yml
+		tests.targets = tests.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Linq", "RoyalCode.SmartSearch.Linq\RoyalCode.SmartSearch.Linq.csproj", "{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}"
@@ -25,6 +25,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{932A3AFB-78D0-4A2D-BADD-54A9BC593B60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Tests", "RoyalCode.SmartSearch.Tests\RoyalCode.SmartSearch.Tests.csproj", "{92A0A603-CFF6-498E-BED8-8D0D21561AC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyalCode.SmartSearch.AspNetCore", "RoyalCode.SmartSearch.AspNetCore\RoyalCode.SmartSearch.AspNetCore.csproj", "{BC54B3A6-736A-4459-9F33-1101013627F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{DDAB919D-3519-4208-A2B1-DCE122228400} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
 		{DEAF76E8-950F-4D38-B98B-9099C9F190ED} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
 		{92A0A603-CFF6-498E-BED8-8D0D21561AC2} = {932A3AFB-78D0-4A2D-BADD-54A9BC593B60}
+		{BC54B3A6-736A-4459-9F33-1101013627F6} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D75591B5-4D8A-4ECD-94CE-D38BBC572272}

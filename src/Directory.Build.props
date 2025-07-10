@@ -11,4 +11,9 @@
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.2</DotNetCoreVersion>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9'">9.0.5</DotNetCoreVersion>
 	</PropertyGroup>
+	<PropertyGroup>
+		<PropSelVer>1.0.2</PropSelVer>
+		<OpHintVer>1.0.0</OpHintVer>
+		<ProblemsVer>1.0.0-preview-4.0</ProblemsVer>
+	</PropertyGroup>
 </Project>

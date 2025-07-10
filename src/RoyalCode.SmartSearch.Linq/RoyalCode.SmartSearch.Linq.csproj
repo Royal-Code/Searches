@@ -16,7 +16,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RoyalCode.Extensions.PropertySelection" Version="1.0.2" />
+		<PackageReference Include="RoyalCode.Extensions.PropertySelection" Version="$(PropSelVer)" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(DotNetCoreVersion)" />
 	</ItemGroup>
 

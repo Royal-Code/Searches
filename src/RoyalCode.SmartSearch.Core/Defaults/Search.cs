@@ -103,7 +103,7 @@ public class Search<TEntity, TDto> : ISearch<TEntity, TDto>
     public TDto? FirstOrDefault() => performer.Prepare(options).Select(searchSelect).FirstOrDefault();
 
     /// <inheritdoc />
-    public Task<TDto?> FirstDefaultAsync(CancellationToken cancellationToken = default)
+    public Task<TDto?> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
         => performer.Prepare(options).Select(searchSelect).FirstOrDefaultAsync(cancellationToken);
 
     /// <inheritdoc />

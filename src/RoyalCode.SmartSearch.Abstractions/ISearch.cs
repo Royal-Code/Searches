@@ -148,7 +148,7 @@ public interface ISearch<TEntity, TDto>
     /// <returns>
     ///     The entity or null if there are no entities that meet the criteria.
     /// </returns>
-    Task<TDto?> FirstDefaultAsync(CancellationToken cancellationToken = default);
+    Task<TDto?> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria,
