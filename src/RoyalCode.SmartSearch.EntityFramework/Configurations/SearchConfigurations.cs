@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RoyalCode.SmartSearch.EntityFramework.Services;
+using RoyalCode.SmartSearch.Linq;
 
 namespace RoyalCode.SmartSearch.EntityFramework.Configurations;
 
@@ -20,7 +21,8 @@ public sealed class SearchConfigurations<TDbContext> : ISearchConfigurations<TDb
     }
 
     /// <inheritdoc />
-    public ISearchConfigurations<TDbContext> Add<TEntity>() where TEntity : class
+    public ISearchConfigurations Add<TEntity>() 
+        where TEntity : class
     {
         // add criteria as a service for the respective context
         var serviceType = typeof(ICriteria<>).MakeGenericType(typeof(TEntity));

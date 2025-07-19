@@ -5,7 +5,7 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<SearchesVer>0.8.0</SearchesVer>
-		<SearchesPreview>-preview-3</SearchesPreview>
+		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.2</DotNetCoreVersion>

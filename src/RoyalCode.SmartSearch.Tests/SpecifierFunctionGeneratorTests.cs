@@ -522,7 +522,13 @@ file class LocalDbContext(DbContextOptions<LocalDbContext> options) : DbContext(
     }
 }
 
-file class SearchConfigurer : ISearchConfigurations { }
+file class SearchConfigurer : ISearchConfigurations
+{
+    public ISearchConfigurations Add<TEntity>() where TEntity : class
+    {
+        throw new NotImplementedException();
+    }
+}
 
 file class ConfigurableEntity
 {

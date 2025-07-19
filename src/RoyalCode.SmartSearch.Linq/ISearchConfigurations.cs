@@ -125,5 +125,14 @@ public interface ISearchConfigurations
         SelectorsMap.Instance.Add(selector);
         return this;
     }
+
+    /// <summary>
+    /// Add a <see cref="ICriteria{TEntity}"/> for an entity as a service,
+    /// related to the current search configurations and unit of work.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type.</typeparam>
+    /// <returns>The same instance.</returns>
+    ISearchConfigurations Add<TEntity>()
+        where TEntity : class;
 }
 
