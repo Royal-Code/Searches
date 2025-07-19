@@ -1,6 +1,6 @@
-﻿using RoyalCode.SmartSearch.Linq.Filter;
-using RoyalCode.SmartSearch.Linq.Selector;
-using RoyalCode.SmartSearch.Linq.Sorter;
+﻿using RoyalCode.SmartSearch.Linq.Filtering;
+using RoyalCode.SmartSearch.Linq.Mappings;
+using RoyalCode.SmartSearch.Linq.Sortings;
 using System.Linq.Expressions;
 
 namespace RoyalCode.SmartSearch.Linq;
@@ -125,5 +125,14 @@ public interface ISearchConfigurations
         SelectorsMap.Instance.Add(selector);
         return this;
     }
+
+    /// <summary>
+    /// Add a <see cref="ICriteria{TEntity}"/> for an entity as a service,
+    /// related to the current search configurations and unit of work.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type.</typeparam>
+    /// <returns>The same instance.</returns>
+    ISearchConfigurations Add<TEntity>()
+        where TEntity : class;
 }
 

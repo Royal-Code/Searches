@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
@@ -25,15 +25,21 @@ public class ResultList<TModel> : IResultList<TModel>
     public int Pages { get; init; }
 
     /// <inheritdoc />
-    [JsonConverter(typeof(SortingsConverter))]
-    public IEnumerable<ISorting> Sortings { get; init; } = null!;
+    public int Skipped { get; init; }
 
     /// <inheritdoc />
-    public Dictionary<string, object> Projections { get; init; } = null!;
+    public int Taken { get; init; }
+
+    /// <inheritdoc />
+    [JsonConverter(typeof(SortingsConverter))]
+    public IReadOnlyList<ISorting> Sortings { get; init; } = null!;
+
+    /// <inheritdoc />
+    public Dictionary<string, object>? Projections { get; init; } = null!;
 
     /// <inheritdoc />
     public IReadOnlyList<TModel> Items { get; init; } = null!;
-
+    
     /// <inheritdoc />
     public virtual T GetProjection<T>(string name, T? defaultValue = default)
     {

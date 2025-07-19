@@ -1,5 +1,4 @@
 using FluentAssertions;
-using RoyalCode.SmartSearch.Abstractions;
 using System.ComponentModel;
 using System.Text.Json;
 

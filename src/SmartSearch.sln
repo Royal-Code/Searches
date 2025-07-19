@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Abstractions", "RoyalCode.SmartSearch.Abstractions\RoyalCode.SmartSearch.Abstractions.csproj", "{CF945035-3E2C-4D16-AD95-B41D422A42B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".items", ".items", "{45312F31-98C1-4E24-9BC9-0784C6378797}"
+	ProjectSection(SolutionItems) = preProject
+		base.targets = base.targets
+		Directory.Build.props = Directory.Build.props
+		icon.png = icon.png
+		..\.github\workflows\smart-search.yml = ..\.github\workflows\smart-search.yml
+		tests.targets = tests.targets
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Linq", "RoyalCode.SmartSearch.Linq\RoyalCode.SmartSearch.Linq.csproj", "{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Core", "RoyalCode.SmartSearch.Core\RoyalCode.SmartSearch.Core.csproj", "{DDAB919D-3519-4208-A2B1-DCE122228400}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.EntityFramework", "RoyalCode.SmartSearch.EntityFramework\RoyalCode.SmartSearch.EntityFramework.csproj", "{DEAF76E8-950F-4D38-B98B-9099C9F190ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{EB20012D-6B82-492A-A7C8-9B45D10C0364}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{932A3AFB-78D0-4A2D-BADD-54A9BC593B60}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Tests", "RoyalCode.SmartSearch.Tests\RoyalCode.SmartSearch.Tests.csproj", "{92A0A603-CFF6-498E-BED8-8D0D21561AC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyalCode.SmartSearch.AspNetCore", "RoyalCode.SmartSearch.AspNetCore\RoyalCode.SmartSearch.AspNetCore.csproj", "{BC54B3A6-736A-4459-9F33-1101013627F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF945035-3E2C-4D16-AD95-B41D422A42B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF945035-3E2C-4D16-AD95-B41D422A42B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF945035-3E2C-4D16-AD95-B41D422A42B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF945035-3E2C-4D16-AD95-B41D422A42B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDAB919D-3519-4208-A2B1-DCE122228400}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDAB919D-3519-4208-A2B1-DCE122228400}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDAB919D-3519-4208-A2B1-DCE122228400}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDAB919D-3519-4208-A2B1-DCE122228400}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEAF76E8-950F-4D38-B98B-9099C9F190ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEAF76E8-950F-4D38-B98B-9099C9F190ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEAF76E8-950F-4D38-B98B-9099C9F190ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEAF76E8-950F-4D38-B98B-9099C9F190ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92A0A603-CFF6-498E-BED8-8D0D21561AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC54B3A6-736A-4459-9F33-1101013627F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CF945035-3E2C-4D16-AD95-B41D422A42B5} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
+		{DBEBDD2C-37A5-4D17-9DB9-1ACD67749E13} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
+		{DDAB919D-3519-4208-A2B1-DCE122228400} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
+		{DEAF76E8-950F-4D38-B98B-9099C9F190ED} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
+		{92A0A603-CFF6-498E-BED8-8D0D21561AC2} = {932A3AFB-78D0-4A2D-BADD-54A9BC593B60}
+		{BC54B3A6-736A-4459-9F33-1101013627F6} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D75591B5-4D8A-4ECD-94CE-D38BBC572272}
+	EndGlobalSection
+EndGlobal

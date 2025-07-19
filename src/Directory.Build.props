@@ -5,10 +5,15 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<SearchesVer>0.8.0</SearchesVer>
-		<SearchesPreview>-preview-1</SearchesPreview>
+		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.2</DotNetCoreVersion>
 		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9'">9.0.5</DotNetCoreVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PropSelVer>1.0.2</PropSelVer>
+		<OpHintVer>1.0.0</OpHintVer>
+		<ProblemsVer>1.0.0-preview-4.3</ProblemsVer>
 	</PropertyGroup>
 </Project>

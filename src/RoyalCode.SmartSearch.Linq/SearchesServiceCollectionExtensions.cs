@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RoyalCode.SmartSearch.Linq.Filter;
-using RoyalCode.SmartSearch.Linq.Selector;
-using RoyalCode.SmartSearch.Linq.Sorter;
+using RoyalCode.SmartSearch.Linq.Filtering;
+using RoyalCode.SmartSearch.Linq.Mappings;
+using RoyalCode.SmartSearch.Linq.Services;
+using RoyalCode.SmartSearch.Linq.Sortings;
 
 namespace RoyalCode.SmartSearch.Linq;
 

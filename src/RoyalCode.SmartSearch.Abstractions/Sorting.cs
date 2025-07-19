@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text.Json;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>

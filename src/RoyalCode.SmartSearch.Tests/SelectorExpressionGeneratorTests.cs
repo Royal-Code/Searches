@@ -1,4 +1,4 @@
-﻿using RoyalCode.SmartSearch.Linq.Selector;
+﻿using RoyalCode.SmartSearch.Linq.Mappings;
 
 namespace RoyalCode.SmartSearch.Tests;
 

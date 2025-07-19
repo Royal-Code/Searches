@@ -1,16 +1,16 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
-internal sealed class SortingsConverter : JsonConverter<IEnumerable<ISorting>>
+internal sealed class SortingsConverter : JsonConverter<IReadOnlyList<ISorting>>
 {
-    public override IEnumerable<ISorting>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override IReadOnlyList<ISorting>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         return JsonSerializer.Deserialize<List<Sorting>>(ref reader, options);
     }
 
-    public override void Write(Utf8JsonWriter writer, IEnumerable<ISorting> value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, IReadOnlyList<ISorting> value, JsonSerializerOptions options)
     {
         JsonSerializer.Serialize(writer, value, options);
     }

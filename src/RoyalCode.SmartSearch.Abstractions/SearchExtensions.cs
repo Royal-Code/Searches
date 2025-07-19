@@ -1,56 +1,45 @@
 ﻿// Ignore Spelling: sortings
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
-///     Extensions methods for <see cref="ISearchOptions{TSearch}"/>, <see cref="ISearch{TEntity}"/>
+///     Extensions methods for <see cref="ICriteriaOptions{TSearch}"/>, <see cref="ISearch{TEntity}"/>
 ///     and <see cref="ISearch{TEntity, TDto}"/>.
 /// </para>
 /// </summary>
 public static class SearchExtensions
 {
     /// <summary>
-    /// Applies the <see cref="SearchOptions"/> to the <see cref="ISearchOptions{TSearch}"/>.
+    /// Applies the <see cref="SearchOptions"/> to the <see cref="ICriteriaOptions{TSearch}"/>.
     /// </summary>
     /// <typeparam name="T">The search object type.</typeparam>
-    /// <param name="search">The search.</param>
+    /// <param name="criteria">The criteria.</param>
     /// <param name="options">The options.</param>
     /// <returns>The search with the options applied.</returns>
-    public static ISearch<T> WithOptions<T>(this ISearch<T> search, SearchOptions options)
+    public static ICriteria<T> WithOptions<T>(this ICriteria<T> criteria, SearchOptions options)
         where T : class
     {
         if (options.ItemsPerPage.HasValue)
-            search = search.UsePages(options.ItemsPerPage.Value);
+            criteria = criteria.UsePages(options.ItemsPerPage.Value);
 
         if (options.Page.HasValue)
-            search = search.FetchPage(options.Page.Value);
+            criteria = criteria.FetchPage(options.Page.Value);
 
         if (options.LastCount.HasValue)
-            search = search.UseLastCount(options.LastCount.Value);
+            criteria = criteria.UseLastCount(options.LastCount.Value);
 
         if (options.Count.HasValue)
-            search = search.UseCount(options.Count.Value);
+            criteria = criteria.UseCount(options.Count.Value);
 
-        OrderBy(search, options.Sortings);
+        if (options.Skip.HasValue)
+            criteria = criteria.Skip(options.Skip.Value);
 
-        return search;
-    }
+        if (options.Take.HasValue)
+            criteria = criteria.Take(options.Take.Value);
 
-    /// <summary>
-    /// Applies a set of sorting to the search.
-    /// </summary>
-    /// <typeparam name="T">The search object type.</typeparam>
-    /// <param name="search">The search.</param>
-    /// <param name="sortings">The sortings.</param>
-    /// <returns>The search with the sortings applied.</returns>
-    public static ISearch<T> OrderBy<T>(this ISearch<T> search, ISorting[]? sortings)
-        where T : class
-    {
-        if (sortings is not null)
-            foreach (var sorting in sortings)
-                search.OrderBy(sorting);
+        criteria.OrderBy(options.Sortings);
 
-        return search;
+        return criteria;
     }
 }

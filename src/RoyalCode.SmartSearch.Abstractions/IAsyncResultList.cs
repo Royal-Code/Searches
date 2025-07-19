@@ -1,4 +1,4 @@
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// Component interface for async listing the result of a search.

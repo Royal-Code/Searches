@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace RoyalCode.SmartSearch.Abstractions;
+namespace RoyalCode.SmartSearch;
 
 /// <summary>
 /// <para>
@@ -34,15 +34,25 @@ public interface IResultList
     int Pages { get; }
 
     /// <summary>
+    /// Number of items skipped in the result set.
+    /// </summary>
+    int Skipped { get; }
+
+    /// <summary>
+    /// Number of items taken from the result set.
+    /// </summary>
+    int Taken { get; }
+
+    /// <summary>
     /// The sort objects applied to the search.
     /// </summary>
     [JsonConverter(typeof(SortingsConverter))]
-    IEnumerable<ISorting> Sortings { get; }
+    IReadOnlyList<ISorting> Sortings { get; }
 
     /// <summary>
     /// Projections carried out during the research.
     /// </summary>
-    Dictionary<string, object> Projections { get; }
+    Dictionary<string, object>? Projections { get; }
 }
 
 /// <summary>

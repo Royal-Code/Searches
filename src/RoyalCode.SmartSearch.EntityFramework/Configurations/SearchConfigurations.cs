@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using RoyalCode.SmartSearch.Abstractions;
-using RoyalCode.SmartSearch.EntityFramework.Internals;
+using RoyalCode.SmartSearch.EntityFramework.Services;
 using RoyalCode.SmartSearch.Linq;
 
 namespace RoyalCode.SmartSearch.EntityFramework.Configurations;
@@ -20,43 +18,28 @@ public sealed class SearchConfigurations<TDbContext> : ISearchConfigurations<TDb
     public SearchConfigurations(IServiceCollection services)
     {
         this.services = services;
-
-        services.AddSmartSearchLinq();
-        services.TryAddTransient<IPipelineFactory<TDbContext>, PipelineFactory<TDbContext>>();
-        services.TryAddTransient<ISearchManager<TDbContext>, SearchManager<TDbContext>>();
     }
 
     /// <inheritdoc />
-    public ISearchConfigurations<TDbContext> Add<TEntity>() where TEntity : class
+    public ISearchConfigurations Add<TEntity>() 
+        where TEntity : class
     {
-        // add search as a service for the respective context
-        var searchType = typeof(ISearch<>).MakeGenericType(typeof(TEntity));
-        var dbSearchType = typeof(Internals.ISearch<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
-        var searchImplType = typeof(InternalSearch<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
+        // add criteria as a service for the respective context
+        var serviceType = typeof(ICriteria<>).MakeGenericType(typeof(TEntity));
+        var implType = typeof(InternalCriteria<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
 
         services.Add(ServiceDescriptor.Describe(
-            dbSearchType,
-            searchImplType,
+            serviceType,
+            implType,
             ServiceLifetime.Transient));
 
-        services.Add(ServiceDescriptor.Describe(
-            searchType,
-            sp => sp.GetService(dbSearchType)!,
-            ServiceLifetime.Transient));
-
-        // add all entities as a service for the respective context
-        var allType = typeof(IAllEntities<>).MakeGenericType(typeof(TEntity));
-        var dbAllType = typeof(IAllEntities<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
-        var allImplType = typeof(InternalAllEntities<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
+        // add criteria performer as a service for the respective context
+        serviceType = typeof(ICriteriaPerformer<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
+        implType = typeof(CriteriaPerformer<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
 
         services.Add(ServiceDescriptor.Describe(
-            dbAllType,
-            allImplType,
-            ServiceLifetime.Transient));
-
-        services.Add(ServiceDescriptor.Describe(
-            allType,
-            sp => sp.GetService(dbAllType)!,
+            serviceType,
+            implType,
             ServiceLifetime.Transient));
 
         return this;
