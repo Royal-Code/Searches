@@ -4,16 +4,16 @@ using System.Net.Mime;
 namespace RoyalCode.SmartSearch.AspNetCore.HttpResults;
 
 /// <summary>
-/// Metadados de resposta para endpoints HTTP, utilizados para documentação e geração de OpenAPI/Swagger.
+/// Response metadata for HTTP endpoints, used for documentation and OpenAPI/Swagger generation.
 /// </summary>
 internal sealed class ResponseTypeMetadata : IProducesResponseTypeMetadata
 {
     /// <summary>
-    /// Inicializa uma nova instância de <see cref="ResponseTypeMetadata"/> com tipo de retorno, status e tipos de conteúdo.
+    /// Initializes a new instance of <see cref="ResponseTypeMetadata"/> with return type, status code, and content types.
     /// </summary>
-    /// <param name="type">Tipo do objeto retornado.</param>
-    /// <param name="statusCode">Código de status HTTP.</param>
-    /// <param name="contentTypes">Tipos de conteúdo suportados (ex: application/json).</param>
+    /// <param name="type">Type of the returned object.</param>
+    /// <param name="statusCode">HTTP status code.</param>
+    /// <param name="contentTypes">Supported content types (e.g., application/json).</param>
     public ResponseTypeMetadata(Type? type, int statusCode, params string[]? contentTypes)
     {
         Type = type;
@@ -21,25 +21,25 @@ internal sealed class ResponseTypeMetadata : IProducesResponseTypeMetadata
         ContentTypes = contentTypes ?? [MediaTypeNames.Application.Json];
     }
     /// <summary>
-    /// Inicializa uma nova instância de <see cref="ResponseTypeMetadata"/> apenas com status e tipos de conteúdo.
+    /// Initializes a new instance of <see cref="ResponseTypeMetadata"/> with status code and content types only.
     /// </summary>
-    /// <param name="statusCode">Código de status HTTP.</param>
-    /// <param name="contentTypes">Tipos de conteúdo suportados (ex: application/json).</param>
+    /// <param name="statusCode">HTTP status code.</param>
+    /// <param name="contentTypes">Supported content types (e.g., application/json).</param>
     public ResponseTypeMetadata(int statusCode, params string[]? contentTypes)
     {
         StatusCode = statusCode;
         ContentTypes = contentTypes ?? [MediaTypeNames.Application.Json];
     }
     /// <summary>
-    /// Tipo do objeto retornado na resposta HTTP.
+    /// Type of the object returned in the HTTP response.
     /// </summary>
     public Type? Type { get; }
     /// <summary>
-    /// Código de status HTTP da resposta.
+    /// HTTP status code of the response.
     /// </summary>
     public int StatusCode { get; }
     /// <summary>
-    /// Tipos de conteúdo suportados pela resposta.
+    /// Supported content types for the response.
     /// </summary>
     public IEnumerable<string> ContentTypes { get; }
 }

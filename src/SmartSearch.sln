@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".items", ".items", "{45312F
 		base.targets = base.targets
 		Directory.Build.props = Directory.Build.props
 		icon.png = icon.png
+		README.md = README.md
 		..\.github\workflows\smart-search.yml = ..\.github\workflows\smart-search.yml
 		tests.targets = tests.targets
 	EndProjectSection

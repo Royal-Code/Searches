@@ -5,6 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Routing;
 
+/// <summary>
+/// Extension methods for mapping search endpoints in ASP.NET Core.
+/// </summary>
 public static class SearchExtensions
 {
     #region MapSearch
