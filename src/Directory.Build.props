@@ -1,15 +1,15 @@
 <Project>
 	<PropertyGroup>
-		<LibTargets>net8;net9</LibTargets>
-		<AspTargets>net8;net9</AspTargets>
+		<LibTargets>net8.0;net9.0;</LibTargets>
+		<AspTargets>net8.0;net9.0;</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>0.8.0</SearchesVer>
+		<SearchesVer>0.8.1</SearchesVer>
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8'">8.0.0</DotNetCoreVersion>
-		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9'">9.0.0</DotNetCoreVersion>
+		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net8.0'">8.0.0</DotNetCoreVersion>
+		<DotNetCoreVersion Condition="'$(TargetFramework)' == 'net9.0'">9.0.0</DotNetCoreVersion>
 	</PropertyGroup>
 	<PropertyGroup>
 		<PropSelVer>1.0.2</PropSelVer>
