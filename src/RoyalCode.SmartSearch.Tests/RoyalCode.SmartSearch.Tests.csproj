@@ -3,6 +3,7 @@
 	<Import Project="..\tests.targets" />
 
 	<ItemGroup>
+		<PackageReference Include="Bogus" Version="35.6.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(DotNetCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(DotNetCoreVersion)" />
 	</ItemGroup>

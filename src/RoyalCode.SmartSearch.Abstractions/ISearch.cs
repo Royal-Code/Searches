@@ -50,14 +50,14 @@ public interface ISearch<TEntity>
     /// </summary>
     /// <param name="token">The task cancellation token.</param>
     /// <returns>A task to wait for the list of results.</returns>
-    Task<IResultList<TEntity>> ToListAsync(CancellationToken token);
+    Task<IResultList<TEntity>> ToListAsync(CancellationToken token = default);
 
     /// <summary>
     /// Creates a result list that will return the searched entities asynchronously.
     /// </summary>
     /// <param name="token">The task cancellation token.</param>
     /// <returns>A task to wait for the async list of results.</returns>
-    Task<IAsyncResultList<TEntity>> ToAsyncListAsync(CancellationToken token);
+    Task<IAsyncResultList<TEntity>> ToAsyncListAsync(CancellationToken token = default);
 
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria.
@@ -124,14 +124,14 @@ public interface ISearch<TEntity, TDto>
     /// </summary>
     /// <param name="token">The task cancellation token.</param>
     /// <returns>A task to wait for the list of results.</returns>
-    Task<IResultList<TDto>> ToListAsync(CancellationToken token);
+    Task<IResultList<TDto>> ToListAsync(CancellationToken token = default);
 
     /// <summary>
     /// Creates a result list that will return the searched entities asynchronously.
     /// </summary>
     /// <param name="token">The task cancellation token.</param>
     /// <returns>A task to wait for the async list of results.</returns>
-    Task<IAsyncResultList<TDto>> ToAsyncListAsync(CancellationToken token);
+    Task<IAsyncResultList<TDto>> ToAsyncListAsync(CancellationToken token = default);
 
     /// <summary>
     /// Apply the filters and sorting and get the first entity that meets the criteria.

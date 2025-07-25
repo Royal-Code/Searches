@@ -47,11 +47,11 @@ public class Search<TEntity> : ISearch<TEntity>
     public IResultList<TEntity> ToList() => performer.Prepare(options).ToResultList();
 
     /// <inheritdoc />
-    public Task<IResultList<TEntity>> ToListAsync(CancellationToken token)
+    public Task<IResultList<TEntity>> ToListAsync(CancellationToken token = default)
         => performer.Prepare(options).ToResultListAsync(token);
 
     /// <inheritdoc />
-    public Task<IAsyncResultList<TEntity>> ToAsyncListAsync(CancellationToken token)
+    public Task<IAsyncResultList<TEntity>> ToAsyncListAsync(CancellationToken token = default)
         => performer.Prepare(options).ToAsyncListAsync(token);
 
     /// <inheritdoc />
@@ -92,11 +92,11 @@ public class Search<TEntity, TDto> : ISearch<TEntity, TDto>
     public IResultList<TDto> ToList() => performer.Prepare(options).Select(searchSelect).ToResultList();
 
     /// <inheritdoc />
-    public Task<IResultList<TDto>> ToListAsync(CancellationToken token)
+    public Task<IResultList<TDto>> ToListAsync(CancellationToken token = default)
         => performer.Prepare(options).Select(searchSelect).ToResultListAsync(token);
 
     /// <inheritdoc />
-    public Task<IAsyncResultList<TDto>> ToAsyncListAsync(CancellationToken token)
+    public Task<IAsyncResultList<TDto>> ToAsyncListAsync(CancellationToken token = default)
         => performer.Prepare(options).Select(searchSelect).ToAsyncListAsync(token);
 
     /// <inheritdoc />

@@ -139,4 +139,16 @@ public sealed class SearchOptions
         Page = resultList.Page;
         return this;
     }
+
+    /// <summary>
+    /// Ensures that the search options are not empty.
+    /// </summary>
+    public void AvoidEmpty()
+    {
+        if (Page is null && ItemsPerPage is null && Skip is null && Take is null)
+        {
+            Page = 1;
+            ItemsPerPage = 10;
+        }
+    }
 }
