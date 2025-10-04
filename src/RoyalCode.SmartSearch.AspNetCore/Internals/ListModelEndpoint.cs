@@ -40,7 +40,7 @@ public class ListModelEndpoint<TEntity, TDto, TFilter>
     public async Task<MatchList<TDto>> List(
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try
@@ -111,7 +111,7 @@ public class ListModelEndpoint<TEntity, TDto, TFilter, TId>
         [FromRoute] TId id,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try
@@ -185,7 +185,7 @@ public class ListModelEndpoint<TEntity, TDto, TFilter, TId1, TId2>
         [FromRoute] TId2 relatedId,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try

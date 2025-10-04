@@ -42,7 +42,7 @@ public class SearchModelEndpoint<TEntity, TDto, TFilter>
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> criteria,
+        [FromServices] ICriteria<TEntity> criteria,
         CancellationToken ct)
     {
         try
@@ -119,7 +119,7 @@ public class SearchModelEndpoint<TEntity, TDto, TFilter, TId>
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> criteria,
+        [FromServices] ICriteria<TEntity> criteria,
         CancellationToken ct)
     {
         try
@@ -198,7 +198,7 @@ public class SearchModelEndpoint<TEntity, TDto, TFilter, TId1, TId2>
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try

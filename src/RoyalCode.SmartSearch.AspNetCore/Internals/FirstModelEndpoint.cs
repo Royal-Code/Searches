@@ -40,7 +40,7 @@ public class FirstModelEndpoint<TEntity, TDto, TFilter>
     public async Task<MatchFirst<TDto>> First(
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try
@@ -112,7 +112,7 @@ public class FirstModelEndpoint<TEntity, TDto, TFilter, TId>
         [FromRoute] TId id,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try
@@ -187,7 +187,7 @@ public class FirstModelEndpoint<TEntity, TDto, TFilter, TId1, TId2>
         [FromRoute] TId2 relatedId,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try
@@ -265,7 +265,7 @@ public class FirstModelEndpoint<TEntity, TDto, TFilter, TId1, TId2, TId3>
         [FromRoute] TId3 subRelatedId,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> searchable,
         CancellationToken ct)
     {
         try
