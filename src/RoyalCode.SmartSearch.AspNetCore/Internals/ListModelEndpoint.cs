@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RoyalCode.SmartProblems;
 using RoyalCode.SmartSearch.AspNetCore.HttpResults;
-using RoyalCode.SmartSearch.Exceptions;
 
 namespace RoyalCode.SmartSearch.AspNetCore.Internals;
 
@@ -33,44 +33,25 @@ public class ListModelEndpoint<TEntity, TDto, TFilter>
     /// </summary>
     /// <param name="filtro">A filter object with search criteria.</param>
     /// <param name="orderby">Ordering criteria.</param>
-    /// <param name="searchable">A search service for the entity.</param>
+    /// <param name="criteria">A search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>HTTP 200 result with list, 204 if empty, or 400 on sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchList<TDto>> List(
+    public Task<MatchList<TDto>> List(
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        [FromServices] ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .OrderBy(orderby)
-                .FilterBy(filtro);
-
-            if (listAction is not null)
-                listAction(search);
-
-            var select = search.Select<TDto>();
-            var result = await select.ToListAsync(ct);
-
-            if (result.Count == 0)
-                return TypedResults.NoContent();
-
-            return TypedResults.Ok(result.Items);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.ListAsync<TEntity, TDto, TFilter>(
+            filtro,
+            orderby,
+            criteria,
+            listAction,
+            logger,
+            ct);
     }
 }
 
@@ -103,45 +84,30 @@ public class ListModelEndpoint<TEntity, TDto, TFilter, TId>
     /// <param name="id">The additional identifier for the list.</param>
     /// <param name="filtro">A filter object with search criteria.</param>
     /// <param name="orderby">Ordering criteria.</param>
-    /// <param name="searchable">A search service for the entity.</param>
+    /// <param name="criteria">A search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>HTTP 200 result with list, 204 if empty, or 400 on sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchList<TDto>> List(
+    public Task<MatchList<TDto>> List(
         [FromRoute] TId id,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        [FromServices] ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .OrderBy(orderby)
-                .FilterBy(filtro);
+        Action<ICriteria<TEntity>>? action = null;
+        if (listAction is not null)
+            action = c => listAction(id, c);
 
-            if (listAction is not null)
-                listAction(id, search);
-
-            var select = search.Select<TDto>();
-            var result = await select.ToListAsync(ct);
-
-            if (result.Count == 0)
-                return TypedResults.NoContent();
-
-            return TypedResults.Ok(result.Items);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.ListAsync<TEntity, TDto, TFilter>(
+            filtro,
+            orderby,
+            criteria,
+            action,
+            logger,
+            ct);
     }
 }
 
@@ -176,45 +142,30 @@ public class ListModelEndpoint<TEntity, TDto, TFilter, TId1, TId2>
     /// <param name="relatedId">The second additional identifier for the list.</param>
     /// <param name="filtro">A filter object with search criteria.</param>
     /// <param name="orderby">Ordering criteria.</param>
-    /// <param name="searchable">A search service for the entity.</param>
+    /// <param name="criteria">A search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>HTTP 200 result with list, 204 if empty, or 400 on sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchList<TDto>> List(
+    public Task<MatchList<TDto>> List(
         [FromRoute] TId1 id,
         [FromRoute] TId2 relatedId,
         [AsParameters] TFilter filtro,
         [FromQuery] Sorting[]? orderby,
-        [FromServices] ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .OrderBy(orderby)
-                .FilterBy(filtro);
+        Action<ICriteria<TEntity>>? action = null;
+        if (listAction is not null)
+            action = c => listAction(id, relatedId, c);
 
-            if (listAction is not null)
-                listAction(id, relatedId, search);
-
-            var select = search.Select<TDto>();
-            var result = await select.ToListAsync(ct);
-
-            if (result.Count == 0)
-                return TypedResults.NoContent();
-
-            return TypedResults.Ok(result.Items);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.ListAsync<TEntity, TDto, TFilter>(
+            filtro,
+            orderby,
+            criteria,
+            action,
+            logger,
+            ct);
     }
 }

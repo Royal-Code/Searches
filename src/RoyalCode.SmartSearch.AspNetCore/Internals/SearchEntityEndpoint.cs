@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RoyalCode.SmartProblems;
 using RoyalCode.SmartSearch.AspNetCore.HttpResults;
-using RoyalCode.SmartSearch.Exceptions;
 
 namespace RoyalCode.SmartSearch.AspNetCore.Internals;
 
@@ -32,47 +32,27 @@ public class SearchEntityEndpoint<TEntity, TFilter>
     /// <param name="filtro">Filter object with search criteria.</param>
     /// <param name="options">Pagination and counting parameters.</param>
     /// <param name="orderby">Sorting criteria.</param>
-    /// <param name="searchable">Search service for the entity.</param>
+    /// <param name="criteria">Search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>HTTP 200 result with paginated list, 204 if empty, or 400 on sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchSearch<TEntity>> Search(
+    public Task<MatchSearch<TEntity>> Search(
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        [FromServices]  ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .WithOptions(options)
-                .OrderBy(orderby)
-                .FilterBy(filtro);
-
-            if (searchAction != null)
-                searchAction(search);
-
-            var result = await search.AsSearch().ToListAsync(ct);
-
-            if (result.Count == 0)
-            {
-                return TypedResults.NoContent();
-            }
-
-            return TypedResults.Ok(result);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.SearchAsync(
+            filtro,
+            options,
+            orderby,
+            criteria,
+            searchAction,
+            logger,
+            ct);
     }
 }
 
@@ -104,48 +84,32 @@ public class SearchEntityEndpoint<TEntity, TFilter, TId>
     /// <param name="filtro">Filter object with search criteria.</param>
     /// <param name="options">Pagination and counting parameters.</param>
     /// <param name="orderby">Sorting criteria.</param>
-    /// <param name="searchable">Search service for the entity.</param>
+    /// <param name="criteria">Search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>HTTP 200 result with paginated list, 204 if empty, or 400 on sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchSearch<TEntity>> Search(
-        TId id,
+    public Task<MatchSearch<TEntity>> Search(
+        [FromRoute] TId id,
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        [FromServices] ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .WithOptions(options)
-                .OrderBy(orderby)
-                .FilterBy(filtro);
+        Action<ICriteria<TEntity>>? action = null;
+        if (searchAction is not null)
+            action = c => searchAction(id, c);
 
-            if (searchAction != null)
-                searchAction(id, search);
-
-            var result = await search.AsSearch().ToListAsync(ct);
-
-            if (result.Count == 0)
-            {
-                return TypedResults.NoContent();
-            }
-
-            return TypedResults.Ok(result);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.SearchAsync(
+            filtro,
+            options,
+            orderby,
+            criteria,
+            action,
+            logger,
+            ct);
     }
 }
 
@@ -179,48 +143,32 @@ public class SearchEntityEndpoint<TEntity, TFilter, TId1, TId2>
     /// <param name="filtro">Filter object with search criteria.</param>
     /// <param name="options">Pagination and counting parameters.</param>
     /// <param name="orderby">Sorting criteria.</param>
-    /// <param name="searchable">Search service for the entity.</param>
+    /// <param name="criteria">Search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>HTTP 200 result with paginated list, 204 if empty, or 400 on sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchSearch<TEntity>> Search(
-        TId1 id,
-        TId2 relatedId,
+    public Task<MatchSearch<TEntity>> Search(
+        [FromRoute] TId1 id,
+        [FromRoute] TId2 relatedId,
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        [FromServices] ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .WithOptions(options)
-                .OrderBy(orderby)
-                .FilterBy(filtro);
+        Action<ICriteria<TEntity>>? action = null;
+        if (searchAction is not null)
+            action = c => searchAction(id, relatedId, c);
 
-            if (searchAction != null)
-                searchAction(id, relatedId, search);
-
-            var result = await search.AsSearch().ToListAsync(ct);
-
-            if (result.Count == 0)
-            {
-                return TypedResults.NoContent();
-            }
-
-            return TypedResults.Ok(result);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.SearchAsync(
+            filtro,
+            options,
+            orderby,
+            criteria,
+            action,
+            logger,
+            ct);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RoyalCode.SmartProblems;
 using RoyalCode.SmartSearch.AspNetCore.HttpResults;
-using RoyalCode.SmartSearch.Exceptions;
 
 namespace RoyalCode.SmartSearch.AspNetCore.Internals;
 
@@ -35,48 +35,26 @@ public class SearchModelEndpoint<TEntity, TDto, TFilter>
     /// <param name="options">Paging and counting parameters.</param>
     /// <param name="orderby">Sorting criteria.</param>
     /// <param name="criteria">Search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>HTTP result 200 with paginated list, 204 if empty, or 400 in sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchSearch<TDto>> Search(
+    public Task<MatchSearch<TDto>> Search(
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
         [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = criteria
-                .WithOptions(options)
-                .OrderBy(orderby)
-                .FilterBy(filtro);
-
-            if (searchAction is not null)
-                searchAction(search);
-
-            var select = search.Select<TDto>();
-
-            var result = await select.ToListAsync(ct);
-
-            if (result.Count == 0)
-            {
-                return TypedResults.NoContent();
-            }
-
-            return TypedResults.Ok(result);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.SearchAsync<TEntity, TDto, TFilter>(
+            filtro,
+            options,
+            orderby,
+            criteria,
+            searchAction,
+            logger,
+            ct);
     }
 }
 
@@ -111,48 +89,29 @@ public class SearchModelEndpoint<TEntity, TDto, TFilter, TId>
     /// <param name="options">Paging and counting parameters.</param>
     /// <param name="orderby">Sorting criteria.</param>
     /// <param name="criteria">Search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>HTTP result 200 with paginated list, 204 if empty, or 400 in sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchSearch<TDto>> Search(
+    public Task<MatchSearch<TDto>> Search(
         [FromRoute] TId id,
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
         [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = criteria
-                .WithOptions(options)
-                .OrderBy(orderby)
-                .FilterBy(filtro);
+        Action<ICriteria<TEntity>> action = c => searchAction(id, c);
 
-            searchAction(id, search);
-
-            var select = search.Select<TDto>();
-
-            var result = await select.ToListAsync(ct);
-
-            if (result.Count == 0)
-            {
-                return TypedResults.NoContent();
-            }
-
-            return TypedResults.Ok(result);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.SearchAsync<TEntity, TDto, TFilter>(
+            filtro,
+            options,
+            orderby,
+            criteria,
+            action,
+            logger,
+            ct);
     }
 }
 
@@ -188,49 +147,30 @@ public class SearchModelEndpoint<TEntity, TDto, TFilter, TId1, TId2>
     /// <param name="filtro">Filter object with search criteria.</param>
     /// <param name="options">Paging and counting parameters.</param>
     /// <param name="orderby">Sorting criteria.</param>
-    /// <param name="searchable">Search service for the entity.</param>
+    /// <param name="criteria">Search service for the entity.</param>
+    /// <param name="logger">Logger for logging errors.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>HTTP result 200 with paginated list, 204 if empty, or 400 in sorting error.</returns>
     [ProduceProblems(ProblemCategory.InvalidParameter, ProblemCategory.InternalServerError)]
-    public async Task<MatchSearch<TDto>> Search(
+    public Task<MatchSearch<TDto>> Search(
         [FromRoute] TId1 id,
         [FromRoute] TId2 relatedId,
         [AsParameters] TFilter filtro,
         [AsParameters] SearchOptions options,
         [FromQuery] Sorting[]? orderby,
-        [FromServices] ICriteria<TEntity> searchable,
+        [FromServices] ICriteria<TEntity> criteria,
+        [FromServices] ILogger<ICriteria<TEntity>>? logger,
         CancellationToken ct)
     {
-        try
-        {
-            var search = searchable
-                .WithOptions(options)
-                .OrderBy(orderby)
-                .FilterBy(filtro);
+        Action<ICriteria<TEntity>> action = c => searchAction(id, relatedId, c);
 
-            searchAction(id, relatedId, search);
-
-            var select = search.Select<TDto>();
-
-            var result = await select.ToListAsync(ct);
-
-            if (result.Count == 0)
-            {
-                return TypedResults.NoContent();
-            }
-
-            return TypedResults.Ok(result);
-        }
-        catch (OrderByException obex)
-        {
-            return Problems.InvalidParameter(obex.Message, nameof(orderby))
-                .With("propertyName", obex.PropertyName)
-                .With("typeName", obex.TypeName)
-                .With("orderby", orderby);
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
+        return Performer.SearchAsync<TEntity, TDto, TFilter>(
+            filtro,
+            options,
+            orderby,
+            criteria,
+            action,
+            logger,
+            ct);
     }
 }
