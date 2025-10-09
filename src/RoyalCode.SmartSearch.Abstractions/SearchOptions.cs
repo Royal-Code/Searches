@@ -76,7 +76,7 @@ public sealed class SearchOptions
     /// <summary>
     /// The order by instructions for the search.
     /// </summary>
-    public Sorting[]? Sortings
+    internal Sorting[]? Sortings
     {
         get => sortings?.ToArray() ?? null;
         set => sortings = value?.ToList();
