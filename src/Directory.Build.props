@@ -4,7 +4,7 @@
 		<AspTargets>net8.0;net9.0;</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>0.8.5</SearchesVer>
+		<SearchesVer>0.8.6</SearchesVer>
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -14,6 +14,6 @@
 	<PropertyGroup>
 		<PropSelVer>1.0.2</PropSelVer>
 		<OpHintVer>1.0.0</OpHintVer>
-		<ProblemsVer>1.0.0-preview-4.8</ProblemsVer>
+		<ProblemsVer>1.0.0-preview-4.9</ProblemsVer>
 	</PropertyGroup>
 </Project>

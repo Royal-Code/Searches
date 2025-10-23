@@ -100,6 +100,70 @@ public class Performer
 
     /// <summary>
     /// <para>
+    ///     Asynchronously retrieves the first entity that matches the specified filter and sorting criteria,
+    ///     allowing an asynchronous configuration delegate.
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    ///     If the sorting criteria are invalid, the method returns a problem result.
+    ///     If an unexpected error occurs, an internal error problem result is returned.
+    /// </remarks>
+    /// <typeparam name="TEntity">The entity type to be queried.</typeparam>
+    /// <typeparam name="TFilter">The filter type to be applied.</typeparam>
+    /// <param name="filtro">Filter object with criteria.</param>
+    /// <param name="orderby">Sorting array or null.</param>
+    /// <param name="criteria">Criteria component.</param>
+    /// <param name="configure">Async configuration delegate applied before execution.</param>
+    /// <param name="logger">Optional logger.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>First entity, NoContent, or Problem result.</returns>
+    public static async Task<MatchFirst<TEntity>> FirstAsync<TEntity, TFilter>(
+        TFilter filtro,
+        Sorting[]? orderby,
+        ICriteria<TEntity> criteria,
+        Func<ICriteria<TEntity>, Task>? configure,
+        ILogger? logger,
+        CancellationToken ct)
+        where TEntity : class
+        where TFilter : class
+    {
+        try
+        {
+            var search = criteria
+                .OrderBy(orderby)
+                .FilterBy(filtro);
+
+            if (configure is not null)
+                await configure(search);
+
+            var entity = await search.FirstOrDefaultAsync(ct);
+
+            if (entity is null)
+            {
+                return TypedResults.NoContent();
+            }
+
+            return entity;
+        }
+        catch (OrderByException obex)
+        {
+            return Problems.InvalidParameter(obex.Message, nameof(orderby))
+                .With("propertyName", obex.PropertyName)
+                .With("typeName", obex.TypeName)
+                .With("orderby", orderby);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex,
+                "An error occurred while executing the query for the first entity of type {EntityType} with filter of type {FilterType}.",
+                typeof(TEntity).Name, typeof(TFilter).Name);
+
+            return Problems.InternalError(ex);
+        }
+    }
+
+    /// <summary>
+    /// <para>
     ///     Asynchronously retrieves the first entity matching the specified filter and sorting criteria,
     ///     projecting it to the specified DTO type.
     /// </para>
@@ -155,6 +219,71 @@ public class Performer
 
             if (configure is not null)
                 configure(search);
+
+            var dto = await search.Select<TDto>().FirstOrDefaultAsync(ct);
+
+            if (dto is null)
+            {
+                return TypedResults.NoContent();
+            }
+
+            return dto;
+        }
+        catch (OrderByException obex)
+        {
+            return Problems.InvalidParameter(obex.Message, nameof(orderby))
+                .With("propertyName", obex.PropertyName)
+                .With("typeName", obex.TypeName)
+                .With("orderby", orderby);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex,
+                "An error occurred while executing the query for the first entity of type {EntityType} with filter of type {FilterType}.",
+                typeof(TEntity).Name, typeof(TFilter).Name);
+
+            return Problems.InternalError(ex);
+        }
+    }
+
+    /// <summary>
+    /// <para>
+    ///     Asynchronously retrieves the first DTO matching the specified filter and sorting criteria,
+    ///     allowing an asynchronous configuration delegate.
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    ///     If no item matches, 204 is returned. Invalid sorting produces a problem result.
+    /// </remarks>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TDto">DTO type.</typeparam>
+    /// <typeparam name="TFilter">Filter type.</typeparam>
+    /// <param name="filtro">Filter object.</param>
+    /// <param name="orderby">Sorting array or null.</param>
+    /// <param name="searchable">Criteria component.</param>
+    /// <param name="configure">Async configuration delegate applied before projection/execution.</param>
+    /// <param name="logger">Optional logger.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>First DTO, NoContent, or Problem result.</returns>
+    public static async Task<MatchFirst<TDto>> FirstAsync<TEntity, TDto, TFilter>(
+        [AsParameters] TFilter filtro,
+        [FromQuery] Sorting[]? orderby,
+        [FromServices] ICriteria<TEntity> searchable,
+        Func<ICriteria<TEntity>, Task>? configure,
+        ILogger? logger,
+        CancellationToken ct)
+        where TEntity : class
+        where TDto : class
+        where TFilter : class
+    {
+        try
+        {
+            var search = searchable
+                .OrderBy(orderby)
+                .FilterBy(filtro);
+
+            if (configure is not null)
+                await configure(search);
 
             var dto = await search.Select<TDto>().FirstOrDefaultAsync(ct);
 
@@ -242,6 +371,63 @@ public class Performer
 
     /// <summary>
     /// <para>
+    ///     Asynchronously retrieves a list of entities that match the specified filter and sorting criteria,
+    ///     allowing an asynchronous configuration delegate.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TFilter">Filter type.</typeparam>
+    /// <param name="filtro">Filter object.</param>
+    /// <param name="orderby">Sorting array or null.</param>
+    /// <param name="criteria">Criteria component.</param>
+    /// <param name="configure">Async configuration delegate executed prior to list retrieval.</param>
+    /// <param name="logger">Optional logger.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Ok with list, NoContent, or Problem result.</returns>
+    public static async Task<MatchList<TEntity>> ListAsync<TEntity, TFilter>(
+        TFilter filtro,
+        Sorting[]? orderby,
+        ICriteria<TEntity> criteria,
+        Func<ICriteria<TEntity>, Task>? configure,
+        ILogger? logger,
+        CancellationToken ct)
+        where TEntity : class
+        where TFilter : class
+    {
+        try
+        {
+            var search = criteria
+                .OrderBy(orderby)
+                .FilterBy(filtro);
+
+            if (configure is not null)
+                await configure(search);
+
+            var result = await search.AsSearch().ToListAsync(ct);
+
+            if (result.Count == 0)
+                return TypedResults.NoContent();
+
+            return TypedResults.Ok(result.Items);
+        }
+        catch (OrderByException obex)
+        {
+            return Problems.InvalidParameter(obex.Message, nameof(orderby))
+                .With("propertyName", obex.PropertyName)
+                .With("typeName", obex.TypeName)
+                .With("orderby", orderby);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex,
+                "An error occurred while listing entities of type {EntityType} with filter of type {FilterType}.",
+                typeof(TEntity).Name, typeof(TFilter).Name);
+            return Problems.InternalError(ex);
+        }
+    }
+
+    /// <summary>
+    /// <para>
     ///     Asynchronously retrieves a list of DTOs (projection) that match the specified filter and sorting criteria.
     /// </para>
     /// </summary>
@@ -276,6 +462,66 @@ public class Performer
                 .FilterBy(filtro);
 
             configure?.Invoke(search);
+
+            var select = search.Select<TDto>();
+            var result = await select.ToListAsync(ct);
+
+            if (result.Count == 0)
+                return TypedResults.NoContent();
+
+            return TypedResults.Ok(result.Items);
+        }
+        catch (OrderByException obex)
+        {
+            return Problems.InvalidParameter(obex.Message, nameof(orderby))
+                .With("propertyName", obex.PropertyName)
+                .With("typeName", obex.TypeName)
+                .With("orderby", orderby);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex,
+                "An error occurred while listing DTOs ({DtoType}) for entity {EntityType} with filter {FilterType}.",
+                typeof(TDto).Name, typeof(TEntity).Name, typeof(TFilter).Name);
+            return Problems.InternalError(ex);
+        }
+    }
+
+    /// <summary>
+    /// <para>
+    ///     Asynchronously retrieves a list of DTOs (projection) that match the specified filter and sorting criteria,
+    ///     allowing an asynchronous configuration delegate.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TDto">DTO projection type.</typeparam>
+    /// <typeparam name="TFilter">Filter type.</typeparam>
+    /// <param name="filtro">Filter object.</param>
+    /// <param name="orderby">Sorting array or null.</param>
+    /// <param name="criteria">Criteria component.</param>
+    /// <param name="configure">Async configuration delegate executed before projection.</param>
+    /// <param name="logger">Optional logger.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Ok with list, NoContent, or Problem result.</returns>
+    public static async Task<MatchList<TDto>> ListAsync<TEntity, TDto, TFilter>(
+        TFilter filtro,
+        Sorting[]? orderby,
+        ICriteria<TEntity> criteria,
+        Func<ICriteria<TEntity>, Task>? configure,
+        ILogger? logger,
+        CancellationToken ct)
+        where TEntity : class
+        where TDto : class
+        where TFilter : class
+    {
+        try
+        {
+            var search = criteria
+                .OrderBy(orderby)
+                .FilterBy(filtro);
+
+            if (configure is not null)
+                await configure(search);
 
             var select = search.Select<TDto>();
             var result = await select.ToListAsync(ct);
@@ -364,6 +610,65 @@ public class Performer
 
     /// <summary>
     /// <para>
+    ///     Asynchronously performs a paged search returning entities, allowing an asynchronous configuration delegate.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TFilter">Filter type.</typeparam>
+    /// <param name="filtro">Filter instance.</param>
+    /// <param name="options">Search/pagination options.</param>
+    /// <param name="orderby">Sorting definitions.</param>
+    /// <param name="criteria">Criteria component.</param>
+    /// <param name="configure">Async configuration delegate executed before search execution.</param>
+    /// <param name="logger">Optional logger.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Paged result, NoContent or Problem.</returns>
+    public static async Task<MatchSearch<TEntity>> SearchAsync<TEntity, TFilter>(
+        TFilter filtro,
+        SearchOptions options,
+        Sorting[]? orderby,
+        ICriteria<TEntity> criteria,
+        Func<ICriteria<TEntity>, Task>? configure,
+        ILogger? logger,
+        CancellationToken ct)
+        where TEntity : class
+        where TFilter : class
+    {
+        try
+        {
+            var search = criteria
+                .WithOptions(options)
+                .OrderBy(orderby)
+                .FilterBy(filtro);
+
+            if (configure is not null)
+                await configure(search);
+
+            var result = await search.AsSearch().ToListAsync(ct);
+
+            if (result.Count == 0)
+                return TypedResults.NoContent();
+
+            return TypedResults.Ok(result);
+        }
+        catch (OrderByException obex)
+        {
+            return Problems.InvalidParameter(obex.Message, nameof(orderby))
+                .With("propertyName", obex.PropertyName)
+                .With("typeName", obex.TypeName)
+                .With("orderby", orderby);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex,
+                "An error occurred while performing paged search for entity {EntityType} with filter {FilterType}.",
+                typeof(TEntity).Name, typeof(TFilter).Name);
+            return Problems.InternalError(ex);
+        }
+    }
+
+    /// <summary>
+    /// <para>
     ///     Asynchronously performs a paged search returning DTOs (projection).
     /// </para>
     /// </summary>
@@ -401,6 +706,68 @@ public class Performer
                 .FilterBy(filtro);
 
             configure?.Invoke(search);
+
+            var select = search.Select<TDto>();
+            var result = await select.ToListAsync(ct);
+
+            if (result.Count == 0)
+                return TypedResults.NoContent();
+
+            return TypedResults.Ok(result);
+        }
+        catch (OrderByException obex)
+        {
+            return Problems.InvalidParameter(obex.Message, nameof(orderby))
+                .With("propertyName", obex.PropertyName)
+                .With("typeName", obex.TypeName)
+                .With("orderby", orderby);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex,
+                "An error occurred while performing paged search for DTO {DtoType} of entity {EntityType} with filter {FilterType}.",
+                typeof(TDto).Name, typeof(TEntity).Name, typeof(TFilter).Name);
+            return Problems.InternalError(ex);
+        }
+    }
+
+    /// <summary>
+    /// <para>
+    ///     Asynchronously performs a paged search returning DTOs (projection), allowing an asynchronous configuration delegate.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TDto">DTO projection type.</typeparam>
+    /// <typeparam name="TFilter">Filter type.</typeparam>
+    /// <param name="filtro">Filter instance.</param>
+    /// <param name="options">Search/pagination options.</param>
+    /// <param name="orderby">Sorting definitions.</param>
+    /// <param name="criteria">Criteria component.</param>
+    /// <param name="configure">Async configuration delegate executed before projection.</param>
+    /// <param name="logger">Optional logger.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Paged result, NoContent or Problem.</returns>
+    public static async Task<MatchSearch<TDto>> SearchAsync<TEntity, TDto, TFilter>(
+        TFilter filtro,
+        SearchOptions options,
+        Sorting[]? orderby,
+        ICriteria<TEntity> criteria,
+        Func<ICriteria<TEntity>, Task>? configure,
+        ILogger? logger,
+        CancellationToken ct)
+        where TEntity : class
+        where TDto : class
+        where TFilter : class
+    {
+        try
+        {
+            var search = criteria
+                .WithOptions(options)
+                .OrderBy(orderby)
+                .FilterBy(filtro);
+
+            if (configure is not null)
+                await configure(search);
 
             var select = search.Select<TDto>();
             var result = await select.ToListAsync(ct);
