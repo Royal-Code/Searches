@@ -19,44 +19,21 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Build and pack SmartSearch Abstractions
-        run: dotnet build ./src -c Release
-        
-#      - name: Build and pack SmartSearch Abstractions
-#        run: dotnet build ./src/RoyalCode.SmartSearch.Abstractions/RoyalCode.SmartSearch.Abstractions.csproj -c Release
-        
-#      - name: Build and pack SmartSearch Core
-#        run: dotnet build ./src/RoyalCode.SmartSearch.Core/RoyalCode.SmartSearch.Core.csproj -c Release
       
-#      - name: Build and pack SmartSearch Linq
-#        run: dotnet build ./src/RoyalCode.SmartSearch.Linq/RoyalCode.SmartSearch.Linq.csproj -c Release
+      - name: Build and pack SmartSearch Abstractions
+        run: dotnet build ./src/RoyalCode.SmartSearch.Abstractions/RoyalCode.SmartSearch.Abstractions.csproj -c Release
         
-#      - name: Build and pack SmartSearch EntityFramework
-#        run: dotnet build ./src/RoyalCode.SmartSearch.EntityFramework/RoyalCode.SmartSearch.EntityFramework.csproj -c Release
+      - name: Build and pack SmartSearch Core
+        run: dotnet build ./src/RoyalCode.SmartSearch.Core/RoyalCode.SmartSearch.Core.csproj -c Release
+      
+      - name: Build and pack SmartSearch Linq
+        run: dotnet build ./src/RoyalCode.SmartSearch.Linq/RoyalCode.SmartSearch.Linq.csproj -c Release
         
-#      - name: Build and pack SmartSearch AspNetCore
-#        run: dotnet build ./src/RoyalCode.SmartSearch.AspNetCore/RoyalCode.SmartSearch.AspNetCore.csproj -c Release
-
-      - name: Test with coverage (coverlet.collector)
-        run: dotnet test ./src --collect:"XPlat Code Coverage" --results-directory ./TestResults --no-build
-
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-      - name: Generate coverage report
-        run: |
-          reportgenerator \
-            -reports:./TestResults/**/coverage.cobertura.xml \
-            -targetdir:./TestResults/Report \
-            -reporttypes:Html
-          echo "\nCoverage summary:" && cat ./TestResults/Report/Summary.txt || true
-
-      - name: Upload coverage report artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: ./TestResults/Report
+      - name: Build and pack SmartSearch EntityFramework
+        run: dotnet build ./src/RoyalCode.SmartSearch.EntityFramework/RoyalCode.SmartSearch.EntityFramework.csproj -c Release
+        
+      - name: Build and pack SmartSearch AspNetCore
+        run: dotnet build ./src/RoyalCode.SmartSearch.AspNetCore/RoyalCode.SmartSearch.AspNetCore.csproj -c Release
 
       - name: Publish
         run: dotnet nuget push ./**/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
