@@ -21,7 +21,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore ./src/RoyalCode.SmartSearch.sln
 
       - name: Build and pack SmartSearch Abstractions
         run: dotnet build ./src/RoyalCode.SmartSearch.Abstractions/RoyalCode.SmartSearch.Abstractions.csproj -c Release
