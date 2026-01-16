@@ -1,4 +1,3 @@
-using FluentAssertions;
 using System.ComponentModel;
 using System.Text.Json;
 
@@ -65,7 +64,7 @@ public class SortingTests
         var result = JsonSerializer.Deserialize<ResultList<TestModel>>(json, jsonOptions);
 
         // assert
-        result.Should().BeEquivalentTo(expected);
+        Assert.Equivalent(expected, result);
     }
 
     [Theory]
@@ -88,11 +87,11 @@ public class SortingTests
         var result = Sorting.TryParse(orderby, out var sorting);
 
         // assert
-        result.Should().Be(expectedResult);
+        Assert.Equal(expectedResult, result);
         if (expectedResult)
         {
-            sorting.Direction.Should().Be(expectedDirection);
-            sorting.OrderBy.Should().Be(expectedOrderBy);
+            Assert.Equal(expectedDirection, sorting.Direction);
+            Assert.Equal(expectedOrderBy, sorting.OrderBy);
         }
     }
 }

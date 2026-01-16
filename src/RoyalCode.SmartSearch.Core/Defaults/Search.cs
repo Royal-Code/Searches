@@ -18,8 +18,8 @@ public class Search<TEntity> : ISearch<TEntity>
     /// <summary>
     /// Creates a new search.
     /// </summary>
-    /// <param name="performer"></param>
-    /// <param name="options"></param>
+    /// <param name="performer">The criteria performer used to execute search operations for entities of type TEntity.</param>
+    /// <param name="options">The options that configure search behavior, such as tracking and filtering settings.</param>
     public Search(ICriteriaPerformer<TEntity> performer, CriteriaOptions options)
     {
         this.performer = performer;
@@ -69,6 +69,11 @@ public class Search<TEntity> : ISearch<TEntity>
         => performer.Prepare(options).SingleAsync(cancellationToken);
 }
 
+/// <summary>
+/// Default implementation of <see cref="ISearch{TEntity,TDto}"/>.
+/// </summary>
+/// <typeparam name="TEntity">The entity type.</typeparam>
+/// <typeparam name="TDto">The dto type.</typeparam>
 public class Search<TEntity, TDto> : ISearch<TEntity, TDto>
     where TEntity : class
     where TDto : class
@@ -77,6 +82,13 @@ public class Search<TEntity, TDto> : ISearch<TEntity, TDto>
     private readonly CriteriaOptions options;
     private readonly ISearchSelect<TEntity, TDto> searchSelect;
 
+    /// <summary>
+    /// Initializes a new instance of the Search class with the specified criteria performer, options, and search
+    /// selector.
+    /// </summary>
+    /// <param name="performer">The criteria performer used to execute search operations for entities of type TEntity.</param>
+    /// <param name="options">The options that configure search behavior, such as tracking and filtering settings.</param>
+    /// <param name="searchSelect">The selector that defines how search results of type TEntity are projected to DTOs of type TDto.</param>
     public Search(
         ICriteriaPerformer<TEntity> performer,
         CriteriaOptions options,

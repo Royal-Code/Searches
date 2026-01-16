@@ -118,3 +118,25 @@ Tests in `RoyalCode.SmartSearch.Tests` demonstrate usage scenarios such as:
 ---
 
 For more examples, see the test files in the `RoyalCode.SmartSearch.Tests` folder.
+
+## Documentation Status
+- Libraries and patterns are described above with examples of usage.
+- More API-level docs and extension points can be expanded (e.g., selector resolvers, specifier generator options).
+- Tests illustrate typical usage; a dedicated samples directory could be added in the future.
+
+## Test Coverage
+The test projects already reference `coverlet.collector` and `Microsoft.CodeCoverage` (see `src/tests.targets`).
+
+### Local coverage report
+1. Run tests and collect coverage:
+   - `dotnet test ./src --collect:"XPlat Code Coverage" --results-directory ./TestResults`
+2. Generate HTML report:
+   - Install tool once: `dotnet tool install --global dotnet-reportgenerator-globaltool`
+   - Generate: `reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Report -reporttypes:Html`
+3. Open `./TestResults/Report/index.html` in a browser.
+
+### GitHub Actions coverage
+The workflow at `.github/workflows/smart-search.yml` runs tests with coverage and publishes an artifact `coverage-report` containing the HTML output. After the run completes:
+- Download the `coverage-report` artifact from the job summary.
+- Open `index.html` to view coverage.
+

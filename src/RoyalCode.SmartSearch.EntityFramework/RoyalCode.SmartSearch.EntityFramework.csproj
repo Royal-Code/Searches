@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="..\base.targets" />
+	<Import Project="..\pack.targets" />
 
 	<PropertyGroup>
 		<TargetFrameworks>$(AspTargets)</TargetFrameworks>
@@ -17,7 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(DotNetCoreVersion)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EFVer)" />
 		<PackageReference Include="RoyalCode.OperationHint.Abstractions" Version="$(OpHintVer)" />
 	</ItemGroup>
 

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RoyalCode.SmartSearch.Tests;
@@ -43,7 +42,7 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = all.Collect();
 
         // assert
-        result.Should().HaveCount(3);
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
@@ -66,7 +65,7 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = await all.CollectAsync();
 
         // assert
-        result.Should().HaveCount(3);
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
@@ -90,8 +89,8 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = all.FilterBy(filter).Collect();
 
         // assert
-        result.Should().HaveCount(1);
-        result.Should().ContainSingle(x => x.Id == 2);
+        Assert.Single(result);
+        Assert.Equal(2, result.Single().Id);
     }
 
     [Fact]
@@ -115,7 +114,8 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = await all.FilterBy(filter).CollectAsync();
 
         // assert
-        result.Should().HaveCount(1).And.ContainSingle(x => x.Id == 2);
+        Assert.Single(result);
+        Assert.Equal(2, result.Single().Id);
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class AllEntitiesTests
         bool result = all.FilterBy(filter).Exists();
 
         // assert
-        result.Should().BeTrue();
+        Assert.True(result);
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class AllEntitiesTests
         bool result = await all.FilterBy(filter).ExistsAsync();
 
         // assert
-        result.Should().BeTrue();
+        Assert.True(result);
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public class AllEntitiesTests
         bool result = all.FilterBy(filter).Exists();
 
         // assert
-        result.Should().BeFalse();
+        Assert.False(result);
     }
 
     [Fact]
@@ -211,7 +211,7 @@ public class AllEntitiesTests
         bool result = await all.FilterBy(filter).ExistsAsync();
 
         // assert
-        result.Should().BeFalse();
+        Assert.False(result);
     }
 
     [Fact]
@@ -237,7 +237,8 @@ public class AllEntitiesTests
         // assert
 
         // assert
-        result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
@@ -261,7 +262,8 @@ public class AllEntitiesTests
         SimpleModel? result = await all.FilterBy(filter).FirstOrDefaultAsync();
 
         // assert
-        result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
@@ -285,7 +287,7 @@ public class AllEntitiesTests
         SimpleModel? result = all.FilterBy(filter).FirstOrDefault();
 
         // assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
@@ -309,7 +311,7 @@ public class AllEntitiesTests
         SimpleModel? result = await all.FilterBy(filter).FirstOrDefaultAsync();
 
         // assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
@@ -333,7 +335,7 @@ public class AllEntitiesTests
         SimpleModel result = all.FilterBy(filter).Single();
 
         // assert
-        result.Id.Should().Be(2);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
@@ -357,7 +359,7 @@ public class AllEntitiesTests
         SimpleModel result = await all.FilterBy(filter).SingleAsync();
 
         // assert
-        result.Id.Should().Be(2);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
@@ -380,7 +382,7 @@ public class AllEntitiesTests
         Action act = () => all.Single();
 
         // assert
-        act.Should().Throw<InvalidOperationException>();
+        Assert.Throws<InvalidOperationException>(act);
     }
 
     [Fact]
@@ -403,7 +405,7 @@ public class AllEntitiesTests
         Func<Task> act = () => all.SingleAsync();
 
         // assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
     }
 
     [Fact]
@@ -427,7 +429,7 @@ public class AllEntitiesTests
         Action act = () => all.FilterBy(filter).Single();
 
         // assert
-        act.Should().Throw<InvalidOperationException>();
+        Assert.Throws<InvalidOperationException>(act);
     }
 
     [Fact]
@@ -451,7 +453,7 @@ public class AllEntitiesTests
         Func<Task> act = () => all.FilterBy(filter).SingleAsync();
 
         // assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
     }
 }
 

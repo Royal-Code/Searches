@@ -2,8 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filtering;
+using RoyalCode.SmartSearch.Linq.Services;
 using System.Collections;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Tests;
 
@@ -424,9 +426,37 @@ public class SpecifierFunctionGeneratorTests
         Assert.Equal(expectedCount, query.Count());
     }
 
+    [Fact]
     public void Factory_Must_UseTheSpecifierFilterMethod()
     {
-        // todo
+        // arrange
+        var services = new ServiceCollection();
+        services.AddSmartSearchLinq();
+        var sp = services.BuildServiceProvider();
+        var factory = sp.GetRequiredService<ISpecifierFactory>();
+
+        var data = new List<SimpleModel>
+        {
+            new() { Id = 1, Name = "A" },
+            new() { Id = 2, Name = "B" },
+            new() { Id = 3, Name = "AB" }
+        }.AsQueryable();
+
+        var filter = new SimpleFilterManual { Name = "A" };
+
+        // act
+        var specifier = factory.GetSpecifier<SimpleModel, SimpleFilterManual>();
+
+        // assert
+        Assert.NotNull(specifier);
+
+        // act
+        var result = specifier.Specify(data, filter);
+
+        // assert
+        Assert.True(SimpleFilterManual.Called);
+        Assert.Equal(2, result.Count());
+        Assert.All(result, m => Assert.Contains("A", m.Name));
     }
 }
 
