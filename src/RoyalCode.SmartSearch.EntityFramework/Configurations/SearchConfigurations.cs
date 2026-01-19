@@ -24,9 +24,15 @@ public sealed class SearchConfigurations<TDbContext> : ISearchConfigurations<TDb
     public ISearchConfigurations Add<TEntity>() 
         where TEntity : class
     {
+        return Add(typeof(TEntity));
+    }
+
+    /// <inheritdoc />
+    public ISearchConfigurations Add(Type entityType)
+    {
         // add criteria as a service for the respective context
-        var serviceType = typeof(ICriteria<>).MakeGenericType(typeof(TEntity));
-        var implType = typeof(InternalCriteria<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
+        var serviceType = typeof(ICriteria<>).MakeGenericType(entityType);
+        var implType = typeof(InternalCriteria<,>).MakeGenericType(typeof(TDbContext), entityType);
 
         services.Add(ServiceDescriptor.Describe(
             serviceType,
@@ -34,8 +40,8 @@ public sealed class SearchConfigurations<TDbContext> : ISearchConfigurations<TDb
             ServiceLifetime.Transient));
 
         // add criteria performer as a service for the respective context
-        serviceType = typeof(ICriteriaPerformer<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
-        implType = typeof(CriteriaPerformer<,>).MakeGenericType(typeof(TDbContext), typeof(TEntity));
+        serviceType = typeof(ICriteriaPerformer<,>).MakeGenericType(typeof(TDbContext), entityType);
+        implType = typeof(CriteriaPerformer<,>).MakeGenericType(typeof(TDbContext), entityType);
 
         services.Add(ServiceDescriptor.Describe(
             serviceType,

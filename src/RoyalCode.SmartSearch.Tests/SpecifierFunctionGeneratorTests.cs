@@ -558,6 +558,11 @@ file class SearchConfigurer : ISearchConfigurations
     {
         throw new NotImplementedException();
     }
+
+    public ISearchConfigurations Add(Type entityType)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 file class ConfigurableEntity
