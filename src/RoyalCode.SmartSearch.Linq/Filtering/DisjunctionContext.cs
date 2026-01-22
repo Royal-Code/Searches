@@ -14,7 +14,7 @@ internal sealed class DisjunctionContext<TModel>
         var criterion = junction.Criterion;
 
         // Build comparison expression: e.Property OP value
-        var targetAccess = junction.ModelPropertySelection.GetMemberAccess(LambdaParam);
+        var targetAccess = junction.ModelPropertySelection!.GetMemberAccess(LambdaParam);
         var valueExpr = Expression.Constant(value, typeof(TProperty));
 
         Expression opExpr = ExpressionGenerator.CreateOperatorExpression(

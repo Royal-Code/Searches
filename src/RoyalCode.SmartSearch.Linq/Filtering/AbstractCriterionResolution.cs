@@ -1,25 +1,25 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using RoyalCode.Extensions.PropertySelection;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 
 internal abstract class AbstractCriterionResolution : ICriterionResolution
 {
-    protected AbstractCriterionResolution(PropertyInfo property, CriterionAttribute criterionAttribute, Type modelType)
+    protected AbstractCriterionResolution(PropertySelection propertySelection, CriterionAttribute criterionAttribute, Type modelType)
     {
-        FilterPropertyInfo = property;
         Criterion = criterionAttribute;
         ModelType = modelType;
+        FilterPropertySelection = propertySelection;
     }
 
-    public PropertyInfo FilterPropertyInfo { get; set; }
+    public PropertySelection FilterPropertySelection {  get; set; }
 
     public CriterionAttribute Criterion { get; set; }
 
     public Type ModelType { get; set; }
 
-    protected Lack? Pending { get; set; }
+    protected Lack? Lack { get; set; }
 
     public virtual Expression CreateExpression(ParameterExpression queryParam, ParameterExpression filterParam)
     {
@@ -41,7 +41,7 @@ internal abstract class AbstractCriterionResolution : ICriterionResolution
         // create an expression to check if the filter property is empty
         if (Criterion.IgnoreIfIsEmpty)
             assign = ExpressionGenerator.GetIfIsEmptyConstraintExpression(
-                Expression.MakeMemberAccess(filterParam, FilterPropertyInfo),
+                FilterPropertySelection.GetAccessExpression(filterParam),
                 assign);
 
         return assign;
@@ -49,7 +49,7 @@ internal abstract class AbstractCriterionResolution : ICriterionResolution
 
     public bool IsLacking([NotNullWhen(true)] out Lack? lack)
     {
-        lack = Pending;
+        lack = Lack;
         return lack is not null;
     }
 

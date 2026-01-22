@@ -1,6 +1,5 @@
 ﻿using RoyalCode.Extensions.PropertySelection;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 
@@ -8,7 +7,7 @@ internal class DefaultOperatorCriterionResolution : AbstractCriterionResolution
 {
     private PropertySelection? targetSelection;
 
-    public DefaultOperatorCriterionResolution(PropertyInfo property, CriterionAttribute criterionAttribute, Type modelType) 
+    public DefaultOperatorCriterionResolution(PropertySelection property, CriterionAttribute criterionAttribute, Type modelType) 
         : base(property, criterionAttribute, modelType)
     {
         if (Criterion.TargetPropertyPath is not null)
@@ -16,32 +15,32 @@ internal class DefaultOperatorCriterionResolution : AbstractCriterionResolution
             targetSelection = modelType.TrySelectProperty(Criterion.TargetPropertyPath!);
             if (targetSelection is null)
             {
-                Pending = new Lack
+                Lack = new Lack
                 {
-                    Description = $"The target property path '{Criterion.TargetPropertyPath}' for filter property '{FilterPropertyInfo.Name}' could not be resolved in type '{modelType.FullName}'."
+                    Description = $"The target property path '{Criterion.TargetPropertyPath}' for filter property '{FilterPropertySelection.PropertyName}' could not be resolved in type '{modelType.FullName}'."
                 };
             }
         }
         else
         {
-            var propertySelection = modelType.TrySelectProperty(FilterPropertyInfo.Name);
+            var propertySelection = modelType.TrySelectProperty(FilterPropertySelection.PropertyName);
             if (propertySelection is null)
             {
-                Pending = new Lack
+                Lack = new Lack
                 {
-                    Description = $"The target property path '{FilterPropertyInfo.Name}' for filter property '{FilterPropertyInfo.Name}' could not be resolved in type '{modelType.FullName}'."
+                    Description = $"The target property path '{FilterPropertySelection.PropertyName}' for filter property '{FilterPropertySelection.PropertyName}' could not be resolved in type '{modelType.FullName}'."
                 };
             }
-            else if (propertySelection.PropertyType.IsAssignableFrom(FilterPropertyInfo.PropertyType)
-                || FilterPropertyInfo.PropertyType.CheckTypes(propertySelection.PropertyType))
+            else if (propertySelection.PropertyType.IsAssignableFrom(FilterPropertySelection.PropertyType)
+                || FilterPropertySelection.PropertyType.CheckTypes(propertySelection.PropertyType))
             {
                 targetSelection = propertySelection;
             }
             else
             {
-                Pending = new Lack
+                Lack = new Lack
                 {
-                    Description = $"The target property '{propertySelection}' for filter property '{FilterPropertyInfo.Name}' has incompatible type '{propertySelection.PropertyType.FullName}' (filter property type: '{FilterPropertyInfo.PropertyType.FullName}')."
+                    Description = $"The target property '{propertySelection}' for filter property '{FilterPropertySelection.PropertyName}' has incompatible type '{propertySelection.PropertyType.FullName}' (filter property type: '{FilterPropertySelection.PropertyType.FullName}')."
                 };
             }
         }
@@ -53,9 +52,9 @@ internal class DefaultOperatorCriterionResolution : AbstractCriterionResolution
         var targetParam = Expression.Parameter(ModelType, "e");
 
         var operatorExpression = ExpressionGenerator.CreateOperatorExpression(
-            ExpressionGenerator.DiscoveryCriterionOperator(Criterion, FilterPropertyInfo),
+            ExpressionGenerator.DiscoveryCriterionOperator(Criterion, FilterPropertySelection.Info),
             Criterion.Negation,
-            FilterPropertyInfo.GetMemberAccess(filterParam),
+            FilterPropertySelection.GetMemberAccess(filterParam),
             targetSelection!.GetMemberAccess(targetParam));
 
         // generate the type of the predicate.

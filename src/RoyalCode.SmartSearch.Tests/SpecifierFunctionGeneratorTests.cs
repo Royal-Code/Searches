@@ -5,7 +5,6 @@ using RoyalCode.SmartSearch.Linq.Filtering;
 using RoyalCode.SmartSearch.Linq.Services;
 using System.Collections;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Tests;
 
@@ -23,7 +22,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<SimpleModel, SimpleFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -36,7 +35,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<SimpleModel, NullablePropertiesFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -75,7 +74,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<ExtendedModel, ExtendedFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -316,7 +315,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -335,7 +334,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilterNotNull>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -350,13 +349,13 @@ public class SpecifierFunctionGeneratorTests
 
         var generator = new DefaultSpecifierFunctionGenerator();
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilter>()!;
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
 
         var query = ConfigurableEntity.List.AsQueryable();
         var filter = new ConfigurableFilter();
 
         // act
-        query = function(query, filter);
+        query = function.Function(query, filter);
 
         // assert
         Assert.Equal(3, query.Count());
@@ -381,7 +380,7 @@ public class SpecifierFunctionGeneratorTests
 
         var generator = new DefaultSpecifierFunctionGenerator();
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilter>()!;
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
 
         var query = ConfigurableEntity.List.AsQueryable();
         var filter = new ConfigurableFilter()
@@ -390,7 +389,7 @@ public class SpecifierFunctionGeneratorTests
         };
 
         // act
-        query = function(query, filter);
+        query = function.Function(query, filter);
 
         // assert
         Assert.Equal(expectedCount, query.Count());
@@ -411,7 +410,7 @@ public class SpecifierFunctionGeneratorTests
 
         var generator = new DefaultSpecifierFunctionGenerator();
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilterNotNull>()!;
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
 
         var query = ConfigurableEntity.List.AsQueryable();
         var filter = new ConfigurableFilterNotNull()
@@ -420,7 +419,7 @@ public class SpecifierFunctionGeneratorTests
         };
 
         // act
-        query = function(query, filter);
+        query = function.Function(query, filter);
 
         // assert
         Assert.Equal(expectedCount, query.Count());

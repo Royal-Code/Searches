@@ -8,7 +8,7 @@
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
-		<PropSelVer>1.0.2</PropSelVer>
+		<PropSelVer>1.0.3</PropSelVer>
 		<OpHintVer>1.0.0</OpHintVer>
 		<ProblemsVer>1.0.0-preview-6.0</ProblemsVer>
 	</PropertyGroup>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using RoyalCode.SmartSearch.Linq;
 
 namespace RoyalCode.SmartSearch.Tests;
 

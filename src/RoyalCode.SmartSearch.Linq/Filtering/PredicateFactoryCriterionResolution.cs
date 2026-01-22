@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
+﻿using RoyalCode.Extensions.PropertySelection;
+using System.Linq.Expressions;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 
@@ -8,7 +8,7 @@ internal class PredicateFactoryCriterionResolution : AbstractCriterionResolution
     private readonly Delegate predicateFactory;
 
     public PredicateFactoryCriterionResolution(
-        PropertyInfo property,
+        PropertySelection property,
         CriterionAttribute criterionAttribute,
         Type modelType,
         Delegate predicateFactory)
@@ -18,9 +18,9 @@ internal class PredicateFactoryCriterionResolution : AbstractCriterionResolution
 
         if (!CheckPredicateFactoryType(modelType, property.PropertyType))
         {
-            Pending = new Lack
+            Lack = new Lack
             {
-                Description = $"The predicate factory for filter property '{FilterPropertyInfo.Name}' is not compatible with the specified types, model '{modelType.FullName}', filter property '{property.PropertyType.FullName}'."
+                Description = $"The predicate factory for filter property '{FilterPropertySelection.PropertyName}' is not compatible with the specified types, model '{modelType.FullName}', filter property '{property.PropertyType.FullName}'."
             };
         }
     }
@@ -31,7 +31,7 @@ internal class PredicateFactoryCriterionResolution : AbstractCriterionResolution
         var predicateFactoryCall = Expression.Call(
             Expression.Constant(predicateFactory.Target),
             predicateFactory.Method,
-            FilterPropertyInfo.GetMemberAccess(filterParam));
+            FilterPropertySelection.GetMemberAccess(filterParam));
 
         return predicateFactoryCall;
     }

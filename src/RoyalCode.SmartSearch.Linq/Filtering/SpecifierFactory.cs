@@ -35,6 +35,7 @@ internal sealed class SpecifierFactory : ISpecifierFactory
             return specifier;
 
         specifier = specifierGenerator?.Generate<TModel, TFilter>();
+        Lack[]? lacks = null;
 
         if (specifier is null)
         {
@@ -44,9 +45,14 @@ internal sealed class SpecifierFactory : ISpecifierFactory
                 return specifier;
             }
 
-            var function = functionGenerator?.Generate<TModel, TFilter>();
-            if (function is not null)
-                specifier = new InternalSpecifier<TModel, TFilter>(function);
+            if (functionGenerator is not null)
+            {
+                var result = functionGenerator.Generate<TModel, TFilter>();
+                if (result.HasFunction(out var function))
+                    specifier = new InternalSpecifier<TModel, TFilter>(function);
+                else
+                    lacks = result.Lacks;
+            }
         }
 
         if (specifier is not null)
@@ -55,7 +61,9 @@ internal sealed class SpecifierFactory : ISpecifierFactory
             return specifier;
         }
 
-        throw new InvalidOperationException("No specifier configured for the model and filter.");
+        throw lacks is not null
+            ? Lack.ToException(lacks)
+            : new InvalidOperationException("No specifier configured for the model and filter.");
     }
 
     private static bool TryFindByFilterMethod<TModel, TFilter>([NotNullWhen(true)] out ISpecifier<TModel, TFilter>? specifier)

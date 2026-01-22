@@ -7,11 +7,26 @@ internal class DisjuctionCriterionResolution : ICriterionResolution
 {
     private readonly Type modelType;
     private readonly IReadOnlyList<JunctionProperty> group;
+    private readonly Lack? lack;
 
     public DisjuctionCriterionResolution(Type modelType, IReadOnlyList<JunctionProperty> group)
     {
         this.modelType = modelType;
         this.group = group;
+
+        foreach (var junction in group)
+        {
+            if (junction.IsLacking(out var junctionLack))
+            {
+                if (lack is null)
+                    lack = junctionLack;
+                else
+                    lack = new Lack
+                    {
+                        Description = lack.Description + "; " + junctionLack.Description
+                    };
+            }
+        }
     }
 
     public Expression CreateExpression(ParameterExpression queryParam, ParameterExpression filterParam)
@@ -61,7 +76,7 @@ internal class DisjuctionCriterionResolution : ICriterionResolution
 
     public bool IsLacking([NotNullWhen(true)] out Lack? lack)
     {
-        lack = null;
+        lack = this.lack;
         return lack is not null;
     }
 }
