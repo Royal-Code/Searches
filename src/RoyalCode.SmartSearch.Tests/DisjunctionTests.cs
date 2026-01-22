@@ -5,19 +5,31 @@ namespace RoyalCode.SmartSearch.Tests;
 
 public class DisjunctionTests
 {
-    private static IServiceProvider CreateProvider(string name)
+    private static async Task<IServiceProvider> CreateProvider(string name)
     {
         var services = new ServiceCollection();
-        services.AddDbContext<DisjunctionDbContext>(b => b.UseInMemoryDatabase(name));
+
+        var sqliteConnection = new Microsoft.Data.Sqlite.SqliteConnection($"DataSource=:memory:");
+        await sqliteConnection.OpenAsync();
+        services.AddSingleton(sqliteConnection);
+
+        services.AddDbContext<DisjunctionDbContext>(b => b.UseSqlite(sqliteConnection));
         services.AddEntityFrameworkSearches<DisjunctionDbContext>(s => s.Add<DisjunctionEntity>());
-        return services.BuildServiceProvider();
+
+        var provider = services.BuildServiceProvider();
+
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<DisjunctionDbContext>();
+        await db.Database.EnsureCreatedAsync();
+
+        return provider;
     }
 
     [Fact]
-    public void Must_NotApplyWhere_WhenAllDisjunctionFiltersAreEmpty()
+    public async Task Must_NotApplyWhere_WhenAllDisjunctionFiltersAreEmpty()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_NotApplyWhere_WhenAllDisjunctionFiltersAreEmpty));
+        var provider = await CreateProvider(nameof(Must_NotApplyWhere_WhenAllDisjunctionFiltersAreEmpty));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<DisjunctionDbContext>();
         ctx.AddRange(
@@ -38,10 +50,10 @@ public class DisjunctionTests
     }
 
     [Fact]
-    public void Must_ApplyWhereWithSingleCondition_WhenOneDisjunctionFilterHasValue()
+    public async Task Must_ApplyWhereWithSingleCondition_WhenOneDisjunctionFilterHasValue()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_ApplyWhereWithSingleCondition_WhenOneDisjunctionFilterHasValue));
+        var provider = await CreateProvider(nameof(Must_ApplyWhereWithSingleCondition_WhenOneDisjunctionFilterHasValue));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<DisjunctionDbContext>();
         ctx.AddRange(
@@ -63,10 +75,10 @@ public class DisjunctionTests
     }
 
     [Fact]
-    public void Must_ApplyWhereWithOrConditions_WhenMultipleDisjunctionFiltersHaveValue()
+    public async Task Must_ApplyWhereWithOrConditions_WhenMultipleDisjunctionFiltersHaveValue()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_ApplyWhereWithOrConditions_WhenMultipleDisjunctionFiltersHaveValue));
+        var provider = await CreateProvider(nameof(Must_ApplyWhereWithOrConditions_WhenMultipleDisjunctionFiltersHaveValue));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<DisjunctionDbContext>();
         ctx.AddRange(

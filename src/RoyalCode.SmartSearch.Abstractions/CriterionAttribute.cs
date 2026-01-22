@@ -12,6 +12,41 @@
 public sealed class CriterionAttribute : Attribute
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="CriterionAttribute"/> class.
+    /// </summary>
+    public CriterionAttribute() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CriterionAttribute"/> class with the specified criterion operator.
+    /// </summary>
+    /// <param name="criterionOperator">The operator that defines how the criterion will be evaluated.</param>
+    public CriterionAttribute(CriterionOperator criterionOperator)
+    {
+        Operator = criterionOperator;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CriterionAttribute"/> class with the specified target property path.
+    /// </summary>
+    /// <param name="targetPropertyPath">The dot-delimited path to the property that this criterion targets. Cannot be null or empty.</param>
+    public CriterionAttribute(string targetPropertyPath)
+    {
+        TargetPropertyPath = targetPropertyPath;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CriterionAttribute"/> class with the specified target property path and criterion
+    /// operator.
+    /// </summary>
+    /// <param name="targetPropertyPath">The dot-delimited path to the property that the criterion applies to. Cannot be null or empty.</param>
+    /// <param name="criterionOperator">The operator to use when evaluating the criterion.</param>
+    public CriterionAttribute(string targetPropertyPath, CriterionOperator criterionOperator)
+    {
+        TargetPropertyPath = targetPropertyPath;
+        Operator = criterionOperator;
+    }
+
+    /// <summary>
     /// <para>
     ///     The operator used to filter.
     /// </para>

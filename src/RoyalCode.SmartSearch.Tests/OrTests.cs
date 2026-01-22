@@ -5,19 +5,31 @@ namespace RoyalCode.SmartSearch.Tests;
 
 public class OrTests
 {
-    private static IServiceProvider CreateProvider(string name)
+    private static async Task<IServiceProvider> CreateProvider(string name)
     {
         var services = new ServiceCollection();
-        services.AddDbContext<OrDbContext>(b => b.UseInMemoryDatabase(name));
+
+        var sqliteConnection = new Microsoft.Data.Sqlite.SqliteConnection($"DataSource=:memory:");
+        await sqliteConnection.OpenAsync();
+        services.AddSingleton(sqliteConnection);
+
+        services.AddDbContext<OrDbContext>(b => b.UseSqlite(sqliteConnection));
         services.AddEntityFrameworkSearches<OrDbContext>(s => s.Add<OrEntity>());
-        return services.BuildServiceProvider();
+
+        var provider = services.BuildServiceProvider();
+
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<OrDbContext>();
+        await db.Database.EnsureCreatedAsync();
+
+        return provider;
     }
 
     [Fact]
-    public void Must_NotApplyWhere_WhenOrFilterPropertyIsEmpty()
+    public async Task Must_NotApplyWhere_WhenOrFilterPropertyIsEmpty()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_NotApplyWhere_WhenOrFilterPropertyIsEmpty));
+        var provider = await CreateProvider(nameof(Must_NotApplyWhere_WhenOrFilterPropertyIsEmpty));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<OrDbContext>();
         ctx.AddRange(
@@ -37,10 +49,10 @@ public class OrTests
     }
 
     [Fact]
-    public void Must_ApplyWhere_WithSingleCondition_WhenOneValueMatchesAnyName()
+    public async Task Must_ApplyWhere_WithSingleCondition_WhenOneValueMatchesAnyName()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_ApplyWhere_WithSingleCondition_WhenOneValueMatchesAnyName));
+        var provider = await CreateProvider(nameof(Must_ApplyWhere_WithSingleCondition_WhenOneValueMatchesAnyName));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<OrDbContext>();
         ctx.AddRange(
@@ -62,10 +74,10 @@ public class OrTests
     }
 
     [Fact]
-    public void Must_ApplyWhere_WithOrConditions_WhenSameValueAppearsInDifferentFields()
+    public async Task Must_ApplyWhere_WithOrConditions_WhenSameValueAppearsInDifferentFields()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_ApplyWhere_WithOrConditions_WhenSameValueAppearsInDifferentFields));
+        var provider = await CreateProvider(nameof(Must_ApplyWhere_WithOrConditions_WhenSameValueAppearsInDifferentFields));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<OrDbContext>();
         ctx.AddRange(
@@ -89,10 +101,10 @@ public class OrTests
     }
 
     [Fact]
-    public void Must_ApplyWhere_UsingTargetPropertyPathWithOr()
+    public async Task Must_ApplyWhere_UsingTargetPropertyPathWithOr()
     {
         // arrange
-        var provider = CreateProvider(nameof(Must_ApplyWhere_UsingTargetPropertyPathWithOr));
+        var provider = await CreateProvider(nameof(Must_ApplyWhere_UsingTargetPropertyPathWithOr));
         using var scope = provider.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<OrDbContext>();
         ctx.AddRange(
