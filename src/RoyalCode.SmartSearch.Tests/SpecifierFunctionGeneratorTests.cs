@@ -86,7 +86,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -101,7 +101,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -116,7 +116,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -131,7 +131,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -156,7 +156,7 @@ public class SpecifierFunctionGeneratorTests
         var property = typeof(SimpleModel).GetProperty(nameof(SimpleModel.Name))!;
 
         // act
-        var @operator = DefaultSpecifierFunctionGenerator.DiscoveryCriterionOperator(criterion, property);
+        var @operator = ExpressionGenerator.DiscoveryCriterionOperator(criterion, property);
 
         // assert
         Assert.Equal(inOperator, @operator);
@@ -176,7 +176,7 @@ public class SpecifierFunctionGeneratorTests
         var property = typeof(MultiFilterTypes).GetProperty(propertyName)!;
 
         // act
-        var @operator = DefaultSpecifierFunctionGenerator.DiscoveryCriterionOperator(criterion, property);
+        var @operator = ExpressionGenerator.DiscoveryCriterionOperator(criterion, property);
 
         // assert
         Assert.Equal(expectedOperator, @operator);
@@ -200,7 +200,7 @@ public class SpecifierFunctionGeneratorTests
             typeof(MultiFilterTypes).GetProperty(propertyName)!);
 
         // act
-        var expression = DefaultSpecifierFunctionGenerator.GetIfIsEmptyConstraintExpression(
+        var expression = ExpressionGenerator.GetIfIsEmptyConstraintExpression(
             filterMemberAccess,
             assignExpression);
 
@@ -245,7 +245,7 @@ public class SpecifierFunctionGeneratorTests
         Type filterPropertyType, Type modelPropertyType, bool expected)
     {
         // act
-        var match = DefaultSpecifierFunctionGenerator.CheckTypes(filterPropertyType, modelPropertyType);
+        var match = ExpressionGenerator.CheckTypes(filterPropertyType, modelPropertyType);
 
         // assert
         Assert.Equal(expected, match);
@@ -284,7 +284,7 @@ public class SpecifierFunctionGeneratorTests
             typeof(OperatorsModel).GetProperty(propertyName)!);
 
         // act
-        var expression = DefaultSpecifierFunctionGenerator.CreateOperatorExpression(
+        var expression = ExpressionGenerator.CreateOperatorExpression(
             @operator,
             negation,
             filterMemberAccess,

@@ -3,8 +3,6 @@ using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 
-#pragma warning disable S2326
-
 /// <summary>
 /// <para>
 ///     Options used by the default <see cref="ISpecifierFunctionGenerator"/> 
@@ -19,7 +17,7 @@ namespace RoyalCode.SmartSearch.Linq.Filtering;
 /// </summary>
 /// <typeparam name="TModel">The type of the model.</typeparam>
 /// <typeparam name="TFilter">The type of the filter.</typeparam>
-public class SpecifierGeneratorPropertyOptions<TModel, TFilter>
+public abstract class SpecifierGeneratorPropertyOptions<TModel, TFilter>
 {
     internal SpecifierGeneratorPropertyOptions(PropertyInfo propertyInfo)
     {

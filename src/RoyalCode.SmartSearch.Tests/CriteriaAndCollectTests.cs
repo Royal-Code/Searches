@@ -6,7 +6,7 @@ namespace RoyalCode.SmartSearch.Tests;
 /// <summary>
 /// Integration tests for the <see cref="IAllEntities{TEntity}"/> search.
 /// </summary>
-public class AllEntitiesTests
+public class CriteriaAndCollectTests
 {
     // configure test container
     private static IServiceProvider CreateServiceProvider(string name)

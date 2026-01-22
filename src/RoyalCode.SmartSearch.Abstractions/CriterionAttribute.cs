@@ -27,13 +27,16 @@ public sealed class CriterionAttribute : Attribute
 
     /// <summary>
     /// <para>
-    ///     The name of the target property.
+    ///     The name of the target property path.
     /// </para>
     /// <para>
     ///     Optional, when not informed then the property name will be used.
     /// </para>
+    /// <para>
+    ///     It can be a nested property path using dot notation or CamelCase.
+    /// </para>
     /// </summary>
-    public string? TargetProperty { get; set; }
+    public string? TargetPropertyPath { get; set; }
 
     /// <summary>
     /// <para>

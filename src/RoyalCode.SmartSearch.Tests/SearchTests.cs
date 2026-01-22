@@ -98,9 +98,9 @@ public class SearchTestsFilter
 {
     public string? Name { get; set; }
 
-    [Criterion(TargetProperty = nameof(SearchEntity.CreatedAt), Operator = CriterionOperator.GreaterThanOrEqual)]
+    [Criterion(TargetPropertyPath = nameof(SearchEntity.CreatedAt), Operator = CriterionOperator.GreaterThanOrEqual)]
     public DateTime? CreatedAtFrom { get; set; }
 
-    [Criterion(TargetProperty = nameof(SearchEntity.CreatedAt), Operator = CriterionOperator.LessThanOrEqual)]
+    [Criterion(TargetPropertyPath = nameof(SearchEntity.CreatedAt), Operator = CriterionOperator.LessThanOrEqual)]
     public DateTime? CreatedAtTo { get; set; }
 }
