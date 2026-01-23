@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 

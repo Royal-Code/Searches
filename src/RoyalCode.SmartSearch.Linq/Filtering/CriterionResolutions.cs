@@ -1,4 +1,5 @@
 ﻿using RoyalCode.Extensions.PropertySelection;
+using RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
@@ -19,6 +20,10 @@ internal static class CriterionResolutions
             })
             .Where(t => !t.Criterion.Ignore)
             .ToList();
+
+        // 1 - For each available property, check if there is a predicate factory defined in the specifier options.
+        //     If so, create a PredicateFactoryCriterionResolution for it,
+        //     and remove it from the available properties.
 
         // try add predicate factories from custom specifier generator options.
         if (SpecifierGeneratorOptions.TryGetOptions<TModel, TFilter>(out var options))
@@ -44,6 +49,11 @@ internal static class CriterionResolutions
                 .Where(t => !predicateResolutions.Exists(pr => pr.FilterPropertySelection.PropertyName == t.FilterProperty.PropertyName))
                 .ToList();
         }
+
+        // 2 - for each available property, check if it has DisjuctionAttribute defined,
+        //     and group them by the DisjuctionAttribute.Alias value,
+        //     creating a DisjuctionCriterionResolution for each group,
+        //     and removing them from the available properties.
 
         // get the disjunction groups from the remaining elected properties.
         var disjuctionsElected = available
@@ -71,10 +81,14 @@ internal static class CriterionResolutions
                 .ToList();
         }
 
+        // 3 - for each available property, check if its name (or the TargetPropertyPath) contains "Or",
+        //     splitting it into parts, and creating a DisjuctionCriterionResolution for each,
+        //     and removing them from the available properties.
+
         // Search for properties that have Or in the middle of the name, e.g., FirstNameOrMiddleNameOrLastName.
         var junctionsElected = available
-            .Where(t => 
-                (t.Criterion.TargetPropertyPath is not null && t.Criterion.TargetPropertyPath.Contains("Or")) 
+            .Where(t =>
+                (t.Criterion.TargetPropertyPath is not null && t.Criterion.TargetPropertyPath.Contains("Or"))
                 || t.FilterProperty.PropertyName.Contains("Or"))
             .Select(t => new
             {
@@ -110,10 +124,36 @@ internal static class CriterionResolutions
                 .ToList();
         }
 
+        // 4 - for each available property, Check for ComplexFilterAttribute,
+        //     creating a ComplexFilterCriterionResolution for each,
+        //     and removing them from the available properties.
+
+        // search for properties that have the ComplexFilter attribute or whose type has the ComplexFilter attribute.
+        var complexElected = available
+            .Where(t =>
+                t.FilterProperty.Info.IsDefined(typeof(ComplexFilterAttribute), true)
+                || t.FilterProperty.Info.PropertyType.IsDefined(typeof(ComplexFilterAttribute), true))
+            .ToList();
+        if (complexElected.Count is not 0)
+        {
+            var complexResolutions = complexElected
+                .Select(t => new ComplexFilterCriterionResolution(
+                    t.FilterProperty,
+                    t.Criterion,
+                    typeof(TModel)))
+                .ToList();
+            resolutions.AddRange(complexResolutions);
+            available = available
+                .Where(t => !complexElected.Exists(ce => ce.FilterProperty.PropertyName == t.FilterProperty.PropertyName))
+                .ToList();
+        }
+
+        // Finally - for each remaining available property, create a DefaultOperatorCriterionResolution.
+
         // for each remaining elected property, creates a criterion resolution.
         var remainingResolutions = available
-            .Select(t => new DefaultOperatorCriterionResolution(t.FilterProperty, t.Criterion, typeof(TModel)))
-            .ToList();
+        .Select(t => new DefaultOperatorCriterionResolution(t.FilterProperty, t.Criterion, typeof(TModel)))
+        .ToList();
 
         resolutions.AddRange(remainingResolutions);
 

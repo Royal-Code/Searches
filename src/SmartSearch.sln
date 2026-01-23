@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11408.92 d18.3
+VisualStudioVersion = 18.3.11408.92
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Abstractions", "RoyalCode.SmartSearch.Abstractions\RoyalCode.SmartSearch.Abstractions.csproj", "{CF945035-3E2C-4D16-AD95-B41D422A42B5}"
 EndProject
@@ -9,8 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".items", ".items", "{45312F
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 		icon.png = icon.png
-		README.md = README.md
 		pack.targets = pack.targets
+		README.md = README.md
 		..\.github\workflows\smart-search.yml = ..\.github\workflows\smart-search.yml
 		tests.targets = tests.targets
 	EndProjectSection
@@ -28,6 +28,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalCode.SmartSearch.Tests", "RoyalCode.SmartSearch.Tests\RoyalCode.SmartSearch.Tests.csproj", "{92A0A603-CFF6-498E-BED8-8D0D21561AC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyalCode.SmartSearch.AspNetCore", "RoyalCode.SmartSearch.AspNetCore\RoyalCode.SmartSearch.AspNetCore.csproj", "{BC54B3A6-736A-4459-9F33-1101013627F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{789D2113-F8D2-401F-87CB-4CB728AA2674}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\archtecture.md = ..\docs\archtecture.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +75,7 @@ Global
 		{DEAF76E8-950F-4D38-B98B-9099C9F190ED} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
 		{92A0A603-CFF6-498E-BED8-8D0D21561AC2} = {932A3AFB-78D0-4A2D-BADD-54A9BC593B60}
 		{BC54B3A6-736A-4459-9F33-1101013627F6} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
+		{789D2113-F8D2-401F-87CB-4CB728AA2674} = {45312F31-98C1-4E24-9BC9-0784C6378797}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D75591B5-4D8A-4ECD-94CE-D38BBC572272}

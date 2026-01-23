@@ -4,8 +4,7 @@ namespace RoyalCode.SmartSearch.Linq.Filtering;
 
 public interface ISpecifierExpressionGenerator
 {
-
-    public Expression GenerateExpression<TModel>(ExpressionGeneratorContext<TModel> context);
+    public static abstract Expression GenerateExpression<TModel>(ExpressionGeneratorContext<TModel> context);
 }
 
 public class ExpressionGeneratorContext<TModel>

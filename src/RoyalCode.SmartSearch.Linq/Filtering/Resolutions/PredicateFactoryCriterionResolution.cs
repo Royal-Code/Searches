@@ -1,7 +1,7 @@
 ﻿using RoyalCode.Extensions.PropertySelection;
 using System.Linq.Expressions;
 
-namespace RoyalCode.SmartSearch.Linq.Filtering;
+namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal class PredicateFactoryCriterionResolution : AbstractCriterionResolution
 {

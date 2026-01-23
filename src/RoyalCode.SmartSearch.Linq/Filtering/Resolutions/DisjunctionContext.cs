@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace RoyalCode.SmartSearch.Linq.Filtering;
+namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal sealed class DisjunctionContext<TModel>
     where TModel : class

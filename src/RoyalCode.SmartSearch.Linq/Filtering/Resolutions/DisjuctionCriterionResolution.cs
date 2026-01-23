@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
-namespace RoyalCode.SmartSearch.Linq.Filtering;
+namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal class DisjuctionCriterionResolution : ICriterionResolution
 {

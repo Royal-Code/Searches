@@ -1,7 +1,7 @@
 ﻿using RoyalCode.Extensions.PropertySelection;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RoyalCode.SmartSearch.Linq.Filtering;
+namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal class JunctionProperty
 {

@@ -1,6 +1,5 @@
-﻿using RoyalCode.Extensions.PropertySelection;
+﻿using RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 
