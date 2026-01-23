@@ -37,7 +37,10 @@ public class ComplexFilterAttribute<TPropertyType> : Attribute
 ///     can be mapped as a complex property or an owned entity, 
 ///     depending on how the class or struct is used.
 /// </para>
+/// <para>
+///     It can be applied to classes, structs, or properties to denote that they represent complex filter types or properties.
+/// </para>
 /// </summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = false)]
 public class ComplexFilterAttribute : Attribute { }
 

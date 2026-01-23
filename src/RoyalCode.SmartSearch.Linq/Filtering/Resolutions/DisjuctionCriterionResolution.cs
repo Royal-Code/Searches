@@ -5,13 +5,13 @@ namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal class DisjuctionCriterionResolution : ICriterionResolution
 {
-    private readonly Type modelType;
+    private readonly FilterTarget filterTarget;
     private readonly IReadOnlyList<JunctionProperty> group;
     private readonly Lack? lack;
 
-    public DisjuctionCriterionResolution(Type modelType, IReadOnlyList<JunctionProperty> group)
+    public DisjuctionCriterionResolution(FilterTarget filterTarget, IReadOnlyList<JunctionProperty> group)
     {
-        this.modelType = modelType;
+        this.filterTarget = filterTarget;
         this.group = group;
 
         foreach (var junction in group)
@@ -31,7 +31,7 @@ internal class DisjuctionCriterionResolution : ICriterionResolution
 
     public Expression CreateExpression(ParameterExpression queryParam, ParameterExpression filterParam)
     {
-        var ctxType = typeof(DisjunctionContext<>).MakeGenericType(modelType);
+        var ctxType = typeof(DisjunctionContext<>).MakeGenericType(filterTarget.ModelType);
         var ctxVar = Expression.Variable(ctxType, "ctx");
         var ctxAssign = Expression.Assign(ctxVar, Expression.New(ctxType));
 

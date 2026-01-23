@@ -33,14 +33,23 @@ public sealed class DefaultSpecifierFunctionGenerator : ISpecifierFunctionGenera
         var filterParam = Expression.Parameter(typeof(TFilter), "filter");
         var queryParam = Expression.Parameter(typeof(IQueryable<TModel>), "query");
         List<Expression> body = [];
+        List<ParameterExpression> variables = [];
 
         foreach (var resolution in resolvedProperties)
         {
-            // create the assign expression to apply the filter to the query.
-            var assign = resolution.CreateExpression(queryParam, filterParam);
+            // create the expression to apply the filter to the query.
+            var expression = resolution.CreateExpression(queryParam, filterParam);
 
-            // add the assign expression to the body.
-            body.Add(assign);
+            // if the expression is a block, then add all expressions in the block to the body.
+            if (expression is BlockExpression block)
+            {
+                variables.AddRange(block.Variables);
+                body.AddRange(block.Expressions);
+                continue;
+            }
+
+            // add the expression to the body.
+            body.Add(expression);
         }
 
         // build the expression of the lambda function to apply the filters.
@@ -50,7 +59,7 @@ public sealed class DefaultSpecifierFunctionGenerator : ISpecifierFunctionGenera
             typeof(IQueryable<TModel>));
 
         body.Add(queryParam);
-        var bodyBlock = Expression.Block(body);
+        var bodyBlock = Expression.Block(variables, body);
 
         var lambdaFunc = Expression.Lambda(funcType, bodyBlock, queryParam, filterParam);
 

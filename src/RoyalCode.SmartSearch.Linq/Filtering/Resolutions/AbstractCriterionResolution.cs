@@ -6,10 +6,10 @@ namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal abstract class AbstractCriterionResolution : ICriterionResolution
 {
-    protected AbstractCriterionResolution(PropertySelection propertySelection, CriterionAttribute criterionAttribute, Type modelType)
+    protected AbstractCriterionResolution(PropertySelection propertySelection, CriterionAttribute criterionAttribute, FilterTarget filterTarget)
     {
         Criterion = criterionAttribute;
-        ModelType = modelType;
+        FilterTarget = filterTarget;
         FilterPropertySelection = propertySelection;
     }
 
@@ -17,7 +17,7 @@ internal abstract class AbstractCriterionResolution : ICriterionResolution
 
     public CriterionAttribute Criterion { get; set; }
 
-    public Type ModelType { get; set; }
+    public FilterTarget FilterTarget { get; set; }
 
     protected Lack? Lack { get; set; }
 
@@ -31,7 +31,7 @@ internal abstract class AbstractCriterionResolution : ICriterionResolution
 
         // create the method call to apply the filter in the query.
         var methodCall = ExpressionGenerator.CreateWhereCall(
-            ModelType,
+            FilterTarget.ModelType,
             queryParam,
             predicateExpression);
 

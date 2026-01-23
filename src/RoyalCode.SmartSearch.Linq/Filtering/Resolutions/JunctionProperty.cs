@@ -7,17 +7,17 @@ internal class JunctionProperty
 {
     private readonly Lack? lack;
 
-    public JunctionProperty(PropertySelection property, CriterionAttribute criterion, Type modelType)
+    public JunctionProperty(PropertySelection property, CriterionAttribute criterion, FilterTarget filterTarget)
     {
         FilterProperty = property;
         Criterion = criterion;
 
-        var propertySelection = GetPropertySelection(modelType);
+        var propertySelection = GetPropertySelection(filterTarget);
         if (propertySelection is null)
         {
             lack = new Lack
             {
-                Description = $"The target property '{Criterion.TargetPropertyPath ?? FilterProperty.PropertyName}' for filter property '{FilterProperty.PropertyName}' was not found in model type '{modelType.FullName}'."
+                Description = $"The target property '{Criterion.TargetPropertyPath ?? FilterProperty.PropertyName}' for filter property '{FilterProperty.PropertyName}' was not found in model type '{filterTarget.TargetType.FullName}'."
             };
         }
         else
@@ -42,10 +42,10 @@ internal class JunctionProperty
         return lack is not null;
     }
 
-    private PropertySelection? GetPropertySelection(Type modelType)
+    private PropertySelection? GetPropertySelection(FilterTarget filterTarget)
     {
         return Criterion.TargetPropertyPath is not null
-            ? modelType.TrySelectProperty(Criterion.TargetPropertyPath)
-            : modelType.TrySelectProperty(FilterProperty.PropertyName);
+            ? filterTarget.TrySelectProperty(Criterion.TargetPropertyPath)
+            : filterTarget.TrySelectProperty(FilterProperty.PropertyName);
     }
 }

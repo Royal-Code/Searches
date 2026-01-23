@@ -10,17 +10,17 @@ internal class PredicateFactoryCriterionResolution : AbstractCriterionResolution
     public PredicateFactoryCriterionResolution(
         PropertySelection property,
         CriterionAttribute criterionAttribute,
-        Type modelType,
+        FilterTarget filterTarget,
         Delegate predicateFactory)
-        : base(property, criterionAttribute, modelType)
+        : base(property, criterionAttribute, filterTarget)
     {
         this.predicateFactory = predicateFactory;
 
-        if (!CheckPredicateFactoryType(modelType, property.PropertyType))
+        if (!CheckPredicateFactoryType(filterTarget, property.PropertyType))
         {
             Lack = new Lack
             {
-                Description = $"The predicate factory for filter property '{FilterPropertySelection.PropertyName}' is not compatible with the specified types, model '{modelType.FullName}', filter property '{property.PropertyType.FullName}'."
+                Description = $"The predicate factory for filter property '{FilterPropertySelection.PropertyName}' is not compatible with the specified types, model '{filterTarget.TargetType.FullName}', filter property '{property.PropertyType.FullName}'."
             };
         }
     }
@@ -36,14 +36,14 @@ internal class PredicateFactoryCriterionResolution : AbstractCriterionResolution
         return predicateFactoryCall;
     }
 
-    private bool CheckPredicateFactoryType(Type modelType, Type filterPropertyType)
+    private bool CheckPredicateFactoryType(FilterTarget filterTarget, Type filterPropertyType)
     {
         // if the filter property is nullable, get the underlying type
         filterPropertyType = Nullable.GetUnderlyingType(filterPropertyType) ?? filterPropertyType;
 
         // check if the predicate factory is compatible with the specified types (Func<TProperty, Expression<Func<TFilter, bool>>>)
         var predicateFactoryType = predicateFactory.GetType();
-        var funcType = typeof(Func<,>).MakeGenericType(modelType, typeof(bool));
+        var funcType = typeof(Func<,>).MakeGenericType(filterTarget.ModelType, typeof(bool));
         var expressionFuncType = typeof(Expression<>).MakeGenericType(funcType);
         var expectedType = typeof(Func<,>).MakeGenericType(filterPropertyType, expressionFuncType);
         if (expectedType.IsAssignableFrom(predicateFactoryType))

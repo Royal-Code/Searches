@@ -6,14 +6,43 @@ namespace RoyalCode.SmartSearch.Linq.Filtering;
 
 internal static class CriterionResolutions
 {
-    public static IReadOnlyList<ICriterionResolution> CreateResolutions<TModel, TFilter>(PropertySelection? previousFilterProperty = null)
+    public static IReadOnlyList<ICriterionResolution> CreateResolutions<TModel, TFilter>(
+        PropertySelection? previousFilterProperty = null, FilterTarget? filterTarget = null)
         where TModel : class
         where TFilter : class
     {
-        List<ICriterionResolution> resolutions = [];
+        filterTarget ??= new(typeof(TModel));
 
-        var available = typeof(TFilter).GetProperties()
-            .Select(p => new
+        List<ICriterionResolution> resolutions = [];
+        var available = BuildAvailableFilterProperties(typeof(TFilter), previousFilterProperty);
+
+        ApplyCustomPredicateFactories<TModel, TFilter>(available, filterTarget, resolutions);
+        BuildDisjunctionsFromAttributes(available, filterTarget, resolutions);
+        BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions);
+        BuildComplexFilterResolutions(available, filterTarget, resolutions);
+        BuildDefaultOperatorResolutions(available, filterTarget, resolutions);
+
+        return resolutions;
+    }
+
+    public static IReadOnlyList<ICriterionResolution> CreateResolutions(
+        PropertySelection previousFilterProperty, FilterTarget filterTarget)
+    {
+        List<ICriterionResolution> resolutions = [];
+        var available = BuildAvailableFilterProperties(previousFilterProperty.Info.PropertyType, previousFilterProperty);
+
+        BuildDisjunctionsFromAttributes(available, filterTarget, resolutions);
+        BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions);
+        BuildComplexFilterResolutions(available, filterTarget, resolutions);
+        BuildDefaultOperatorResolutions(available, filterTarget, resolutions);
+
+        return resolutions;
+    }
+
+    private static List<AvailableFilterProperty> BuildAvailableFilterProperties(Type filterType, PropertySelection? previousFilterProperty)
+    {
+        var available = filterType.GetProperties()
+            .Select(p => new AvailableFilterProperty
             {
                 FilterProperty = previousFilterProperty?.SelectChild(p) ?? new PropertySelection(p),
                 Criterion = p.GetCustomAttribute<CriterionAttribute>(true) ?? new CriterionAttribute()
@@ -21,14 +50,20 @@ internal static class CriterionResolutions
             .Where(t => !t.Criterion.Ignore)
             .ToList();
 
-        // 1 - For each available property, check if there is a predicate factory defined in the specifier options.
-        //     If so, create a PredicateFactoryCriterionResolution for it,
-        //     and remove it from the available properties.
+        return available;
+    }
 
-        // try add predicate factories from custom specifier generator options.
+    private static void ApplyCustomPredicateFactories<TModel, TFilter>(
+        List<AvailableFilterProperty> available,
+        FilterTarget filterTarget,
+        List<ICriterionResolution> resolutions)
+            where TModel : class
+            where TFilter : class
+    {
         if (SpecifierGeneratorOptions.TryGetOptions<TModel, TFilter>(out var options))
         {
-            List<PredicateFactoryCriterionResolution> predicateResolutions = [];
+            List<AvailableFilterProperty> toRemove = [];
+
             foreach (var tuple in available)
             {
                 if (options.TryGetPropertyOptions(tuple.FilterProperty.Info, out var propertyOptions)
@@ -37,31 +72,28 @@ internal static class CriterionResolutions
                     var resolution = new PredicateFactoryCriterionResolution(
                         tuple.FilterProperty,
                         tuple.Criterion,
-                        typeof(TModel),
+                        filterTarget,
                         propertyOptions.PredicateFactory);
 
-                    predicateResolutions.Add(resolution);
+                    resolutions.Add(resolution);
+                    toRemove.Add(tuple);
                 }
             }
 
-            resolutions.AddRange(predicateResolutions);
-            available = available
-                .Where(t => !predicateResolutions.Exists(pr => pr.FilterPropertySelection.PropertyName == t.FilterProperty.PropertyName))
-                .ToList();
+            toRemove.ForEach(r => available.Remove(r));
         }
+    }
 
-        // 2 - for each available property, check if it has DisjuctionAttribute defined,
-        //     and group them by the DisjuctionAttribute.Alias value,
-        //     creating a DisjuctionCriterionResolution for each group,
-        //     and removing them from the available properties.
-
-        // get the disjunction groups from the remaining elected properties.
+    private static void BuildDisjunctionsFromAttributes(
+        List<AvailableFilterProperty> available, 
+        FilterTarget filterTarget, 
+        List<ICriterionResolution> resolutions)
+    {
         var disjuctionsElected = available
             .Where(t => t.FilterProperty.Info.IsDefined(typeof(DisjuctionAttribute), true))
             .Select(t => new
             {
-                t.FilterProperty,
-                t.Criterion,
+                Property = t,
                 Group = t.FilterProperty.Info.GetCustomAttribute<DisjuctionAttribute>(true)!.Alias
             })
             .ToList();
@@ -71,92 +103,94 @@ internal static class CriterionResolutions
             var disjuctions = disjuctionsElected
                 .GroupBy(t => t.Group)
                 .Select(g => new DisjuctionCriterionResolution(
-                    typeof(TModel),
-                    [.. g.Select(t => new JunctionProperty(t.FilterProperty, t.Criterion, typeof(TModel)))]))
+                    filterTarget,
+                    [.. g.Select(t => new JunctionProperty(t.Property.FilterProperty, t.Property.Criterion, filterTarget))]))
                 .ToList();
 
             resolutions.AddRange(disjuctions);
-            available = available
-                .Where(t => !disjuctionsElected.Exists(de => de.FilterProperty.PropertyName == t.FilterProperty.PropertyName))
-                .ToList();
+            disjuctionsElected.ForEach(de => available.Remove(de.Property));
         }
+    }
 
-        // 3 - for each available property, check if its name (or the TargetPropertyPath) contains "Or",
-        //     splitting it into parts, and creating a DisjuctionCriterionResolution for each,
-        //     and removing them from the available properties.
-
-        // Search for properties that have Or in the middle of the name, e.g., FirstNameOrMiddleNameOrLastName.
+    private static void BuildDisjunctionsFromNameOrTargetPath(
+        List<AvailableFilterProperty> available,
+        FilterTarget filterTarget,
+        List<ICriterionResolution> resolutions)
+    {
         var junctionsElected = available
             .Where(t =>
                 (t.Criterion.TargetPropertyPath is not null && t.Criterion.TargetPropertyPath.Contains("Or"))
                 || t.FilterProperty.PropertyName.Contains("Or"))
             .Select(t => new
             {
-                t.FilterProperty,
-                t.Criterion,
-                Parts = (t.Criterion.TargetPropertyPath ?? t.FilterProperty.PropertyName).Split(["Or"], StringSplitOptions.RemoveEmptyEntries)
+                Property = t,
+                Parts = (t.Criterion.TargetPropertyPath ?? t.FilterProperty.PropertyName)
+                    .Split(["Or"], StringSplitOptions.RemoveEmptyEntries)
             })
             .ToList();
 
         if (junctionsElected.Count is not 0)
         {
-            // For each part of the name, create a JunctionProperty, using the same FilterProperty,
-            // but creating a Criterion for each and assigning the TargetPropertyPath with the value of the part.
             var junctions = junctionsElected
                 .Select(j => new DisjuctionCriterionResolution(
-                    typeof(TModel),
-                        [.. j.Parts.Select(part => new JunctionProperty(
-                            j.FilterProperty,
-                            new CriterionAttribute
-                            {
-                                Operator = j.Criterion.Operator,
-                                Negation = j.Criterion.Negation,
-                                IgnoreIfIsEmpty = j.Criterion.IgnoreIfIsEmpty,
-                                TargetPropertyPath = part,
-                            },
-                            typeof(TModel)))
-                        ]))
+                    filterTarget,
+                    [.. j.Parts.Select(part => new JunctionProperty(
+                        j.Property.FilterProperty,
+                        new CriterionAttribute
+                        {
+                            Operator = j.Property.Criterion.Operator,
+                            Negation = j.Property.Criterion.Negation,
+                            IgnoreIfIsEmpty = j.Property.Criterion.IgnoreIfIsEmpty,
+                            TargetPropertyPath = part,
+                        },
+                        filterTarget))
+                    ]))
                 .ToList();
 
             resolutions.AddRange(junctions);
-            available = available
-                .Where(t => !junctionsElected.Exists(je => je.FilterProperty.PropertyName == t.FilterProperty.PropertyName))
-                .ToList();
+            junctionsElected.ForEach(j => available.Remove(j.Property));
         }
+    }
 
-        // 4 - for each available property, Check for ComplexFilterAttribute,
-        //     creating a ComplexFilterCriterionResolution for each,
-        //     and removing them from the available properties.
-
-        // search for properties that have the ComplexFilter attribute or whose type has the ComplexFilter attribute.
+    private static void BuildComplexFilterResolutions(
+        List<AvailableFilterProperty> available,
+        FilterTarget filterTarget, 
+        List<ICriterionResolution> resolutions)
+    {
         var complexElected = available
             .Where(t =>
                 t.FilterProperty.Info.IsDefined(typeof(ComplexFilterAttribute), true)
                 || t.FilterProperty.Info.PropertyType.IsDefined(typeof(ComplexFilterAttribute), true))
             .ToList();
+
         if (complexElected.Count is not 0)
         {
             var complexResolutions = complexElected
                 .Select(t => new ComplexFilterCriterionResolution(
                     t.FilterProperty,
                     t.Criterion,
-                    typeof(TModel)))
+                    filterTarget))
                 .ToList();
+
             resolutions.AddRange(complexResolutions);
-            available = available
-                .Where(t => !complexElected.Exists(ce => ce.FilterProperty.PropertyName == t.FilterProperty.PropertyName))
-                .ToList();
+            complexElected.ForEach(c => available.Remove(c));
         }
+    }
 
-        // Finally - for each remaining available property, create a DefaultOperatorCriterionResolution.
+    private static void BuildDefaultOperatorResolutions(
+        List<AvailableFilterProperty> available,
+        FilterTarget filterTarget, 
+        List<ICriterionResolution> resolutions)
+    {
+        foreach (var t in available)
+        {
+            resolutions.Add(new DefaultOperatorCriterionResolution(t.FilterProperty, t.Criterion, filterTarget));
+        }
+    }
 
-        // for each remaining elected property, creates a criterion resolution.
-        var remainingResolutions = available
-        .Select(t => new DefaultOperatorCriterionResolution(t.FilterProperty, t.Criterion, typeof(TModel)))
-        .ToList();
-
-        resolutions.AddRange(remainingResolutions);
-
-        return resolutions;
+    private sealed class AvailableFilterProperty
+    {
+        public required PropertySelection FilterProperty { get; init; }
+        public required CriterionAttribute Criterion { get; init; }
     }
 }
