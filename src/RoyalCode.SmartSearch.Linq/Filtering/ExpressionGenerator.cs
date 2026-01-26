@@ -334,16 +334,7 @@ public static class ExpressionGenerator
         {
             return true;
         }
-        // check if the model type has ComplexFilter attribute and get the attribute generic type to compare with the filter type
-        if (HasAttribute(Nullable.GetUnderlyingType(modelPropertyType), typeof(ComplexFilterAttribute<>), out var complexFilterAttr))
-        {
-            var complexFilterType = complexFilterAttr.GetType().GetGenericArguments()[0];
-            if (filterPropertyType == complexFilterType)
-            {
-                return true;
-            }
-        }
-
+        
         // when generic arg, is required to check same types, when not, is required to check if is IEnumerable
         if (genericArg)
         {

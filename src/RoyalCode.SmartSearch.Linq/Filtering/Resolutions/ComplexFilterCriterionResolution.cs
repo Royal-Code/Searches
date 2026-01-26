@@ -77,8 +77,6 @@ internal class ComplexFilterCriterionResolution : ICriterionResolution
 
     private IReadOnlyList<ICriterionResolution> CreateInternalCriterionResolution()
     {
-        List<ICriterionResolution> resolutions = [];
-
         // lockup for the target property selection
         var targetPropertySelection = filterTarget.TrySelectProperty(criterion.TargetPropertyPath ?? filterProperty.PropertyName);
 
@@ -92,42 +90,15 @@ internal class ComplexFilterCriterionResolution : ICriterionResolution
             return [];
         }
 
-        // now have 2 ways:
-        // 1. the filter property and the target property are of the same type
-        //    -> then create resolution for each property of the property type
-        // 2. the filter property and the target property are of different types
-        //    -> then check for ComplextFilter<T> attribute on the target property type
-        //       and check for matching the types.
-        //    -> then create a resolution for the filter property type and the defined target sub-property.
+        // create a new FilterTarget using the targetPropertySelection
+        var newFilterTarget = new FilterTarget(filterTarget.ModelType, targetPropertySelection.PropertyType, targetPropertySelection);
 
-        if (FilterPropertyType == targetPropertySelection.PropertyType)
-        {
-            // create a new FilterTarget using the targetPropertySelection
-            var newFilterTarget = new FilterTarget(filterTarget.ModelType, targetPropertySelection.PropertyType, targetPropertySelection);
+        // check the filterProperty to be used as previous filter property
+        var previousFilterProperty = filterPropertyUnderlyingType is not null
+            ? filterProperty.SelectChild("Value")!
+            : filterProperty;
 
-            // check the filterProperty to be used as previous filter property
-            var previousFilterProperty = filterPropertyUnderlyingType is not null
-                ? filterProperty.SelectChild("Value")!
-                : filterProperty;
-
-            // return resolutions for the filter property and the new filter target
-            return CriterionResolutions.CreateResolutions(previousFilterProperty, newFilterTarget);
-        }
-        else
-        {
-            // different types, check for ComplexFilter<T> attribute on target property type
-            if (!targetPropertySelection.PropertyType.HasAttribute(typeof(ComplexFilterAttribute<>), out var attr))
-            {
-                lack = new Lack
-                {
-                    Description = $"The target property '{targetPropertySelection.PropertyName}' on model type '{filterTarget.TargetType.FullName}' does not have a ComplexFilter<> attribute required for criterion '{criterion.GetType().Name}'."
-                };
-                return [];
-            }
-
-            // todo
-        }
-
-        return resolutions;
+        // return resolutions for the filter property and the new filter target
+        return CriterionResolutions.CreateResolutions(previousFilterProperty, newFilterTarget);
     }
 }

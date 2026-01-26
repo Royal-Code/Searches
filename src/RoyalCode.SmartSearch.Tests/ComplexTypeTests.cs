@@ -26,6 +26,36 @@ public class ComplexTypeTests
     }
 
     [Fact]
+    public async Task Must_FilterBy_Names_WithOr_ReturnThree()
+    {
+        // arrange
+        var provider = await CreateServiceProvider(nameof(Must_FilterBy_Names_WithOr_ReturnThree));
+        using var scope = provider.CreateScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+        ctx.AddRange(
+            new User { Id = 1, Email = new Email("u1@corp.com"), Name = new PersonName("John", "A", "Smith") },            // FirstName = John
+            new User { Id = 2, Email = new Email("u2@corp.com"), Name = new PersonName("Mary", "John", "Jones") },         // MiddleName = John
+            new User { Id = 3, Email = new Email("u3@corp.com"), Name = new PersonName("Alex", "C", "John") },            // LastName = John
+            new User { Id = 4, Email = new Email("u4@corp.com"), Name = new PersonName("Maria", "B", "Silva") },
+            new User { Id = 5, Email = new Email("u5@corp.com"), Name = new PersonName("Peter", "Q", "Parker") },
+            new User { Id = 6, Email = new Email("u6@corp.com"), Name = new PersonName("Julia", "R", "Stone") }
+        );
+        ctx.SaveChanges();
+
+        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<User>>();
+
+        // act: Name.Value applies OR across FirstName/MiddleName/LastName
+        var filter = new UserFilterByName { Name = new PersonNameFilter { Value = "John" } };
+        var result = criteria.FilterBy(filter).Collect();
+
+        // assert
+        Assert.Equal(3, result.Count);
+        Assert.Contains(result, x => x.Id == 1);
+        Assert.Contains(result, x => x.Id == 2);
+        Assert.Contains(result, x => x.Id == 3);
+    }
+
+    [Fact]
     public async Task Must_FilterBy_Email_FirstName_And_State_ReturnTwo()
     {
         // arrange
@@ -56,21 +86,6 @@ public class ComplexTypeTests
         Assert.Equal(2, result.Count);
         Assert.Contains(result, x => x.Id == 1);
         Assert.Contains(result, x => x.Id == 2);
-    }
-    [Fact]
-    public void HasAttribute_WhenComplexFilter_ShouldBeTrue()
-    {
-        // Arrange
-        var type = typeof(Email);
-
-        // Act
-        var hasAttribute = ExpressionGenerator.HasAttribute(type, typeof(ComplexFilterAttribute<>), out var attr);
-
-        // Assert
-        Assert.True(hasAttribute);
-
-        var genericType = attr!.GetType().GetGenericArguments()[0];
-        Assert.Equal(typeof(string), genericType);
     }
 
     [Fact]
@@ -439,7 +454,7 @@ public class ComplexTypeTests
 }
 
 
-[ComplexFilter<string>(nameof(Value))]
+[ComplexFilter]
 internal readonly record struct Email
 {
     public string Value { get; }
@@ -502,6 +517,18 @@ internal class UserFilter
 
     [Criterion("MainAddress")]
     public Address? Address { get; set; }
+}
+
+internal class UserFilterByName
+{
+    public PersonNameFilter Name { get; set; }
+}
+
+[ComplexFilter]
+internal struct PersonNameFilter
+{
+    [Criterion("FirstNameOrMiddleNameOrLastName")]
+    public string? Value { get; set; }
 }
 
 internal class UserDbContext : DbContext

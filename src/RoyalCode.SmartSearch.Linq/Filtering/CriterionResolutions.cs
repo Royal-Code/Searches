@@ -1,6 +1,7 @@
 ﻿using RoyalCode.Extensions.PropertySelection;
 using RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
 
@@ -20,6 +21,7 @@ internal static class CriterionResolutions
         BuildDisjunctionsFromAttributes(available, filterTarget, resolutions);
         BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions);
         BuildComplexFilterResolutions(available, filterTarget, resolutions);
+        BuildFilterExpressionGenerator(available, filterTarget, resolutions);
         BuildDefaultOperatorResolutions(available, filterTarget, resolutions);
 
         return resolutions;
@@ -34,6 +36,7 @@ internal static class CriterionResolutions
         BuildDisjunctionsFromAttributes(available, filterTarget, resolutions);
         BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions);
         BuildComplexFilterResolutions(available, filterTarget, resolutions);
+        BuildFilterExpressionGenerator(available, filterTarget, resolutions);
         BuildDefaultOperatorResolutions(available, filterTarget, resolutions);
 
         return resolutions;
@@ -118,15 +121,14 @@ internal static class CriterionResolutions
         List<ICriterionResolution> resolutions)
     {
         var junctionsElected = available
-            .Where(t =>
-                (t.Criterion.TargetPropertyPath is not null && t.Criterion.TargetPropertyPath.Contains("Or"))
-                || t.FilterProperty.PropertyName.Contains("Or"))
             .Select(t => new
             {
                 Property = t,
                 Parts = (t.Criterion.TargetPropertyPath ?? t.FilterProperty.PropertyName)
                     .Split(["Or"], StringSplitOptions.RemoveEmptyEntries)
             })
+            // Only consider as junction when split produced more than one part (e.g., FirstNameOrLastName)
+            .Where(x => x.Parts.Length > 1)
             .ToList();
 
         if (junctionsElected.Count is not 0)
@@ -174,6 +176,42 @@ internal static class CriterionResolutions
 
             resolutions.AddRange(complexResolutions);
             complexElected.ForEach(c => available.Remove(c));
+        }
+    }
+
+    private static void BuildFilterExpressionGenerator(
+        List<AvailableFilterProperty> available, 
+        FilterTarget filterTarget, 
+        List<ICriterionResolution> resolutions)
+    {
+        var generatorElected = available
+            .Where(t =>
+                t.FilterProperty.Info.IsDefined(typeof(FilterExpressionGeneratorAttribute<>), true)
+                || t.FilterProperty.Info.PropertyType.IsDefined(typeof(FilterExpressionGeneratorAttribute<>), true))
+            .ToList();
+
+        if (generatorElected.Count is not 0)
+        {
+            var generatorResolutions = generatorElected
+                .Select(t =>
+                {
+                    // obter tipo genérico do atributo
+                    var attr = t.FilterProperty.Info.GetCustomAttribute(typeof(FilterExpressionGeneratorAttribute<>), true)
+                        ?? t.FilterProperty.Info.PropertyType.GetCustomAttribute(typeof(FilterExpressionGeneratorAttribute<>), true);
+
+                    // extrair o tipo genérico TExpressionGenerator do atributo
+                    var genericAttrType = attr?.GetType().GetGenericArguments()[0];
+
+                    return new FilterExpressionGeneratorResolution(
+                        t.FilterProperty,
+                        t.Criterion,
+                        filterTarget,
+                        genericAttrType);
+                })
+                .ToList();
+
+            resolutions.AddRange(generatorResolutions);
+            generatorElected.ForEach(g => available.Remove(g));
         }
     }
 

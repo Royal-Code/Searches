@@ -12,6 +12,10 @@ The core pattern is the **Filter-Specifier-Pattern** (Specification Pattern), wh
 - **Specifier:** Function or component that applies the filter to a LINQ query.
 - **Selector:** Projection from entities to DTOs.
 - **Sorting:** Sorting of results.
+- **Disjunction (OR groups):** Grouped OR conditions across multiple filter properties.
+- **OR by property name/path:** Automatically split properties containing "Or" into OR conditions.
+- **ComplexFilter:** Filter complex/owned types and structs by mapping scalar or nested filters to target paths.
+- **FilterExpressionGenerator:** Plug custom expression builders for complex filter scenarios via `ISpecifierExpressionGenerator`.
 
 ## Libraries
 
@@ -68,6 +72,132 @@ services.AddEntityFrameworkSearches<MyDbContext>(cfg =>
 });
 ```
 
+### 6. Disjunction filters (grouped OR)
+Use `[Disjuction("alias")]` to group multiple filter properties into an OR clause:
+
+```csharp
+public class DisjunctionFilter
+{
+    [Disjuction("g1")] public string? P1 { get; set; }
+    [Disjuction("g1")] public string? P2 { get; set; }
+}
+
+// When both are empty: no WHERE is applied.
+// When one has a value: single condition.
+// When multiple have values: OR across P1 and P2.
+```
+
+### 7. OR by property name or TargetPropertyPath
+If a filter property name or `Criterion.TargetPropertyPath` contains `Or`, it is split and applied as OR across the parts:
+
+```csharp
+public class OrFilterNameProperty
+{
+    [Criterion] // default operator for string is Like
+    public string? FirstNameOrMiddleNameOrLastName { get; set; }
+}
+
+public class OrFilterTargetPath
+{
+    [Criterion(TargetPropertyPath = "FirstNameOrLastName")]
+    public string? Query { get; set; }
+}
+```
+
+### 8. ComplexFilter for complex/owned types
+Use `[ComplexFilter]` on filter properties or complex types to apply nested filtering with automatic resolution of target properties.
+
+Scalar-to-complex mapping (do not require `[ComplexFilter]`):
+```csharp
+public readonly record struct Email(string Value);
+
+public class UserFilter
+{
+    [Criterion("Email.Value")]
+    public string? Email { get; set; } // maps to User.Email.Value
+}
+```
+
+Nested complex type filtering:
+```csharp
+public readonly record struct PersonName(string FirstName, string MiddleName, string LastName);
+
+public class UserFilter
+{
+    [ComplexFilter]
+    public PersonName? Name { get; set; } // filters FirstName/MiddleName/LastName, ignores empty fields
+}
+```
+
+Owned/complex entity filtering via target path:
+```csharp
+[ComplexFilter]
+public class Address
+{
+    public string Street { get; set; } = null!;
+    public string City { get; set; } = null!;
+    public string State { get; set; } = null!;
+    public string PostalCode { get; set; } = null!;
+}
+
+public class User
+{
+    public Address? MainAddress { get; set; }
+}
+
+public class UserFilter
+{
+    [Criterion("MainAddress")]
+    public Address? Address { get; set; } // applies nested filters to MainAddress
+}
+```
+
+Behavior notes:
+- Empty/null values are ignored when `IgnoreIfIsEmpty` applies (strings blank, nullables not set, empty collections).
+- Complex filters support AND across provided subfields; only non-empty subfields are applied.
+- OR semantics can be declared via `[Disjuction]` groups or inferred from `Or` in names/paths.
+
+### 9. FilterExpressionGenerator for complex filter logic
+Use `[FilterExpressionGenerator<TGenerator>]` to delegate expression creation to a custom generator that implements `ISpecifierExpressionGenerator`.
+
+Attribute:
+```csharp
+public class OrderByDateFilter
+{
+    [Criterion(nameof(Order.OrderDate))]
+    [FilterExpressionGenerator<PeriodSpecifierExpressionGenerator>]
+    public Period Period { get; set; }
+}
+```
+
+Generator:
+```csharp
+public class PeriodSpecifierExpressionGenerator : ISpecifierExpressionGenerator
+{
+    public static Expression GenerateExpression(ExpressionGeneratorContext ctx)
+    {
+        // Compute range (outside expression) and then apply via expression
+        var getRange = typeof(PeriodSpecifierExpressionGenerator).GetMethod("GetRange")!;
+        var rangeCall = Expression.Call(getRange, ctx.FilterMember);
+
+        var start = Expression.Property(rangeCall, nameof(PeriodRange.Start));
+        var end   = Expression.Property(rangeCall, nameof(PeriodRange.End));
+
+        var ge = Expression.GreaterThanOrEqual(ctx.ModelMember, start);
+        var lt = Expression.LessThan(ctx.ModelMember, end);
+        var body = Expression.AndAlso(ge, lt);
+
+        var predType = typeof(Func<,>).MakeGenericType(ctx.Model.Type, typeof(bool));
+        var lambda = Expression.Lambda(predType, body, ctx.Model);
+
+        var where = Expression.Call(typeof(Queryable), nameof(Queryable.Where), new[] { ctx.Model.Type }, ctx.Query, lambda);
+        return Expression.Assign(ctx.Query, where);
+    }
+}
+```
+
+This allows encapsulating advanced logic (date ranges, business rules) and reusing it across filters while keeping the generated LINQ expression EF-translatable.
+
 ## Usage Examples
 
 ### 1. Simple Search with Filter
@@ -110,6 +240,8 @@ Tests in `RoyalCode.SmartSearch.Tests` demonstrate usage scenarios such as:
 - Sorting and paging
 - Projection to DTOs
 - Custom filter configuration
+- Disjunction and OR splitting by name/path
+- Complex filter on structs/owned entities (`Email`, `PersonName`, `Address`)
 
 ## References
 - [Specification Pattern](https://martinfowler.com/apsupp/spec.pdf)

@@ -4,19 +4,18 @@ namespace RoyalCode.SmartSearch.Linq.Filtering;
 
 public interface ISpecifierExpressionGenerator
 {
-    public static abstract Expression GenerateExpression<TModel>(ExpressionGeneratorContext<TModel> context);
+    public static abstract Expression GenerateExpression(ExpressionGeneratorContext context);
 }
 
-public class ExpressionGeneratorContext<TModel>
+public class ExpressionGeneratorContext
 {
-    public ParameterExpression Query { get; init; }
+    public required ParameterExpression Query { get; init; }
 
-    public ParameterExpression Filter { get; init; }
+    public required ParameterExpression Filter { get; init; }
 
-    public ParameterExpression Model { get; init; }
+    public required ParameterExpression Model { get; init; }
+    public required MemberExpression ModelMember { get; init; }
 
-    public MemberExpression ModelMember { get; init; }
-
-    public MemberExpression FilterMember { get; init; }
+    public required MemberExpression FilterMember { get; init; }
 
 }

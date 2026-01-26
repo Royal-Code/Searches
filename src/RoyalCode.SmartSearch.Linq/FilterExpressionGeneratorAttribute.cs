@@ -12,6 +12,7 @@ namespace RoyalCode.SmartSearch;
 /// </para>
 /// </summary>
 /// <typeparam name="TExpressionGenerator"></typeparam>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = false)]
 public class FilterExpressionGeneratorAttribute<TExpressionGenerator> : Attribute 
     where TExpressionGenerator : ISpecifierExpressionGenerator
 { }
