@@ -52,6 +52,7 @@
     - Tested in DisjunctionTests: when all group members are empty → no where applied; one value → single condition; multiple values → OR between conditions.
 - “Or” in property name or target path:
     - Tested in OrTests: property FirstNameOrMiddleNameOrLastName or target FirstNameOrLastName create OR predicates across the listed paths; empty input is ignored.
+    - Opt-out: properties with `DisableOrFromName = true` do not split by `Or` and are treated as a single target.
 
 # Selector generation (DTO projection)
 - DefaultSelectorExpressionGenerator.Generate<TEntity, TDto>():

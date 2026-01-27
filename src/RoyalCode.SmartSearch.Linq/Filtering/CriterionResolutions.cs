@@ -121,6 +121,7 @@ internal static class CriterionResolutions
         List<ICriterionResolution> resolutions)
     {
         var junctionsElected = available
+            .Where(t => t.Criterion.DisableOrFromName is false)
             .Select(t => new
             {
                 Property = t,

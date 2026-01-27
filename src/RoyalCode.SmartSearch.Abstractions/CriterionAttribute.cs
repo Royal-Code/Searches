@@ -86,4 +86,37 @@ public sealed class CriterionAttribute : Attribute
     /// </para>
     /// </summary>
     public bool IgnoreIfIsEmpty { get; set; } = true;
+
+    /// <summary>
+    /// <para>
+    ///     Disables the automatic OR disjunction inferred from the filter property name or from
+    ///     the <see cref="TargetPropertyPath"/> when they contain the token "Or".
+    /// </para>
+    /// <para>
+    ///     By default, when a filter property name (or its <see cref="TargetPropertyPath"/>) contains
+    ///     the token "Or" (e.g., <c>FirstNameOrLastName</c>), the engine splits it into multiple parts
+    ///     and builds a disjunction (OR) across those target members. When this flag is set to <c>true</c>,
+    ///     that split is suppressed and the property is treated as a single criterion, using the
+    ///     property name (or the entire <see cref="TargetPropertyPath"/>) as-is.
+    /// </para>
+    /// <remarks>
+    /// <para>
+    ///     Use this when natural words include the substring "Or" but are not intended to express
+    ///     disjunctions. Examples include names like <c>Ordem</c>, <c>TempoOrdinario</c>, or
+    ///     <c>NomeOrApelido</c>. With this flag enabled, these properties will no longer trigger
+    ///     automatic OR behavior.
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// public class CustomerFilter
+    /// {
+    ///     [Criterion(DisableOrFromName = true)]
+    ///     public string? ColorOrSizePreference { get; set; } // treated as a single criterion
+    /// }
+    /// </code>
+    /// </example>
+    /// </summary>
+    public bool DisableOrFromName { get; set; }
+ 
 }

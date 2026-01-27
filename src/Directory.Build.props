@@ -4,7 +4,7 @@
 		<AspTargets>net8.0;net9.0;net10.0;</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>0.10.0</SearchesVer>
+		<SearchesVer>0.10.1</SearchesVer>
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>

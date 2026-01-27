@@ -14,6 +14,7 @@ The core pattern is the **Filter-Specifier-Pattern** (Specification Pattern), wh
 - **Sorting:** Sorting of results.
 - **Disjunction (OR groups):** Grouped OR conditions across multiple filter properties.
 - **OR by property name/path:** Automatically split properties containing "Or" into OR conditions.
+  - Opt-out: set `DisableOrFromName = true` in `Criterion` to treat names/paths with `Or` as a single criterion.
 - **ComplexFilter:** Filter complex/owned types and structs by mapping scalar or nested filters to target paths.
 - **FilterExpressionGenerator:** Plug custom expression builders for complex filter scenarios via `ISpecifierExpressionGenerator`.
 
@@ -101,6 +102,13 @@ public class OrFilterTargetPath
 {
     [Criterion(TargetPropertyPath = "FirstNameOrLastName")]
     public string? Query { get; set; }
+}
+
+// Opt-out (do not split by Or in the name)
+public class PreferencesFilter
+{
+    [Criterion(DisableOrFromName = true)]
+    public string? ColorOrSizePreference { get; set; } // treated as a single criterion
 }
 ```
 
