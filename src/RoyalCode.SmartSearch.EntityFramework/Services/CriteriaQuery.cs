@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch.Filtering;
+using RoyalCode.SmartSearch.Hints;
 using RoyalCode.SmartSearch.Linq.Services;
 using RoyalCode.SmartSearch.Linq.Sortings;
 using RoyalCode.SmartSearch.Mappings;
@@ -40,6 +41,8 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     private readonly IOrderByProvider orderByProvider;
     private readonly ISelectorFactory selectorFactory;
     private readonly IHintPerformer? hintPerformer;
+    private readonly IHintHandlerRegistry? hintRegistry;
+    private readonly IReadOnlyList<ICriteriaHint>? localHints;
 
     private IQueryable<TEntity> query;
     private IQueryable<TEntity>? hintedQuery;
@@ -70,18 +73,30 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     ///     ambient hints are applied to the query at the entity-materializing terminals. When <see langword="null"/>,
     ///     the query behaves exactly as before (no-op).
     /// </param>
+    /// <param name="hintRegistry">
+    ///     The optional hint handler registry, used to apply per-query (local) hints. When <see langword="null"/>
+    ///     (or there are no local hints), no local hint is applied.
+    /// </param>
+    /// <param name="localHints">
+    ///     The optional per-query hints declared via <c>ICriteria.UseHints</c>. Applied alongside the ambient hints
+    ///     at the entity-materializing terminals, but isolated to this query (never via the ambient container).
+    /// </param>
     public CriteriaQuery(
         IQueryable<TEntity> query,
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
         ISelectorFactory selectorFactory,
-        IHintPerformer? hintPerformer = null)
+        IHintPerformer? hintPerformer = null,
+        IHintHandlerRegistry? hintRegistry = null,
+        IReadOnlyList<ICriteriaHint>? localHints = null)
     {
         this.query = query;
         this.specifierFactory = specifierFactory;
         this.orderByProvider = orderByProvider;
         this.selectorFactory = selectorFactory;
         this.hintPerformer = hintPerformer;
+        this.hintRegistry = hintRegistry;
+        this.localHints = localHints;
     }
 
     /// <inheritdoc />
@@ -153,15 +168,32 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     }
 
     /// <summary>
-    ///     Returns the base query with ambient operation hints applied (e.g. EF includes).
+    ///     Returns the base query with operation hints applied (e.g. EF includes): both ambient hints (from the
+    ///     hint container, via <see cref="IHintPerformer"/>) and per-query hints (declared via
+    ///     <c>ICriteria.UseHints</c>, applied through the registry visitor).
     /// </summary>
     /// <remarks>
-    ///     The hints are applied <b>once</b> and cached (idempotent). When no <see cref="IHintPerformer"/> is
-    ///     available, or it has no hints, the original query is returned unchanged. This is only used by the
-    ///     entity-materializing terminals; <see cref="Exists()"/> and the record counting must not apply hints.
+    ///     The hints are applied <b>once</b> and cached (idempotent). When neither source is available, the original
+    ///     query is returned unchanged. This is only used by the entity-materializing terminals;
+    ///     <see cref="Exists()"/> and the record counting must not apply hints.
     /// </remarks>
     private IQueryable<TEntity> GetEntityQuery()
-        => hintPerformer is null ? query : (hintedQuery ??= hintPerformer.Perform(query));
+    {
+        if (hintedQuery is not null)
+            return hintedQuery;
+
+        var entityQuery = hintPerformer is null ? query : hintPerformer.Perform(query);
+
+        if (hintRegistry is not null && localHints is { Count: > 0 })
+        {
+            var visitor = new RegistryHintVisitor<IQueryable<TEntity>>(hintRegistry, entityQuery);
+            foreach (var hint in localHints)
+                hint.Accept(visitor);
+            entityQuery = visitor.Query;
+        }
+
+        return hintedQuery = entityQuery;
+    }
 
     private IQueryable<TEntity> GetQueryableWithSkip(bool applyHints = false)
     {

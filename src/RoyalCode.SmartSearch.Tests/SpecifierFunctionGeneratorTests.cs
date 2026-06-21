@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RoyalCode.SmartSearch.Linq;
 using RoyalCode.SmartSearch.Linq.Filtering;
+using RoyalCode.SmartSearch.Linq.Services;
 using System.Collections;
 using System.Linq.Expressions;
 
@@ -424,9 +425,30 @@ public class SpecifierFunctionGeneratorTests
         Assert.Equal(expectedCount, query.Count());
     }
 
+    [Fact]
     public void Factory_Must_UseTheSpecifierFilterMethod()
     {
-        // todo
+        // arrange
+        SimpleFilterManual.Reset();
+        var services = new ServiceCollection();
+        services.AddSmartSearchLinq();
+        var provider = services.BuildServiceProvider();
+        var factory = provider.GetRequiredService<ISpecifierFactory>();
+        var query = new[]
+        {
+            new SimpleModel { Id = 1, Name = "Alpha" },
+            new SimpleModel { Id = 2, Name = "Beta" },
+            new SimpleModel { Id = 3, Name = "Alphabet" }
+        }.AsQueryable();
+        var filter = new SimpleFilterManual { Name = "Alpha" };
+
+        // act
+        var specifier = factory.GetSpecifier<SimpleModel, SimpleFilterManual>();
+        var result = specifier.Specify(query, filter).ToList();
+
+        // assert
+        Assert.True(SimpleFilterManual.Called);
+        Assert.Equal([1, 3], result.Select(m => m.Id));
     }
 }
 
@@ -451,6 +473,8 @@ public class SimpleFilterManual
     public static bool Called { get; private set; } = false;
 
     public string Name { get; set; } = null!;
+
+    public static void Reset() => Called = false;
 
     public IQueryable<SimpleModel> Filter(IQueryable<SimpleModel> query)
     {

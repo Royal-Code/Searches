@@ -2,11 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace RoyalCode.SmartSearch.Tests.OperationHints;
 
-/// <summary>Hints used by the Phase 1 criteria/include integration tests.</summary>
+/// <summary>Hints used by the criteria/include integration tests.</summary>
 public enum SampleHints
 {
     IncludeSingle,
     IncludeMultiple,
+}
+
+/// <summary>A hint enum for which no handler is ever registered (used to assert graceful no-op).</summary>
+public enum UnregisteredHints
+{
+    Something,
 }
 
 /// <summary>Navigation target for both the reference and the collection relations of <see cref="RootEntity"/>.</summary>

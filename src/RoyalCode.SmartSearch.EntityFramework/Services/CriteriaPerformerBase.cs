@@ -25,6 +25,7 @@ public abstract class CriteriaPerformerBase<TEntity> : ICriteriaPerformer<TEntit
     private readonly IOrderByProvider orderByProvider;
     private readonly ISelectorFactory selectorFactory;
     private readonly IHintPerformer? hintPerformer;
+    private readonly IHintHandlerRegistry? hintRegistry;
 
     /// <summary>
     /// Creates a new instance of <see cref="CriteriaPerformer{TDbContext, TEntity}"/>.
@@ -36,16 +37,21 @@ public abstract class CriteriaPerformerBase<TEntity> : ICriteriaPerformer<TEntit
     ///     The optional operation hint performer. When provided, ambient hints are applied to the prepared query;
     ///     when <see langword="null"/> (i.e. <c>OperationHint</c> is not registered), the behavior is unchanged.
     /// </param>
+    /// <param name="hintRegistry">
+    ///     The optional hint handler registry, used to apply per-query hints declared via <c>ICriteria.UseHints</c>.
+    /// </param>
     protected CriteriaPerformerBase(
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
         ISelectorFactory selectorFactory,
-        IHintPerformer? hintPerformer = null)
+        IHintPerformer? hintPerformer = null,
+        IHintHandlerRegistry? hintRegistry = null)
     {
         this.specifierFactory = specifierFactory;
         this.orderByProvider = orderByProvider;
         this.selectorFactory = selectorFactory;
         this.hintPerformer = hintPerformer;
+        this.hintRegistry = hintRegistry;
     }
 
     /// <inheritdoc />
@@ -58,7 +64,9 @@ public abstract class CriteriaPerformerBase<TEntity> : ICriteriaPerformer<TEntit
             specifierFactory,
             orderByProvider,
             selectorFactory,
-            hintPerformer);
+            hintPerformer,
+            hintRegistry,
+            options.Hints);
 
         foreach (var filter in options.Filters)
             filter.ApplyFilter(criteriaQuery);

@@ -36,13 +36,18 @@ public sealed class CriteriaPerformer<TDbContext, TEntity> : CriteriaPerformerBa
     ///     The optional operation hint performer. Resolved by DI when <c>OperationHint</c> is registered;
     ///     <see langword="null"/> otherwise (no-op).
     /// </param>
+    /// <param name="hintRegistry">
+    ///     The optional hint handler registry, used to apply per-query hints declared via <c>ICriteria.UseHints</c>.
+    ///     Resolved by DI when <c>OperationHint</c> is registered; <see langword="null"/> otherwise (no-op).
+    /// </param>
     public CriteriaPerformer(
         TDbContext db,
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
         ISelectorFactory selectorFactory,
-        IHintPerformer? hintPerformer = null)
-        : base(specifierFactory, orderByProvider, selectorFactory, hintPerformer)
+        IHintPerformer? hintPerformer = null,
+        IHintHandlerRegistry? hintRegistry = null)
+        : base(specifierFactory, orderByProvider, selectorFactory, hintPerformer, hintRegistry)
     {
         this.db = db;
     }

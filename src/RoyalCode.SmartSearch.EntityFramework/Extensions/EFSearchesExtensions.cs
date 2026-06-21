@@ -29,17 +29,26 @@ public static class EFSearchesExtensions
         var orderByFactory = db.GetService<IOrderByProvider>();
         var selectorFactory = db.GetService<ISelectorFactory>();
 
-        // Optional: resolved only when OperationHint is registered. Uses the raw provider (not db.GetService<T>(),
-        // which throws when the service is absent) so this path stays a no-op without OperationHint.
-        var hintPerformer = ((IInfrastructure<IServiceProvider>)db).Instance
-            .GetService(typeof(IHintPerformer)) as IHintPerformer;
+        IHintPerformer? hintPerformer;
+        IHintHandlerRegistry? hintRegistry;
+        try
+        {
+            hintPerformer = db.GetService<IHintPerformer>();
+            hintRegistry = db.GetService<IHintHandlerRegistry>();
+        }
+        catch (InvalidOperationException)
+        {
+            hintPerformer = null;
+            hintRegistry = null;
+        }
 
         var preparer = new CriteriaPerformer<DbContext, TEntity>(
             db,
             specifierFactory,
             orderByFactory,
             selectorFactory,
-            hintPerformer);
+            hintPerformer,
+            hintRegistry);
 
         var criteria = new Criteria<TEntity>(preparer);
 

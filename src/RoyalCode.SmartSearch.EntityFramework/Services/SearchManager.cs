@@ -19,6 +19,7 @@ public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
     private readonly IOrderByProvider orderByProvider;
     private readonly ISelectorFactory selectorFactory;
     private readonly IHintPerformer? hintPerformer;
+    private readonly IHintHandlerRegistry? hintRegistry;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SearchManager{TDbContext}"/> class,  
@@ -41,18 +42,24 @@ public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
     ///     The optional operation hint performer. Resolved by DI when <c>OperationHint</c> is registered;
     ///     <see langword="null"/> otherwise (no-op).
     /// </param>
+    /// <param name="hintRegistry">
+    ///     The optional hint handler registry, used to apply per-query hints declared via <c>ICriteria.UseHints</c>.
+    ///     Resolved by DI when <c>OperationHint</c> is registered; <see langword="null"/> otherwise (no-op).
+    /// </param>
     public SearchManager(
         TDbContext db,
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
         ISelectorFactory selectorFactory,
-        IHintPerformer? hintPerformer = null)
+        IHintPerformer? hintPerformer = null,
+        IHintHandlerRegistry? hintRegistry = null)
     {
         this.db = db;
         this.specifierFactory = specifierFactory;
         this.orderByProvider = orderByProvider;
         this.selectorFactory = selectorFactory;
         this.hintPerformer = hintPerformer;
+        this.hintRegistry = hintRegistry;
     }
 
     /// <inheritdoc />
@@ -63,7 +70,8 @@ public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
             specifierFactory,
             orderByProvider,
             selectorFactory,
-            hintPerformer);
+            hintPerformer,
+            hintRegistry);
 
         return new InternalCriteria<TDbContext, TEntity>(performer);
     }

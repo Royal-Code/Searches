@@ -10,16 +10,15 @@ namespace RoyalCode.SmartSearch.Tests;
 
 /// <summary>
 /// <para>
-///     Integration tests for Phase 1 of the "Include via Operation Hints" feature: ambient hints applied to the
-///     EF <see cref="ICriteria{TEntity}"/> pipeline.
+///     Integration tests for Phase 2: per-query hints declared via <see cref="ICriteria{TEntity}.UseHints"/>.
 /// </para>
 /// <para>
-///     Hints declared in the scope's <see cref="IHintsContainer"/> must drive EF includes on the entity-materializing
-///     terminals (<c>Collect</c>/<c>First</c>/<c>Single</c>), but must NOT affect <c>Exists</c> (an <c>Any</c>) nor
-///     <c>Select&lt;TDto&gt;</c> (a projection). Without <c>OperationHint</c> registered, behavior is unchanged.
+///     Local hints must drive EF includes on entity-materializing terminals, must be isolated to the criteria that
+///     declared them (never leaking to sibling criterias in the same scope), must union with ambient hints, must NOT
+///     affect <c>Exists</c> or <c>Select&lt;TDto&gt;</c>, and must be a safe no-op when no handler/registry exists.
 /// </para>
 /// </summary>
-public class CriteriaOperationHintTests
+public class CriteriaUseHintsTests
 {
     private readonly List<string> sqlLog = [];
 
@@ -27,7 +26,6 @@ public class CriteriaOperationHintTests
     {
         var services = new ServiceCollection();
 
-        // a single shared in-memory connection kept open for the provider lifetime
         var connection = new SqliteConnection("DataSource=:memory:");
         connection.Open();
         services.AddSingleton(connection);
@@ -62,8 +60,6 @@ public class CriteriaOperationHintTests
         return provider;
     }
 
-    // Seeds one aggregate in its own scope so query scopes start with an empty change tracker
-    // (otherwise navigation fixup could populate navigations without an actual include).
     private static void Seed(IServiceProvider provider)
     {
         using var scope = provider.CreateScope();
@@ -83,15 +79,13 @@ public class CriteriaOperationHintTests
     private bool LoggedJoin() => sqlLog.Any(s => s.Contains("JOIN", StringComparison.OrdinalIgnoreCase));
 
     [Fact]
-    public void Collect_Should_Apply_AmbientHint_Include_SingleRelation()
+    public void UseHints_Should_Apply_Include_On_Collect()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.Collect();
+        var result = criteria.UseHints(SampleHints.IncludeSingle).Collect();
 
         result.Should().ContainSingle();
         result[0].SingleRelation.Should().NotBeNull();
@@ -99,46 +93,40 @@ public class CriteriaOperationHintTests
     }
 
     [Fact]
-    public void FirstOrDefault_Should_Apply_AmbientHint_Include()
+    public void UseHints_Should_Apply_Include_On_FirstOrDefault()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.FirstOrDefault();
+        var result = criteria.UseHints(SampleHints.IncludeSingle).FirstOrDefault();
 
         result.Should().NotBeNull();
         result!.SingleRelation.Should().NotBeNull();
     }
 
     [Fact]
-    public void Single_Should_Apply_AmbientHint_Include()
+    public void UseHints_Should_Apply_Include_On_Single()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.Single();
+        var result = criteria.UseHints(SampleHints.IncludeSingle).Single();
 
         result.SingleRelation.Should().NotBeNull();
     }
 
     [Fact]
-    public void MultipleHints_Should_Union_Includes()
+    public void UseHints_Multiple_Values_Should_Union_Includes()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
-
-        var container = scope.ServiceProvider.GetRequiredService<IHintsContainer>();
-        container.AddHint(SampleHints.IncludeSingle);
-        container.AddHint(SampleHints.IncludeMultiple);
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.Collect();
+        var result = criteria
+            .UseHints(SampleHints.IncludeSingle, SampleHints.IncludeMultiple)
+            .Collect();
 
         result.Should().ContainSingle();
         result[0].SingleRelation.Should().NotBeNull();
@@ -146,138 +134,124 @@ public class CriteriaOperationHintTests
     }
 
     [Fact]
-    public void DbContextCriteria_Should_Apply_AmbientHint_Include()
+    public void UseHints_With_Null_Hints_Should_Throw()
+    {
+        var provider = CreateProvider(withOperationHints: true);
+        using var scope = provider.CreateScope();
+        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
+
+        var act = () => criteria.UseHints<SampleHints>(null!);
+
+        var exception = act.Should().Throw<ArgumentNullException>().Which;
+        exception.ParamName.Should().Be("hints");
+    }
+
+    [Fact]
+    public void UseHints_With_Empty_Hints_Should_Throw()
+    {
+        var provider = CreateProvider(withOperationHints: true);
+        using var scope = provider.CreateScope();
+        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
+
+        var act = () => criteria.UseHints<SampleHints>();
+
+        var exception = act.Should().Throw<ArgumentException>().Which;
+        exception.ParamName.Should().Be("hints");
+    }
+
+    [Fact]
+    public void UseHints_Is_Isolated_Between_Criterias_In_Same_Scope()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
 
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
-        var db = scope.ServiceProvider.GetRequiredService<HintsDbContext>();
-        var criteria = db.Criteria<RootEntity>();
+        var criteriaWithHint = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
+        var criteriaWithoutHint = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.Collect();
+        sqlLog.Clear();
+        criteriaWithHint.UseHints(SampleHints.IncludeSingle).Collect();
+        LoggedJoin().Should().BeTrue("the criteria that declared UseHints must include");
+
+        sqlLog.Clear();
+        criteriaWithoutHint.Collect();
+        LoggedJoin().Should().BeFalse("a local UseHint must not leak to a sibling criteria in the same scope");
+    }
+
+    [Fact]
+    public void UseHints_Combined_With_Ambient_Hint_Unions_Includes()
+    {
+        var provider = CreateProvider(withOperationHints: true);
+        using var scope = provider.CreateScope();
+
+        // ambient hint in the container...
+        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeMultiple);
+        // ...combined with a per-query hint
+        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
+
+        var result = criteria.UseHints(SampleHints.IncludeSingle).Collect();
 
         result.Should().ContainSingle();
-        result[0].SingleRelation.Should().NotBeNull();
+        result[0].SingleRelation.Should().NotBeNull("from the per-query UseHints");
+        result[0].MultipleRelation.Should().NotBeNull("from the ambient hint").And.HaveCount(2);
     }
 
     [Fact]
-    public void DbContextCriteria_WithoutOperationHint_Registered_Query_Is_Unchanged()
-    {
-        var provider = CreateProvider(withOperationHints: false);
-        using var scope = provider.CreateScope();
-
-        var db = scope.ServiceProvider.GetRequiredService<HintsDbContext>();
-        var criteria = db.Criteria<RootEntity>();
-
-        var result = criteria.Collect();
-
-        result.Should().ContainSingle();
-        result[0].SingleRelation.Should().BeNull("no OperationHint is registered, so no include is applied");
-        result[0].MultipleRelation.Should().BeNull();
-    }
-
-    [Fact]
-    public void AsSearch_ToList_Should_Apply_AmbientHint_Include_ForEntityResults()
+    public void UseHints_Should_Not_Affect_Exists()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.UsePages().AsSearch().ToList();
-
-        result.Items.Should().ContainSingle();
-        result.Items[0].SingleRelation.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task AsSearch_ToListAsync_Should_Apply_AmbientHint_Include_ForEntityResults()
-    {
-        var provider = CreateProvider(withOperationHints: true);
-        using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
-        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
-
-        var result = await criteria.UsePages().AsSearch().ToListAsync(CancellationToken.None);
-
-        result.Items.Should().ContainSingle();
-        result.Items[0].SingleRelation.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task AsSearch_ToAsyncListAsync_Should_Apply_AmbientHint_Include_ForEntityResults()
-    {
-        var provider = CreateProvider(withOperationHints: true);
-        using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
-        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
-
-        var result = await criteria.UsePages().AsSearch().ToAsyncListAsync(CancellationToken.None);
-        var items = new List<RootEntity>();
-        await foreach (var item in result.Items)
-            items.Add(item);
-
-        items.Should().ContainSingle();
-        items[0].SingleRelation.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void Exists_Should_Not_Apply_Includes()
-    {
-        var provider = CreateProvider(withOperationHints: true);
-        using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
-        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
-
-        // a materializing terminal applies the include (anchors the contrast)
         sqlLog.Clear();
-        criteria.Collect();
-        LoggedJoin().Should().BeTrue("Collect must honor the ambient include hint");
-
-        // Exists is an Any(): the include would be wasted, so it must NOT be applied
-        sqlLog.Clear();
-        var exists = criteria.Exists();
+        var exists = criteria.UseHints(SampleHints.IncludeSingle).Exists();
 
         exists.Should().BeTrue();
-        LoggedJoin().Should().BeFalse("Exists must not apply entity includes");
+        LoggedJoin().Should().BeFalse("Exists must not apply per-query includes");
     }
 
     [Fact]
-    public void Select_Dto_Should_Not_Apply_Includes()
+    public void UseHints_Should_Not_Affect_Select_Dto()
     {
         var provider = CreateProvider(withOperationHints: true);
         using var scope = provider.CreateScope();
-
-        scope.ServiceProvider.GetRequiredService<IHintsContainer>().AddHint(SampleHints.IncludeSingle);
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
         sqlLog.Clear();
         var dto = criteria
+            .UseHints(SampleHints.IncludeSingle)
             .Select(r => new RootDto { Id = r.Id, Name = r.Name })
             .FirstOrDefault();
 
         dto.Should().NotBeNull();
         dto!.Name.Should().Be("root");
-        LoggedJoin().Should().BeFalse("entity includes must be ignored under a Select<TDto> projection");
+        LoggedJoin().Should().BeFalse("per-query includes must be ignored under a Select<TDto> projection");
     }
 
     [Fact]
-    public void Without_OperationHint_Registered_Query_Is_Unchanged()
+    public void UseHints_Without_OperationHint_Registered_Is_Safe_NoOp()
     {
         var provider = CreateProvider(withOperationHints: false);
         using var scope = provider.CreateScope();
-
         var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
 
-        var result = criteria.Collect();
+        // no registry available: the hint is silently ignored, no exception
+        var result = criteria.UseHints(SampleHints.IncludeSingle).Collect();
 
         result.Should().ContainSingle();
-        result[0].SingleRelation.Should().BeNull("no OperationHint is registered, so no include is applied");
-        result[0].MultipleRelation.Should().BeNull();
+        result[0].SingleRelation.Should().BeNull();
+    }
+
+    [Fact]
+    public void UseHints_With_Unregistered_Hint_Is_Safe_NoOp()
+    {
+        var provider = CreateProvider(withOperationHints: true);
+        using var scope = provider.CreateScope();
+        var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<RootEntity>>();
+
+        // OperationHint is registered, but no handler exists for this enum type: no-op, no exception
+        var result = criteria.UseHints(UnregisteredHints.Something).Collect();
+
+        result.Should().ContainSingle();
+        result[0].SingleRelation.Should().BeNull();
     }
 }
