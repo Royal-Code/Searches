@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.Linq.Services;
 using RoyalCode.SmartSearch.Linq.Sortings;
@@ -23,6 +24,7 @@ public abstract class CriteriaPerformerBase<TEntity> : ICriteriaPerformer<TEntit
     private readonly ISpecifierFactory specifierFactory;
     private readonly IOrderByProvider orderByProvider;
     private readonly ISelectorFactory selectorFactory;
+    private readonly IHintPerformer? hintPerformer;
 
     /// <summary>
     /// Creates a new instance of <see cref="CriteriaPerformer{TDbContext, TEntity}"/>.
@@ -30,14 +32,20 @@ public abstract class CriteriaPerformerBase<TEntity> : ICriteriaPerformer<TEntit
     /// <param name="specifierFactory">The factory to create specifiers for the query.</param>
     /// <param name="orderByProvider">The provider for ordering the results.</param>
     /// <param name="selectorFactory">The factory for selecting results.</param>
+    /// <param name="hintPerformer">
+    ///     The optional operation hint performer. When provided, ambient hints are applied to the prepared query;
+    ///     when <see langword="null"/> (i.e. <c>OperationHint</c> is not registered), the behavior is unchanged.
+    /// </param>
     protected CriteriaPerformerBase(
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
-        ISelectorFactory selectorFactory)
+        ISelectorFactory selectorFactory,
+        IHintPerformer? hintPerformer = null)
     {
         this.specifierFactory = specifierFactory;
         this.orderByProvider = orderByProvider;
         this.selectorFactory = selectorFactory;
+        this.hintPerformer = hintPerformer;
     }
 
     /// <inheritdoc />
@@ -49,7 +57,8 @@ public abstract class CriteriaPerformerBase<TEntity> : ICriteriaPerformer<TEntit
             entities,
             specifierFactory,
             orderByProvider,
-            selectorFactory);
+            selectorFactory,
+            hintPerformer);
 
         foreach (var filter in options.Filters)
             filter.ApplyFilter(criteriaQuery);

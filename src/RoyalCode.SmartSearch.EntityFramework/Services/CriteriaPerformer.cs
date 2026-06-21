@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch.Linq.Services;
 using RoyalCode.SmartSearch.Linq.Sortings;
 
@@ -31,12 +32,17 @@ public sealed class CriteriaPerformer<TDbContext, TEntity> : CriteriaPerformerBa
     /// <param name="specifierFactory">The factory to create specifiers for the query.</param>
     /// <param name="orderByProvider">The provider for ordering the results.</param>
     /// <param name="selectorFactory">The factory for selecting results.</param>
+    /// <param name="hintPerformer">
+    ///     The optional operation hint performer. Resolved by DI when <c>OperationHint</c> is registered;
+    ///     <see langword="null"/> otherwise (no-op).
+    /// </param>
     public CriteriaPerformer(
         TDbContext db,
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
-        ISelectorFactory selectorFactory)
-        : base(specifierFactory, orderByProvider, selectorFactory)
+        ISelectorFactory selectorFactory,
+        IHintPerformer? hintPerformer = null)
+        : base(specifierFactory, orderByProvider, selectorFactory, hintPerformer)
     {
         this.db = db;
     }

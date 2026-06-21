@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch;
 using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.EntityFramework.Services;
@@ -28,11 +29,17 @@ public static class EFSearchesExtensions
         var orderByFactory = db.GetService<IOrderByProvider>();
         var selectorFactory = db.GetService<ISelectorFactory>();
 
+        // Optional: resolved only when OperationHint is registered. Uses the raw provider (not db.GetService<T>(),
+        // which throws when the service is absent) so this path stays a no-op without OperationHint.
+        var hintPerformer = ((IInfrastructure<IServiceProvider>)db).Instance
+            .GetService(typeof(IHintPerformer)) as IHintPerformer;
+
         var preparer = new CriteriaPerformer<DbContext, TEntity>(
             db,
             specifierFactory,
             orderByFactory,
-            selectorFactory);
+            selectorFactory,
+            hintPerformer);
 
         var criteria = new Criteria<TEntity>(preparer);
 
