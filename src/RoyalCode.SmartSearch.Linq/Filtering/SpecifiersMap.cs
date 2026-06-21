@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering;
@@ -12,7 +13,7 @@ internal sealed class SpecifiersMap
 {
     public static SpecifiersMap Instance { get; } = new();
 
-    private readonly Dictionary<(Type, Type), object> specifiers = new();
+    private readonly ConcurrentDictionary<(Type, Type), object> specifiers = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGet<TModel, TFilter>([NotNullWhen(true)] out ISpecifier<TModel, TFilter>? specifier)
@@ -30,17 +31,15 @@ internal sealed class SpecifiersMap
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Add((Type, Type) key, object value) => specifiers.Add(key, value);
+    public void Add((Type, Type) key, object value) => specifiers.TryAdd(key, value);
 
     public void Add<TModel, TFilter>(ISpecifier<TModel, TFilter> specifier)
         where TModel : class
         where TFilter : class
     {
         var key = (typeof(TModel), typeof(TFilter));
-        if (specifiers.ContainsKey(key))
+        if (!specifiers.TryAdd(key, specifier))
             throw new ArgumentException($"Specifier for {key} already exists.");
-
-        specifiers.Add(key, specifier);
     }
 
     public void Add<TModel, TFilter>(Func<IQueryable<TModel>, TFilter, IQueryable<TModel>> specifier)
@@ -48,9 +47,7 @@ internal sealed class SpecifiersMap
         where TFilter : class
     {
         var key = (typeof(TModel), typeof(TFilter));
-        if (specifiers.ContainsKey(key))
+        if (!specifiers.TryAdd(key, new InternalSpecifier<TModel, TFilter>(specifier)))
             throw new ArgumentException($"Specifier for {key} already exists.");
-
-        specifiers.Add(key, new InternalSpecifier<TModel, TFilter>(specifier));
     }
 }

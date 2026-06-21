@@ -24,6 +24,16 @@ services.AddEntityFrameworkSearches<AppDbContext>(cfg =>
 });
 ```
 
+Tambem e possivel registrar entidades dinamicamente por `Type`:
+
+```csharp
+services.AddEntityFrameworkSearches<AppDbContext>(cfg =>
+{
+    foreach (var entityType in discoveredEntityTypes)
+        cfg.Add(entityType);
+});
+```
+
 Resolva `ICriteria<TEntity>` diretamente:
 
 ```csharp
@@ -68,7 +78,7 @@ public sealed class OrderFilter
 
     public string? Number { get; set; }
 
-    [Criterion(TargetProperty = "Customer.Name")]
+    [Criterion("Customer.Name")]
     public string? CustomerName { get; set; }
 }
 ```
@@ -118,18 +128,18 @@ Use `CriterionAttribute` para controlar operador e caminho alvo:
 ```csharp
 public sealed class InvoiceFilter
 {
-    [Criterion(Operator = CriterionOperator.GreaterThanOrEqual, TargetProperty = "CreatedAt")]
+    [Criterion("CreatedAt", CriterionOperator.GreaterThanOrEqual)]
     public DateTime? CreatedAtStart { get; set; }
 
-    [Criterion(Operator = CriterionOperator.LessThanOrEqual, TargetProperty = "CreatedAt")]
+    [Criterion("CreatedAt", CriterionOperator.LessThanOrEqual)]
     public DateTime? CreatedAtEnd { get; set; }
 }
 ```
 
-Caminhos aninhados podem ser passados por `TargetProperty`:
+Caminhos aninhados podem ser passados pelo construtor ou por `TargetPropertyPath`:
 
 ```csharp
-[Criterion(TargetProperty = "Customer.Email")]
+[Criterion("Customer.Email")]
 public string? Email { get; set; }
 ```
 
@@ -157,7 +167,113 @@ public sealed class PersonFilter
 }
 ```
 
-Se `Or` faz parte do nome e nao deve indicar disjuncao, use `DisableOrFromName`.
+Tambem funciona com caminho alvo:
+
+```csharp
+public sealed class PersonFilter
+{
+    [Criterion(TargetPropertyPath = "FirstNameOrLastName")]
+    public string? Query { get; set; }
+}
+```
+
+Se `Or` faz parte do nome e nao deve indicar disjuncao, use `DisableOrFromName`:
+
+```csharp
+public sealed class ProductFilter
+{
+    [Criterion(DisableOrFromName = true)]
+    public string? ColorOrSizePreference { get; set; }
+}
+```
+
+## Filtros Complexos
+
+Use `[ComplexFilter]` quando uma propriedade do filtro e um objeto de valor ou subfiltro com campos
+internos que devem ser aplicados contra uma propriedade complexa do modelo.
+
+```csharp
+[ComplexFilter]
+public sealed class AddressFilter
+{
+    public string? City { get; set; }
+    public string? State { get; set; }
+}
+
+public sealed class CustomerFilter
+{
+    [Criterion("MainAddress")]
+    public AddressFilter? Address { get; set; }
+}
+```
+
+O atributo pode ficar no tipo complexo ou diretamente na propriedade do filtro. Quando a propriedade
+complexa esta nula, nenhum filtro interno e aplicado.
+
+Filtros complexos tambem podem combinar OR:
+
+```csharp
+[ComplexFilter]
+public struct PersonNameFilter
+{
+    [Criterion("FirstNameOrMiddleNameOrLastName")]
+    public string? Value { get; set; }
+}
+```
+
+## Geradores Customizados de Expressao
+
+Use `[FilterExpressionGenerator<TGenerator>]` quando uma propriedade de filtro precisa gerar uma expressao
+LINQ propria, mas voce ainda quer manter o filtro declarativo.
+
+```csharp
+public enum Period
+{
+    Today,
+    Last7Days,
+    ThisMonth
+}
+
+public sealed class OrderFilter
+{
+    [Criterion("CreatedAt")]
+    [FilterExpressionGenerator<PeriodExpressionGenerator>]
+    public Period Period { get; set; }
+}
+
+public sealed class PeriodExpressionGenerator : ISpecifierExpressionGenerator
+{
+    public static DateTime GetStart(Period period)
+    {
+        var today = DateTime.UtcNow.Date;
+
+        return period switch
+        {
+            Period.Last7Days => today.AddDays(-7),
+            Period.ThisMonth => new DateTime(today.Year, today.Month, 1),
+            _ => today
+        };
+    }
+
+    public static Expression GenerateExpression(ExpressionGeneratorContext context)
+    {
+        var getStart = typeof(PeriodExpressionGenerator).GetMethod(nameof(GetStart))!;
+        var start = Expression.Call(getStart, context.FilterMember);
+        var body = Expression.GreaterThanOrEqual(context.ModelMember, start);
+        var lambda = Expression.Lambda(body, context.Model);
+
+        var where = ExpressionGenerator.CreateWhereCall(
+            context.Model.Type,
+            context.Query,
+            lambda);
+
+        return Expression.Assign(context.Query, where);
+    }
+}
+```
+
+O generator recebe `Query`, `Filter`, `Model`, `ModelMember` e `FilterMember`. Retorne uma expressao que
+atualiza a query, normalmente atribuindo um `Where(...)` de volta para `context.Query`.
 
 ## Sorting
 

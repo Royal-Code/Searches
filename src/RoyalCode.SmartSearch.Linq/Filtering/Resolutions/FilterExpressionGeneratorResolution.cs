@@ -6,9 +6,9 @@ namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
 internal class FilterExpressionGeneratorResolution : ICriterionResolution
 {
-    private readonly PropertySelection filterProperty;
+    private readonly PropertySelection? filterProperty;
     private readonly PropertySelection? targetProperty;
-    private readonly Func<ExpressionGeneratorContext, Expression> expressionCreateFunction;
+    private readonly Func<ExpressionGeneratorContext, Expression>? expressionCreateFunction;
     private readonly Lack? lack;
 
     public FilterExpressionGeneratorResolution(
@@ -34,7 +34,7 @@ internal class FilterExpressionGeneratorResolution : ICriterionResolution
         {
             lack = new Lack
             {
-                Description = $"The target property path '{targetProperty}' could not be resolved in type '{filterTarget.TargetType.FullName}'."
+                Description = $"The target property path '{targetPropertyName}' could not be resolved in type '{filterTarget.TargetType.FullName}'."
             };
             return;
         }
@@ -59,7 +59,7 @@ internal class FilterExpressionGeneratorResolution : ICriterionResolution
         // the predicate function parameter, the entity/model of the query.
         var targetParam = Expression.Parameter(targetProperty!.RootDeclaringType, "e");
         var targetMember = targetProperty.GetMemberAccess(targetParam);
-        var filterMember = filterProperty.GetMemberAccess(filterParam);
+        var filterMember = filterProperty!.GetMemberAccess(filterParam);
 
         var context = new ExpressionGeneratorContext()
         {
@@ -70,7 +70,7 @@ internal class FilterExpressionGeneratorResolution : ICriterionResolution
             FilterMember = filterMember,
         };
 
-        return expressionCreateFunction(context);
+        return expressionCreateFunction!(context);
     }
 
     public bool IsLacking([NotNullWhen(true)] out Lack? lack)
