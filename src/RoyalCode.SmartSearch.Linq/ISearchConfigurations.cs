@@ -134,5 +134,13 @@ public interface ISearchConfigurations
     /// <returns>The same instance.</returns>
     ISearchConfigurations Add<TEntity>()
         where TEntity : class;
+
+    /// <summary>
+    /// Add a <see cref="ICriteria{TEntity}"/> for an entity as a service,
+    /// related to the current search configurations and unit of work.
+    /// </summary>
+    /// <param name="entityType">The entity type.</param>
+    /// <returns>The same instance.</returns>
+    ISearchConfigurations Add(Type entityType);
 }
 

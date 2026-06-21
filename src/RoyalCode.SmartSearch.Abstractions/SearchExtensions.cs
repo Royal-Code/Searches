@@ -20,6 +20,8 @@ public static class SearchExtensions
     public static ICriteria<T> WithOptions<T>(this ICriteria<T> criteria, SearchOptions options)
         where T : class
     {
+        options.AvoidEmpty();
+
         if (options.ItemsPerPage.HasValue)
             criteria = criteria.UsePages(options.ItemsPerPage.Value);
 

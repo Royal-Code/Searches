@@ -157,7 +157,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
 
     private void CheckSorting()
     {
-        if (appliedSorting.Count is 0 && skip > 0)
+        if (appliedSorting.Count is 0 && (skip > 0 || take > 0))
         {
             var orderByBuilder = new OrderByBuilder<TEntity>(query);
             var handler = orderByProvider.GetDefaultHandler<TEntity>();
@@ -255,7 +255,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
         var executableQuery = GetQueryableWithSkipAndTake(true, applyHints: true);
 
         var items = executableQuery.ToList();
-        var hasNextPage = items.Count > take;
+        var hasNextPage = take > 0 && items.Count > take;
         if (hasNextPage)
             items = items.Take(take).ToList();
 
@@ -290,7 +290,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
         var executableQuery = GetQueryableWithSkipAndTake(true, applyHints: true);
 
         var items = await executableQuery.ToListAsync(ct);
-        var hasNextPage = items.Count > take;
+        var hasNextPage = take > 0 && items.Count > take;
         if (hasNextPage)
             items = items.Take(take).ToList();
 

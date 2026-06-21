@@ -22,7 +22,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<SimpleModel, SimpleFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<SimpleModel, NullablePropertiesFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<ExtendedModel, ExtendedFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -100,7 +100,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -115,7 +115,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -130,7 +130,7 @@ public class SpecifierFunctionGeneratorTests
         var parameter = Expression.Parameter(typeof(SimpleModel), "x");
 
         // act
-        var memberAccess = DefaultSpecifierFunctionGenerator.GetMemberAccess(property, parameter);
+        var memberAccess = ExpressionGenerator.GetMemberAccess(property, parameter);
 
         // assert
         Assert.NotNull(memberAccess);
@@ -155,7 +155,7 @@ public class SpecifierFunctionGeneratorTests
         var property = typeof(SimpleModel).GetProperty(nameof(SimpleModel.Name))!;
 
         // act
-        var @operator = DefaultSpecifierFunctionGenerator.DiscoveryCriterionOperator(criterion, property);
+        var @operator = ExpressionGenerator.DiscoveryCriterionOperator(criterion, property);
 
         // assert
         Assert.Equal(inOperator, @operator);
@@ -175,7 +175,7 @@ public class SpecifierFunctionGeneratorTests
         var property = typeof(MultiFilterTypes).GetProperty(propertyName)!;
 
         // act
-        var @operator = DefaultSpecifierFunctionGenerator.DiscoveryCriterionOperator(criterion, property);
+        var @operator = ExpressionGenerator.DiscoveryCriterionOperator(criterion, property);
 
         // assert
         Assert.Equal(expectedOperator, @operator);
@@ -199,7 +199,7 @@ public class SpecifierFunctionGeneratorTests
             typeof(MultiFilterTypes).GetProperty(propertyName)!);
 
         // act
-        var expression = DefaultSpecifierFunctionGenerator.GetIfIsEmptyConstraintExpression(
+        var expression = ExpressionGenerator.GetIfIsEmptyConstraintExpression(
             filterMemberAccess,
             assignExpression);
 
@@ -244,7 +244,7 @@ public class SpecifierFunctionGeneratorTests
         Type filterPropertyType, Type modelPropertyType, bool expected)
     {
         // act
-        var match = DefaultSpecifierFunctionGenerator.CheckTypes(filterPropertyType, modelPropertyType);
+        var match = ExpressionGenerator.CheckTypes(filterPropertyType, modelPropertyType);
 
         // assert
         Assert.Equal(expected, match);
@@ -283,7 +283,7 @@ public class SpecifierFunctionGeneratorTests
             typeof(OperatorsModel).GetProperty(propertyName)!);
 
         // act
-        var expression = DefaultSpecifierFunctionGenerator.CreateOperatorExpression(
+        var expression = ExpressionGenerator.CreateOperatorExpression(
             @operator,
             negation,
             filterMemberAccess,
@@ -315,7 +315,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilter>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -334,7 +334,7 @@ public class SpecifierFunctionGeneratorTests
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilterNotNull>();
 
         // assert
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
     }
 
     [Fact]
@@ -349,13 +349,13 @@ public class SpecifierFunctionGeneratorTests
 
         var generator = new DefaultSpecifierFunctionGenerator();
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilter>()!;
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
 
         var query = ConfigurableEntity.List.AsQueryable();
         var filter = new ConfigurableFilter();
 
         // act
-        query = function(query, filter);
+        query = function.Function(query, filter);
 
         // assert
         Assert.Equal(3, query.Count());
@@ -380,7 +380,7 @@ public class SpecifierFunctionGeneratorTests
 
         var generator = new DefaultSpecifierFunctionGenerator();
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilter>()!;
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
 
         var query = ConfigurableEntity.List.AsQueryable();
         var filter = new ConfigurableFilter()
@@ -389,7 +389,7 @@ public class SpecifierFunctionGeneratorTests
         };
 
         // act
-        query = function(query, filter);
+        query = function.Function(query, filter);
 
         // assert
         Assert.Equal(expectedCount, query.Count());
@@ -410,7 +410,7 @@ public class SpecifierFunctionGeneratorTests
 
         var generator = new DefaultSpecifierFunctionGenerator();
         var function = generator.Generate<ConfigurableEntity, ConfigurableFilterNotNull>()!;
-        Assert.NotNull(function);
+        Assert.NotNull(function.Function);
 
         var query = ConfigurableEntity.List.AsQueryable();
         var filter = new ConfigurableFilterNotNull()
@@ -419,7 +419,7 @@ public class SpecifierFunctionGeneratorTests
         };
 
         // act
-        query = function(query, filter);
+        query = function.Function(query, filter);
 
         // assert
         Assert.Equal(expectedCount, query.Count());
@@ -429,26 +429,33 @@ public class SpecifierFunctionGeneratorTests
     public void Factory_Must_UseTheSpecifierFilterMethod()
     {
         // arrange
-        SimpleFilterManual.Reset();
         var services = new ServiceCollection();
         services.AddSmartSearchLinq();
-        var provider = services.BuildServiceProvider();
-        var factory = provider.GetRequiredService<ISpecifierFactory>();
-        var query = new[]
+        var sp = services.BuildServiceProvider();
+        var factory = sp.GetRequiredService<ISpecifierFactory>();
+
+        var data = new List<SimpleModel>
         {
-            new SimpleModel { Id = 1, Name = "Alpha" },
-            new SimpleModel { Id = 2, Name = "Beta" },
-            new SimpleModel { Id = 3, Name = "Alphabet" }
+            new() { Id = 1, Name = "A" },
+            new() { Id = 2, Name = "B" },
+            new() { Id = 3, Name = "AB" }
         }.AsQueryable();
-        var filter = new SimpleFilterManual { Name = "Alpha" };
+
+        var filter = new SimpleFilterManual { Name = "A" };
 
         // act
         var specifier = factory.GetSpecifier<SimpleModel, SimpleFilterManual>();
-        var result = specifier.Specify(query, filter).ToList();
+
+        // assert
+        Assert.NotNull(specifier);
+
+        // act
+        var result = specifier.Specify(data, filter);
 
         // assert
         Assert.True(SimpleFilterManual.Called);
-        Assert.Equal([1, 3], result.Select(m => m.Id));
+        Assert.Equal(2, result.Count());
+        Assert.All(result, m => Assert.Contains("A", m.Name));
     }
 }
 
@@ -549,6 +556,11 @@ file class LocalDbContext(DbContextOptions<LocalDbContext> options) : DbContext(
 file class SearchConfigurer : ISearchConfigurations
 {
     public ISearchConfigurations Add<TEntity>() where TEntity : class
+    {
+        throw new NotImplementedException();
+    }
+
+    public ISearchConfigurations Add(Type entityType)
     {
         throw new NotImplementedException();
     }

@@ -3,8 +3,8 @@
 	<Import Project="..\tests.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(DotNetCoreVersion)" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(DotNetCoreVersion)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(ApsVer)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(ApsVer)" />
 		<PackageReference Include="RoyalCode.OperationHint.EntityFramework" Version="$(OpHintVer)" />
 	</ItemGroup>
 

@@ -16,7 +16,7 @@ public interface ISpecifierFunctionGenerator
     /// <typeparam name="TModel">The type of the model.</typeparam>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <returns>The function or null if not exists.</returns>
-    Func<IQueryable<TModel>, TFilter, IQueryable<TModel>>? Generate<TModel, TFilter>()
+    SpecifierFunctionGenerationResult<TModel, TFilter> Generate<TModel, TFilter>()
         where TModel : class
         where TFilter : class;
 }

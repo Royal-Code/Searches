@@ -36,7 +36,7 @@ public interface ICriteriaOptions<out TSearch>
     ///     When zero (0) is entered, it will not skip any records.
     /// </para>
     /// <para>
-    ///     When <see cref="UsePages(int)"/> is informed, this property is ignored.
+    ///     When <see cref="UsePages(int, int)"/> or <see cref="FetchPage(int)"/> is informed, this property is ignored.
     /// </para>
     /// </summary>
     /// <param name="skip">The number of records to skip.</param>
@@ -48,7 +48,7 @@ public interface ICriteriaOptions<out TSearch>
     ///     Limits the number of results returned by the search query.
     /// </para>
     /// <para>
-    ///     When <see cref="UsePages(int)"/> is informed, this property is ignored.
+    ///     When <see cref="UsePages(int, int)"/> or <see cref="FetchPage(int)"/> is informed, this property is ignored.
     /// </para>
     /// </summary>
     /// <param name="take">The maximum number of results to return. Must be a positive integer.</param>
@@ -60,7 +60,7 @@ public interface ICriteriaOptions<out TSearch>
     ///     Defines the number of records to be skipped and the number of records to be returned in the search.
     /// </para>
     /// <para>
-    ///     When <see cref="UsePages(int)"/> is informed, this property is ignored.
+    ///     When <see cref="UsePages(int, int)"/> or <see cref="FetchPage(int)"/> is informed, this property is ignored.
     /// </para>
     /// </summary>
     /// <param name="skip">The number of records to skip.</param>

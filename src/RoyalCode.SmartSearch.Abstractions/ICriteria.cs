@@ -15,7 +15,7 @@ namespace RoyalCode.SmartSearch;
 /// </para>
 /// <para>
 ///     To perform a search where entities are not tracked (i.e., detached from the change tracker),
-///     convert the criteria to a search using <see cref="AsSearch"/> or <see cref="Select{TDto}"/>.
+///     convert the criteria to a search using <see cref="AsSearch()"/> or <see cref="Select{TDto}()"/>.
 ///     The resulting <see cref="ISearch{TEntity}"/> or <see cref="ISearch{TEntity, TDto}"/> will return
 ///     entities or DTOs that are not tracked by the change tracker.
 /// </para>

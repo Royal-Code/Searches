@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RoyalCode.SmartSearch.Tests;
@@ -7,27 +6,35 @@ namespace RoyalCode.SmartSearch.Tests;
 /// <summary>
 /// Integration tests for the <see cref="IAllEntities{TEntity}"/> search.
 /// </summary>
-public class AllEntitiesTests
+public class CriteriaAndCollectTests
 {
     // configure test container
-    private static IServiceProvider CreateServiceProvider(string name)
+    private static async Task<IServiceProvider> CreateServiceProvider(string name)
     {
         ServiceCollection services = new();
 
-        services.AddDbContext<AllDbContext>(builder => builder.UseInMemoryDatabase(name));
+        var sqliteConnection = new Microsoft.Data.Sqlite.SqliteConnection($"DataSource=:memory:");
+        await sqliteConnection.OpenAsync();
+        services.AddSingleton(sqliteConnection);
+
+        services.AddDbContext<AllDbContext>(builder => builder.UseSqlite(sqliteConnection));
 
         services.AddEntityFrameworkSearches<AllDbContext>(s => s.Add<SimpleModel>());
 
         ServiceProvider provider = services.BuildServiceProvider();
 
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AllDbContext>();
+        await db.Database.EnsureCreatedAsync();
+
         return provider;
     }
 
     [Fact]
-    public void Must_CollectAll_WhenNoFilterOrSorting()
+    public async Task Must_CollectAll_WhenNoFilterOrSorting()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_CollectAll_WhenNoFilterOrSorting));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_CollectAll_WhenNoFilterOrSorting));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -43,14 +50,14 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = all.Collect();
 
         // assert
-        result.Should().HaveCount(3);
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
     public async Task Must_CollectAll_WhenNoFilterOrSortingAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_CollectAll_WhenNoFilterOrSortingAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_CollectAll_WhenNoFilterOrSortingAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -66,14 +73,14 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = await all.CollectAsync();
 
         // assert
-        result.Should().HaveCount(3);
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
-    public void Must_CollectOne_WhenFilterByName()
+    public async Task Must_CollectOne_WhenFilterByName()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_CollectOne_WhenFilterByName));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_CollectOne_WhenFilterByName));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -90,15 +97,15 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = all.FilterBy(filter).Collect();
 
         // assert
-        result.Should().HaveCount(1);
-        result.Should().ContainSingle(x => x.Id == 2);
+        Assert.Single(result);
+        Assert.Equal(2, result.Single().Id);
     }
 
     [Fact]
     public async Task Must_CollectOne_WhenFilterByNameAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_CollectOne_WhenFilterByNameAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_CollectOne_WhenFilterByNameAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -115,14 +122,15 @@ public class AllEntitiesTests
         IReadOnlyList<SimpleModel> result = await all.FilterBy(filter).CollectAsync();
 
         // assert
-        result.Should().HaveCount(1).And.ContainSingle(x => x.Id == 2);
+        Assert.Single(result);
+        Assert.Equal(2, result.Single().Id);
     }
 
     [Fact]
-    public void Must_Exists_WhenFilterByName()
+    public async Task Must_Exists_WhenFilterByName()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Exists_WhenFilterByName));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Exists_WhenFilterByName));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -139,14 +147,14 @@ public class AllEntitiesTests
         bool result = all.FilterBy(filter).Exists();
 
         // assert
-        result.Should().BeTrue();
+        Assert.True(result);
     }
 
     [Fact]
     public async Task Must_Exists_WhenFilterByNameAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Exists_WhenFilterByNameAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Exists_WhenFilterByNameAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -163,14 +171,14 @@ public class AllEntitiesTests
         bool result = await all.FilterBy(filter).ExistsAsync();
 
         // assert
-        result.Should().BeTrue();
+        Assert.True(result);
     }
 
     [Fact]
-    public void Must_NotExists_WhenFilterByName()
+    public async Task Must_NotExists_WhenFilterByName()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_NotExists_WhenFilterByName));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_NotExists_WhenFilterByName));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -187,14 +195,14 @@ public class AllEntitiesTests
         bool result = all.FilterBy(filter).Exists();
 
         // assert
-        result.Should().BeFalse();
+        Assert.False(result);
     }
 
     [Fact]
     public async Task Must_NotExists_WhenFilterByNameAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_NotExists_WhenFilterByNameAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_NotExists_WhenFilterByNameAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -211,14 +219,14 @@ public class AllEntitiesTests
         bool result = await all.FilterBy(filter).ExistsAsync();
 
         // assert
-        result.Should().BeFalse();
+        Assert.False(result);
     }
 
     [Fact]
-    public void Must_First_WhenFilterByName()
+    public async Task Must_First_WhenFilterByName()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_First_WhenFilterByName));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_First_WhenFilterByName));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -237,14 +245,15 @@ public class AllEntitiesTests
         // assert
 
         // assert
-        result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
     public async Task Must_First_WhenFilterByNameAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_First_WhenFilterByNameAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_First_WhenFilterByNameAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -261,14 +270,15 @@ public class AllEntitiesTests
         SimpleModel? result = await all.FilterBy(filter).FirstOrDefaultAsync();
 
         // assert
-        result.Should().NotBeNull().And.Match<SimpleModel>(x => x.Id == 2);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
-    public void Must_FirstBeNull_WhenFilterByName()
+    public async Task Must_FirstBeNull_WhenFilterByName()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_FirstBeNull_WhenFilterByName));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_FirstBeNull_WhenFilterByName));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -285,14 +295,14 @@ public class AllEntitiesTests
         SimpleModel? result = all.FilterBy(filter).FirstOrDefault();
 
         // assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
     public async Task Must_FirstBeNull_WhenFilterByNameAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_FirstBeNull_WhenFilterByNameAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_FirstBeNull_WhenFilterByNameAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -309,14 +319,14 @@ public class AllEntitiesTests
         SimpleModel? result = await all.FilterBy(filter).FirstOrDefaultAsync();
 
         // assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
-    public void Must_Single_WhenFilterByName()
+    public async Task Must_Single_WhenFilterByName()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Single_WhenFilterByName));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Single_WhenFilterByName));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -333,14 +343,14 @@ public class AllEntitiesTests
         SimpleModel result = all.FilterBy(filter).Single();
 
         // assert
-        result.Id.Should().Be(2);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
     public async Task Must_Single_WhenFilterByNameAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Single_WhenFilterByNameAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Single_WhenFilterByNameAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -357,14 +367,14 @@ public class AllEntitiesTests
         SimpleModel result = await all.FilterBy(filter).SingleAsync();
 
         // assert
-        result.Id.Should().Be(2);
+        Assert.Equal(2, result.Id);
     }
 
     [Fact]
-    public void Must_Throw_WhenSingle_HasMoreThenOne()
+    public async Task Must_Throw_WhenSingle_HasMoreThenOne()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasMoreThenOne));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasMoreThenOne));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -380,14 +390,14 @@ public class AllEntitiesTests
         Action act = () => all.Single();
 
         // assert
-        act.Should().Throw<InvalidOperationException>();
+        Assert.Throws<InvalidOperationException>(act);
     }
 
     [Fact]
     public async Task Must_Throw_WhenSingle_HasMoreThenOneAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasMoreThenOneAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasMoreThenOneAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -403,14 +413,14 @@ public class AllEntitiesTests
         Func<Task> act = () => all.SingleAsync();
 
         // assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
     }
 
     [Fact]
-    public void Must_Throw_WhenSingle_HasNoOne()
+    public async Task Must_Throw_WhenSingle_HasNoOne()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasNoOne));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasNoOne));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -427,14 +437,14 @@ public class AllEntitiesTests
         Action act = () => all.FilterBy(filter).Single();
 
         // assert
-        act.Should().Throw<InvalidOperationException>();
+        Assert.Throws<InvalidOperationException>(act);
     }
 
     [Fact]
     public async Task Must_Throw_WhenSingle_HasNoOneAsync()
     {
         // arrange
-        IServiceProvider provider = CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasNoOneAsync));
+        IServiceProvider provider = await CreateServiceProvider(nameof(Must_Throw_WhenSingle_HasNoOneAsync));
 
         using IServiceScope scope = provider.CreateScope();
         AllDbContext context = scope.ServiceProvider.GetRequiredService<AllDbContext>();
@@ -451,7 +461,7 @@ public class AllEntitiesTests
         Func<Task> act = () => all.FilterBy(filter).SingleAsync();
 
         // assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await Assert.ThrowsAsync<InvalidOperationException>(act);
     }
 }
 

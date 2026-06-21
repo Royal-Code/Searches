@@ -76,7 +76,7 @@ public sealed class SearchOptions
     /// <summary>
     /// The order by instructions for the search.
     /// </summary>
-    public Sorting[]? Sortings
+    internal Sorting[]? Sortings
     {
         get => sortings?.ToArray() ?? null;
         set => sortings = value?.ToList();
@@ -138,5 +138,17 @@ public sealed class SearchOptions
         ItemsPerPage = resultList.ItemsPerPage;
         Page = resultList.Page;
         return this;
+    }
+
+    /// <summary>
+    /// Ensures that the search options are not empty.
+    /// </summary>
+    public void AvoidEmpty()
+    {
+        if (Page is null && ItemsPerPage is null && Skip is null && Take is null)
+        {
+            Page = 1;
+            ItemsPerPage = 10;
+        }
     }
 }
