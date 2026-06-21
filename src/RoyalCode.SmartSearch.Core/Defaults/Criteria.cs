@@ -1,4 +1,5 @@
 ﻿
+using RoyalCode.SmartSearch.Hints;
 using RoyalCode.SmartSearch.Mappings;
 using RoyalCode.SmartSearch.Services;
 using System.Linq.Expressions;
@@ -86,6 +87,18 @@ public class Criteria<TEntity> : ICriteria<TEntity>
         where TFilter : class
     {
         options.AddFilter(filter);
+        return this;
+    }
+
+    /// <inheritdoc />
+    public ICriteria<TEntity> UseHints<THint>(params THint[] hints)
+        where THint : Enum
+    {
+        ArgumentNullException.ThrowIfNull(hints);
+        if (hints.Length is 0)
+            throw new ArgumentException("At least one hint must be provided.", nameof(hints));
+
+        options.AddHint(new CriteriaHint<THint>(hints));
         return this;
     }
 

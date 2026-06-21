@@ -1,4 +1,5 @@
 using RoyalCode.SmartSearch.Filtering;
+using RoyalCode.SmartSearch.Hints;
 
 namespace RoyalCode.SmartSearch.Defaults;
 
@@ -9,6 +10,7 @@ public sealed class CriteriaOptions
 {
     private List<IFilter>? filters;
     private List<ISorting>? sortings;
+    private List<ICriteriaHint>? hints;
 
     /// <summary>
     /// Gets or sets a value indicating whether tracking is enabled.
@@ -24,6 +26,17 @@ public sealed class CriteriaOptions
     /// Get all sorting.
     /// </summary>
     public IReadOnlyList<ISorting> Sortings => sortings ?? [];
+
+    /// <summary>
+    /// <para>
+    ///     Get all per-query hints added to the criteria (via <c>ICriteria.UseHints</c>).
+    /// </para>
+    /// <para>
+    ///     These are local to a single criteria/search and are applied to entity-materializing queries by a
+    ///     provider that understands them (e.g. Entity Framework). Providers without hint support ignore them.
+    /// </para>
+    /// </summary>
+    public IReadOnlyList<ICriteriaHint> Hints => hints ?? [];
 
     /// <summary>
     /// <para>
@@ -107,6 +120,16 @@ public sealed class CriteriaOptions
             return;
         sortings ??= [];
         sortings.AddRange(sorting);
+    }
+
+    /// <summary>
+    /// Adds a per-query hint carrier to the criteria.
+    /// </summary>
+    /// <param name="hint">The hint carrier.</param>
+    public void AddHint(ICriteriaHint hint)
+    {
+        hints ??= [];
+        hints.Add(hint);
     }
 
     /// <summary>

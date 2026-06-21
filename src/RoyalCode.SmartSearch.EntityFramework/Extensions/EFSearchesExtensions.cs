@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch;
 using RoyalCode.SmartSearch.Defaults;
 using RoyalCode.SmartSearch.EntityFramework.Services;
@@ -28,11 +29,26 @@ public static class EFSearchesExtensions
         var orderByFactory = db.GetService<IOrderByProvider>();
         var selectorFactory = db.GetService<ISelectorFactory>();
 
+        IHintPerformer? hintPerformer;
+        IHintHandlerRegistry? hintRegistry;
+        try
+        {
+            hintPerformer = db.GetService<IHintPerformer>();
+            hintRegistry = db.GetService<IHintHandlerRegistry>();
+        }
+        catch (InvalidOperationException)
+        {
+            hintPerformer = null;
+            hintRegistry = null;
+        }
+
         var preparer = new CriteriaPerformer<DbContext, TEntity>(
             db,
             specifierFactory,
             orderByFactory,
-            selectorFactory);
+            selectorFactory,
+            hintPerformer,
+            hintRegistry);
 
         var criteria = new Criteria<TEntity>(preparer);
 

@@ -5,6 +5,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(ApsVer)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(ApsVer)" />
+		<PackageReference Include="RoyalCode.OperationHint.EntityFramework" Version="$(OpHintVer)" />
 	</ItemGroup>
 
 	<ItemGroup>

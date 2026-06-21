@@ -1,10 +1,10 @@
 <Project>
 	<PropertyGroup>
-		<LibTargets>net8.0;net9.0;net10.0;</LibTargets>
-		<AspTargets>net8.0;net9.0;net10.0;</AspTargets>
+		<LibTargets>net8.0;net9.0;net10.0</LibTargets>
+		<AspTargets>net8.0;net9.0;net10.0</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>0.10.1</SearchesVer>
+		<SearchesVer>0.10.2</SearchesVer>
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -13,12 +13,12 @@
 		<ProblemsVer>1.0.0-preview-6.0</ProblemsVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<AspVer>8.0.0</AspVer>
+		<AspVer>8.0.6</AspVer>
 		<EFVer>8.0.10</EFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<AspVer>9.0.0</AspVer>
-		<EFVer>9.0.0</EFVer>
+		<AspVer>9.0.5</AspVer>
+		<EFVer>9.0.5</EFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
 		<AspVer >10.0.0</AspVer>

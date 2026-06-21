@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch.Filtering;
+using RoyalCode.SmartSearch.Hints;
 using RoyalCode.SmartSearch.Linq.Services;
 using RoyalCode.SmartSearch.Linq.Sortings;
 using RoyalCode.SmartSearch.Mappings;
@@ -38,8 +40,12 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     private readonly ISpecifierFactory specifierFactory;
     private readonly IOrderByProvider orderByProvider;
     private readonly ISelectorFactory selectorFactory;
+    private readonly IHintPerformer? hintPerformer;
+    private readonly IHintHandlerRegistry? hintRegistry;
+    private readonly IReadOnlyList<ICriteriaHint>? localHints;
 
     private IQueryable<TEntity> query;
+    private IQueryable<TEntity>? hintedQuery;
 
     private int pageNumber;
     private int skip;
@@ -62,16 +68,35 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     /// <param name="specifierFactory">The factory used to create specifiers for filtering criteria.</param>
     /// <param name="orderByProvider">The provider used to define ordering rules for the query results.</param>
     /// <param name="selectorFactory">The factory used to create selectors for projecting query results.</param>
+    /// <param name="hintPerformer">
+    ///     The optional operation hint performer. When provided (i.e. <c>OperationHint</c> is registered),
+    ///     ambient hints are applied to the query at the entity-materializing terminals. When <see langword="null"/>,
+    ///     the query behaves exactly as before (no-op).
+    /// </param>
+    /// <param name="hintRegistry">
+    ///     The optional hint handler registry, used to apply per-query (local) hints. When <see langword="null"/>
+    ///     (or there are no local hints), no local hint is applied.
+    /// </param>
+    /// <param name="localHints">
+    ///     The optional per-query hints declared via <c>ICriteria.UseHints</c>. Applied alongside the ambient hints
+    ///     at the entity-materializing terminals, but isolated to this query (never via the ambient container).
+    /// </param>
     public CriteriaQuery(
         IQueryable<TEntity> query,
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
-        ISelectorFactory selectorFactory)
+        ISelectorFactory selectorFactory,
+        IHintPerformer? hintPerformer = null,
+        IHintHandlerRegistry? hintRegistry = null,
+        IReadOnlyList<ICriteriaHint>? localHints = null)
     {
         this.query = query;
         this.specifierFactory = specifierFactory;
         this.orderByProvider = orderByProvider;
         this.selectorFactory = selectorFactory;
+        this.hintPerformer = hintPerformer;
+        this.hintRegistry = hintRegistry;
+        this.localHints = localHints;
     }
 
     /// <inheritdoc />
@@ -142,17 +167,45 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
         }
     }
 
-    private IQueryable<TEntity> GetQueryableWithSkip()
+    /// <summary>
+    ///     Returns the base query with operation hints applied (e.g. EF includes): both ambient hints (from the
+    ///     hint container, via <see cref="IHintPerformer"/>) and per-query hints (declared via
+    ///     <c>ICriteria.UseHints</c>, applied through the registry visitor).
+    /// </summary>
+    /// <remarks>
+    ///     The hints are applied <b>once</b> and cached (idempotent). When neither source is available, the original
+    ///     query is returned unchanged. This is only used by the entity-materializing terminals;
+    ///     <see cref="Exists()"/> and the record counting must not apply hints.
+    /// </remarks>
+    private IQueryable<TEntity> GetEntityQuery()
     {
-        var queryable = query;
+        if (hintedQuery is not null)
+            return hintedQuery;
+
+        var entityQuery = hintPerformer is null ? query : hintPerformer.Perform(query);
+
+        if (hintRegistry is not null && localHints is { Count: > 0 })
+        {
+            var visitor = new RegistryHintVisitor<IQueryable<TEntity>>(hintRegistry, entityQuery);
+            foreach (var hint in localHints)
+                hint.Accept(visitor);
+            entityQuery = visitor.Query;
+        }
+
+        return hintedQuery = entityQuery;
+    }
+
+    private IQueryable<TEntity> GetQueryableWithSkip(bool applyHints = false)
+    {
+        var queryable = applyHints ? GetEntityQuery() : query;
         if (skip > 0)
             queryable = queryable.Skip(skip);
         return queryable;
     }
 
-    private IQueryable<TEntity> GetQueryableWithSkipAndTake(bool count)
+    private IQueryable<TEntity> GetQueryableWithSkipAndTake(bool count, bool applyHints = false)
     {
-        var queryable = GetQueryableWithSkip();
+        var queryable = GetQueryableWithSkip(applyHints);
         if (take > 0)
             queryable = queryable.Take(take + (count ? 1 : 0));
         return queryable;
@@ -175,31 +228,31 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
 
     /// <inheritdoc />
     public TEntity? FirstOrDefault()
-        => GetQueryableWithSkip().FirstOrDefault();
+        => GetQueryableWithSkip(applyHints: true).FirstOrDefault();
 
     /// <inheritdoc />
-    public Task<TEntity?> FirstOrDefaultAsync(CancellationToken ct = default) 
-        => GetQueryableWithSkip().FirstOrDefaultAsync(ct);
+    public Task<TEntity?> FirstOrDefaultAsync(CancellationToken ct = default)
+        => GetQueryableWithSkip(applyHints: true).FirstOrDefaultAsync(ct);
 
     /// <inheritdoc />
     public TEntity Single()
-        => GetQueryableWithSkip().Single();
-    
-    /// <inheritdoc />
-    public Task<TEntity> SingleAsync(CancellationToken ct = default)
-        => GetQueryableWithSkip().SingleAsync(ct);
+        => GetQueryableWithSkip(applyHints: true).Single();
 
     /// <inheritdoc />
-    public IReadOnlyList<TEntity> ToList() => GetQueryableWithSkipAndTake(false).ToList();
+    public Task<TEntity> SingleAsync(CancellationToken ct = default)
+        => GetQueryableWithSkip(applyHints: true).SingleAsync(ct);
+
+    /// <inheritdoc />
+    public IReadOnlyList<TEntity> ToList() => GetQueryableWithSkipAndTake(false, applyHints: true).ToList();
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<TEntity>> ToListAsync(CancellationToken ct)
-        => await GetQueryableWithSkipAndTake(false).ToListAsync(ct);
+        => await GetQueryableWithSkipAndTake(false, applyHints: true).ToListAsync(ct);
 
     /// <inheritdoc />
     public IResultList<TEntity> ToResultList()
     {
-        var executableQuery = GetQueryableWithSkipAndTake(true);
+        var executableQuery = GetQueryableWithSkipAndTake(true, applyHints: true);
 
         var items = executableQuery.ToList();
         var hasNextPage = take > 0 && items.Count > take;
@@ -234,7 +287,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     /// <inheritdoc />
     public async Task<IResultList<TEntity>> ToResultListAsync(CancellationToken ct)
     {
-        var executableQuery = GetQueryableWithSkipAndTake(true);
+        var executableQuery = GetQueryableWithSkipAndTake(true, applyHints: true);
 
         var items = await executableQuery.ToListAsync(ct);
         var hasNextPage = take > 0 && items.Count > take;
@@ -269,7 +322,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     /// <inheritdoc />
     public async Task<IAsyncResultList<TEntity>> ToAsyncListAsync(CancellationToken ct)
     {
-        var executableQuery = GetQueryableWithSkipAndTake(false);
+        var executableQuery = GetQueryableWithSkipAndTake(false, applyHints: true);
 
         var queryCount = lastCount > 0
             ? lastCount

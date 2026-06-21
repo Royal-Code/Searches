@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RoyalCode.OperationHint.Abstractions;
 using RoyalCode.SmartSearch.Linq.Services;
 using RoyalCode.SmartSearch.Linq.Sortings;
 
@@ -17,6 +18,8 @@ public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
     private readonly ISpecifierFactory specifierFactory;
     private readonly IOrderByProvider orderByProvider;
     private readonly ISelectorFactory selectorFactory;
+    private readonly IHintPerformer? hintPerformer;
+    private readonly IHintHandlerRegistry? hintRegistry;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SearchManager{TDbContext}"/> class,  
@@ -35,16 +38,28 @@ public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
     ///     The factory responsible for creating selectors that determine which fields to include in the search results.
     ///     Must not be null.
     /// </param>
+    /// <param name="hintPerformer">
+    ///     The optional operation hint performer. Resolved by DI when <c>OperationHint</c> is registered;
+    ///     <see langword="null"/> otherwise (no-op).
+    /// </param>
+    /// <param name="hintRegistry">
+    ///     The optional hint handler registry, used to apply per-query hints declared via <c>ICriteria.UseHints</c>.
+    ///     Resolved by DI when <c>OperationHint</c> is registered; <see langword="null"/> otherwise (no-op).
+    /// </param>
     public SearchManager(
         TDbContext db,
         ISpecifierFactory specifierFactory,
         IOrderByProvider orderByProvider,
-        ISelectorFactory selectorFactory)
+        ISelectorFactory selectorFactory,
+        IHintPerformer? hintPerformer = null,
+        IHintHandlerRegistry? hintRegistry = null)
     {
         this.db = db;
         this.specifierFactory = specifierFactory;
         this.orderByProvider = orderByProvider;
         this.selectorFactory = selectorFactory;
+        this.hintPerformer = hintPerformer;
+        this.hintRegistry = hintRegistry;
     }
 
     /// <inheritdoc />
@@ -54,7 +69,9 @@ public sealed class SearchManager<TDbContext> : ISearchManager<TDbContext>
             db,
             specifierFactory,
             orderByProvider,
-            selectorFactory);
+            selectorFactory,
+            hintPerformer,
+            hintRegistry);
 
         return new InternalCriteria<TDbContext, TEntity>(performer);
     }

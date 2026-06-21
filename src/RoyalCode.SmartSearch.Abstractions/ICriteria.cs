@@ -40,6 +40,27 @@ public interface ICriteria<TEntity> : ICriteriaOptions<ICriteria<TEntity>>
 
     /// <summary>
     /// <para>
+    ///     Adds one or more operation hints to be applied to this criteria only (per-query).
+    /// </para>
+    /// <para>
+    ///     Hints are identified by an <see langword="enum"/> value and are resolved by the search engine to load
+    ///     the entity graph (e.g. Entity Framework includes) when materializing entities via <see cref="Collect"/>,
+    ///     <see cref="FirstOrDefault"/> or <see cref="Single"/>. They are <b>not</b> applied to <see cref="Exists"/>
+    ///     nor to <see cref="Select{TDto}()"/> projections.
+    /// </para>
+    /// <para>
+    ///     Unlike ambient hints, these are local to this criteria and never leak to sibling queries in the same scope.
+    ///     Search engines that do not support hints ignore them gracefully.
+    /// </para>
+    /// </summary>
+    /// <typeparam name="THint">The hint enum type.</typeparam>
+    /// <param name="hints">The hint values to apply.</param>
+    /// <returns>The same instance for chaining calls.</returns>
+    ICriteria<TEntity> UseHints<THint>(params THint[] hints)
+        where THint : Enum;
+
+    /// <summary>
+    /// <para>
     ///     Adds a sorting object to be applied to the criteria.
     /// </para>
     /// </summary>

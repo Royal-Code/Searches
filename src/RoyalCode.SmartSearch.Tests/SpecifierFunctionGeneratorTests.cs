@@ -481,6 +481,8 @@ public class SimpleFilterManual
 
     public string Name { get; set; } = null!;
 
+    public static void Reset() => Called = false;
+
     public IQueryable<SimpleModel> Filter(IQueryable<SimpleModel> query)
     {
         Called = true;
