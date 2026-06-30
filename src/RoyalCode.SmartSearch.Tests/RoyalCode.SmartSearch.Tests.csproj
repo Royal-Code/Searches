@@ -3,9 +3,11 @@
 	<Import Project="..\tests.targets" />
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(ApsVer)" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(ApsVer)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(EFVer)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EFVer)" />
 		<PackageReference Include="RoyalCode.OperationHint.EntityFramework" Version="$(OpHintVer)" />
+		<!-- Promote the transitive SQLitePCLRaw native bundle past the 2.1.11 advisory (NU1903). -->
+		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
