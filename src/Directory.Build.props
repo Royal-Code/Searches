@@ -4,7 +4,7 @@
 		<AspTargets>net8.0;net9.0;net10.0</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>0.10.3</SearchesVer>
+		<SearchesVer>0.10.4</SearchesVer>
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -17,8 +17,8 @@
 		<EFVer>8.0.10</EFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<AspVer>9.0.5</AspVer>
-		<EFVer>9.0.5</EFVer>
+		<AspVer>9.0.0</AspVer>
+		<EFVer>9.0.0</EFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
 		<AspVer >10.0.0</AspVer>
