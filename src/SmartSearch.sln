@@ -37,6 +37,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{789D2113-F
 		..\docs\validations.md = ..\docs\validations.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plans", "plans", "{53A6F32B-CA1F-4521-BE77-3AA5031B438D}"
+	ProjectSection(SolutionItems) = preProject
+		.docs\plans\plan-operator-expression-customization.md = .docs\plans\plan-operator-expression-customization.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +84,7 @@ Global
 		{92A0A603-CFF6-498E-BED8-8D0D21561AC2} = {932A3AFB-78D0-4A2D-BADD-54A9BC593B60}
 		{BC54B3A6-736A-4459-9F33-1101013627F6} = {EB20012D-6B82-492A-A7C8-9B45D10C0364}
 		{789D2113-F8D2-401F-87CB-4CB728AA2674} = {45312F31-98C1-4E24-9BC9-0784C6378797}
+		{53A6F32B-CA1F-4521-BE77-3AA5031B438D} = {45312F31-98C1-4E24-9BC9-0784C6378797}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D75591B5-4D8A-4ECD-94CE-D38BBC572272}

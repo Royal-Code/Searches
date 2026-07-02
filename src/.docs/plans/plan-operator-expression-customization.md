@@ -204,6 +204,44 @@ Honrar curingas (`%`, `_`) digitados pelo usuario em providers relacionais, via 
    escritas a mao (`[WithFilter]`, `AddSpecifier`, `Predicate(...)`) — documentar como limitacao ou tratar em
    iteracao futura?
 
+### Respostas
+
+#### Questão 1
+
+- Decidido: (a) `Like` passa a honrar curingas e `Contains` fica literal — da significado real aos nomes,
+  mas muda comportamento observavel do default de string.
+  Criar uma variável/propriedade `static` pública para determinar o `default` para strings,
+  deixando like como default.
+  Para o `Like` sem EF, o like deverá ter um gerador dinâmico da expression, se conter `%` deverá quebrar a `string`
+  e criar vários `Contains`, se não tem `%` usar direto o `Contains`.
+  Para o `Like` com EF, deverá aplicar `EF.Functions.Like`. Acho que o wrap `%valor%` deverá ser opcional,
+  com um valor default (true/false) em uma propriedade estática pública,
+  mas o CriterionAttribute deverá ter uma propriedade para sobrescrever o default.
+
+#### Questão 2
+
+- Decidido: neste momento não vamos fazer nada em relação a isso. Considerar uma limitação por hora.
+  Dar a entender que é uma entidade/model por "base" ou "container".
+
+#### Questão 3
+
+- Decidido: usar `IEnumerable<ICriterionOperatorExpressionFactory>` com primeira-nao-null-vence.
+  No entanto, criar uma classe que emcapsule o `IEnumerable<ICriterionOperatorExpressionFactory>`
+  e faça a lógica de loop internamente.
+
+#### Questão 4
+
+- Decidido: podemos pensar em algo como .Net Aspire. Mas não complicar demais, talvez deixar para uma interação futura.
+
+#### Questão 5
+
+- Decidido: criar um pacote novo `RoyalCode.SmartSearch.EntityFramework.Npgsql` para manter a implementação do ILike.
+
+#### Questão 6
+
+- Decidido: documentar como limitação, não será tratado `[WithFilter]`, `AddSpecifier`, `Predicate(...)`.
+  Estas customizações são de competência do consumidor, não do core.
+
 ## Fora de escopo
 
 - Trocar a semantica de traducao de filtros de tipos nao-string.
