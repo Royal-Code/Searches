@@ -7,8 +7,8 @@
 /// <param name="propertyName">The name of the property that caused the sorting error.</param>
 /// <param name="typeName">The type of data to be filtered and sorted.</param>
 /// <param name="inner">Internal exception that caused the problem.</param>
-public sealed class OrderByException(string message, string propertyName, string typeName, Exception inner) 
-    : Exception(message, inner) 
+public class OrderByException(string message, string propertyName, string typeName, Exception? inner = null)
+    : Exception(message, inner)
 {
     /// <summary>
     /// The name of the property that caused the sorting error.

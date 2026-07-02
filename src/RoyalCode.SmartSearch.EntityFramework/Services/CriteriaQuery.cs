@@ -151,6 +151,11 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
             orderByProvider,
             selectorFactory);
 
+        // A ordenacao ja foi aplicada a `query` antes do Select e permanece embutida na consulta projetada.
+        // Propaga o estado de ordenacao para a query projetada; sem isso, CheckSorting veria appliedSorting vazio
+        // e (quando ha paginacao) aplicaria a ordenacao default (ex.: Id) por cima da projecao, sobrescrevendo a
+        // ordem real. Tambem garante que o resultado reporte os Sortings efetivamente aplicados.
+        criteriaQuery.appliedSorting.AddRange(appliedSorting);
         criteriaQuery.SetPageSkipTakeCount(pageNumber, skip, take, count, lastCount);
         return criteriaQuery;
     }
@@ -215,7 +220,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     {
         return count == 0 || take < 1
             ? 0
-            : (int)Math.Floor((double)count / take);
+            : (int)Math.Ceiling((double)count / take);
     }
 
     /// <inheritdoc />

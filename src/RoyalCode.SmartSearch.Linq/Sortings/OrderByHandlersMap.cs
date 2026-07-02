@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +9,10 @@ internal sealed class OrderByHandlersMap
 {
     public static OrderByHandlersMap Instance { get; } = new();
 
-    private readonly Dictionary<(Type, string), object> handlers = [];
+    // Cache de handlers de ordenacao por (tipo, propriedade). E um singleton de processo e o caminho de runtime
+    // (OrderByProvider.GetHandler) escreve nele de forma concorrente; por isso usa ConcurrentDictionary. A geracao
+    // do handler e deterministica, entao o caminho de runtime e idempotente (last-write-wins, sem lancar em duplicado).
+    private readonly ConcurrentDictionary<(Type, string), object> handlers = [];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGet<TModel>(string orderBy, [NotNullWhen(true)] out IOrderByHandler<TModel>? handler)
@@ -25,25 +29,21 @@ internal sealed class OrderByHandlersMap
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Add((Type modelType, string orderBy) key, object handler) => handlers.Add(key, handler);
+    public void Add((Type modelType, string orderBy) key, object handler) => handlers[key] = handler;
 
     public void Add<TModel>(string orderBy, IOrderByHandler<TModel> handler)
         where TModel : class
     {
         var key = (typeof(TModel), orderBy);
-        if (handlers.ContainsKey(key))
+        if (!handlers.TryAdd(key, handler))
             throw new ArgumentException($"Handler for {key} already exists.");
-
-        handlers.Add(key, handler);
     }
 
     public void Add<TModel, TProperty>(string orderBy, Expression<Func<TModel, TProperty>> expression)
         where TModel : class
     {
         var key = (typeof(TModel), orderBy);
-        if (handlers.ContainsKey(key))
+        if (!handlers.TryAdd(key, new OrderByHandler<TModel, TProperty>(expression)))
             throw new ArgumentException($"Handler for {key} already exists.");
-
-        handlers.Add(key, new OrderByHandler<TModel, TProperty>(expression));
     }
 }
