@@ -22,8 +22,11 @@ Motivacao (descoberta pela demo do SmartCommands, laboratorio vivo das libs):
 
 ## Status
 
-**PLANEJADO. Nenhuma fase iniciada.** A Fase 3 esta bloqueada pela Questao 1 (semantica de `Like`/`Contains`/novo
-operador), que sera discutida antes.
+**PLANEJADO. Nenhuma fase iniciada. Questoes 1-6 decididas pelo mantenedor (ver "Respostas") e incorporadas nas
+fases.** A decisao da Questao 1 (`Like` honra curingas, `Contains` literal, defaults estaticos configuraveis)
+desbloqueou e expandiu o escopo: a semantica de `Like`/`Contains` no core virou a Fase 3 propria, deslocando a
+factory EF para a Fase 4 e o pacote Npgsql para a Fase 5. Restam as questoes de implementacao 7-9 (novas), que nao
+bloqueiam as Fases 1-2.
 
 Contexto relacionado (fora deste plano, ja resolvido no repo aguardando release): orderby case-insensitive
 (`DefaultOrderByGenerator` + `OrderByHandlersMap`) e falha de traducao de `ORDER BY` relancada como
@@ -64,7 +67,21 @@ Pontos de extensao existentes, do mais largo ao mais fino:
   `RoyalCode.SmartSearch.EntityFramework`; `EF.Functions.ILike` e Npgsql-especifico e mora em pacote proprio ou no
   app consumidor (Questao 5).
 - **Compatibilidade.** `CreateOperatorExpression` atual permanece; a nova assinatura e overload. Comportamento
-  default (sem `Case`, sem factory) permanece identico ao atual.
+  default (sem `Case`, sem factory) permanece identico ao atual, **exceto** pela decisao da Questao 1: `Like`
+  (default de string) passa a honrar curingas digitados pelo usuario. Valvula de escape: propriedade estatica
+  publica com o operador default para strings (consumidor pode voltar a `Contains` literal como default).
+- **`Like` != `Contains` (Questao 1).** `Contains` = substring literal (comportamento atual, curingas escapados);
+  `Like` = pattern com `%` do usuario honrado. Wrap `%valor%` opcional: default em propriedade estatica publica +
+  override por criterion.
+- **Cache por processo aceito como limitacao (Questao 2).** Specifiers continuam cacheados por processo
+  (`SpecifiersMap.Instance`, chave `(TModel, TFilter)`): na pratica, uma estrategia por model por processo.
+  Documentar; nada a fazer agora.
+- **Composicao de factories via classe encapsuladora (Questao 3).** `IEnumerable<ICriterionOperatorExpressionFactory>`
+  com primeira-nao-null-vence, encapsulado em uma classe que faz o loop internamente; as resolutions recebem essa
+  classe, nao o `IEnumerable` cru.
+- **Alcance documentado como limitacao (Questao 6).** A customizacao cobre criterios gerados (`[Criterion]`,
+  disjuncoes). `[WithFilter]`, `AddSpecifier` e `Predicate(...)` sao expressoes do consumidor — competencia dele,
+  nao do core.
 - **Rewriter de query descartado.** A alternativa de reescrever `query.Expression` no pacote EF (visitor trocando
   `Contains` por `ILike`) e nao-invasiva, mas nao enxerga o `[Criterion(Case = ...)]` — nao respeita intencao
   declarada por propriedade. Fica registrada como alternativa rejeitada.
@@ -123,56 +140,90 @@ public readonly struct CriterionOperatorContext
 }
 ```
 
-- Fluxo: `DefaultSpecifierFunctionGenerator` recebe as factories pelo ctor (DI, opcional) e repassa a
+- Classe encapsuladora (Questao 3): envolve o `IEnumerable<ICriterionOperatorExpressionFactory>` e implementa
+  internamente o loop primeira-nao-null-vence; e ela que flui pelo pipeline (nao o `IEnumerable` cru).
+- Fluxo: `DefaultSpecifierFunctionGenerator` recebe a classe encapsuladora pelo ctor (DI, opcional) e repassa a
   `CriterionResolutions.CreateResolutions(...)`; as resolutions guardam e tentam as factories antes do default.
-- Alcance da disjuncao: `DisjuctionCriterionResolution`/`JunctionProperty` carregam a(s) factory(ies) ate
+- Alcance da disjuncao: `DisjuctionCriterionResolution`/`JunctionProperty` carregam a encapsuladora ate
   `DisjunctionContext.Append` (via `Expression.Constant` embutido no codigo gerado ou campo no `JunctionProperty`).
-- Mitigacao do cache (conforme Questao 2): no minimo, incluir a identidade da(s) factory(ies) na chave do
-  `SpecifiersMap` para evitar contaminacao entre containers com estrategias diferentes no mesmo processo.
+- Limitacao documentada (Questao 2): specifiers sao cacheados por processo (`SpecifiersMap.Instance`); na pratica,
+  uma estrategia por model por processo — containers distintos no mesmo processo compartilham o specifier gerado.
 
 ### Testes
 
 - Factory fake que troca `Like` por expressao marcada: unitario provando que a funcao gerada usa a factory, que
-  `null` cai no default, e que a ordem de registro decide (se multiplas — Questao 3).
+  `null` cai no default, e que a ordem de registro decide (primeira-nao-null-vence via encapsuladora).
 - Disjuncao usa a factory (runtime path).
-- Dois containers com factories diferentes no mesmo processo nao compartilham specifier cacheado (prova da
-  mitigacao do cache).
 
-## Fase 3 - Emissao EF relacional (`EF.Functions.Like`) — BLOQUEADA pela Questao 1
+## Fase 3 - Semantica de `Like` e `Contains` no core (Questao 1)
 
 ### Objetivo
 
-Honrar curingas (`%`, `_`) digitados pelo usuario em providers relacionais, via factory em
-`RoyalCode.SmartSearch.EntityFramework` (opt-in no `AddEntityFrameworkSearches`).
+`Like` e `Contains` deixarem de ser sinonimos: `Contains` = substring literal (atual); `Like` = pattern com `%`
+do usuario honrado, com comportamento portavel (sem EF) e defaults configuraveis.
 
 ### Entregas
 
-- Factory baseada em `EF.Functions.Like(target, pattern)` (pacote relacional, provider-neutro).
-- Definicao do pattern conforme decisao da Questao 1 (wrap `%valor%` vs valor cru como pattern vs operador novo).
+- Propriedade estatica publica com o operador default para strings, com `Like` como default; lida por
+  `DiscoveryCriterionOperator` (valvula de escape para consumidores que preferem `Contains` literal como default).
+- Wrap `%valor%` opcional: default (true/false) em propriedade estatica publica + propriedade no
+  `CriterionAttribute` para sobrescrever por criterion (tri-state — Questao 8).
+- Gerador dinamico portavel do `Like` (sem EF): como o valor so existe na execucao e a funcao do specifier e
+  compilada e cacheada por `(TModel, TFilter)`, a resolution emite chamada a um helper de runtime que inspeciona o
+  valor: sem `%`, aplica `Contains` direto; com `%`, quebra a string e compoe a expressao pelos segmentos
+  (semantica exata do split — Questao 7). O corpo do specifier ja e imperativo (`Expression.Block` com `Assign`),
+  o que comporta a chamada.
+- Interacao com `Case = Insensitive` (Fase 1): a normalizacao portavel (`ToUpper`) tambem se aplica ao caminho do
+  pattern.
+- Casa dos defaults estaticos (operador default de string + wrap): agrupados em um unico tipo de opcoes
+  (Questao 9).
+
+### Testes
+
+- Unitarios do helper de runtime: valor sem `%` = `Contains`; com `%` compoe pelos segmentos; wrap on/off;
+  override por criterion vence o default estatico; `Insensitive` normaliza.
+- E2E SQLite: `?nome=jo%o` encontra "Joao" e nao encontra "Jono"... conforme semantica decidida na Questao 7;
+  `Contains` com `%` no valor segue literal (escapado).
+- Troca do default estatico para `Contains` restaura o comportamento anterior por completo.
+
+## Fase 4 - Emissao EF relacional (`EF.Functions.Like`)
+
+### Objetivo
+
+Nos providers relacionais, o `Like` ser emitido como `EF.Functions.Like(target, pattern)` (traduz para `LIKE`
+nativo), via factory em `RoyalCode.SmartSearch.EntityFramework` (opt-in no `AddEntityFrameworkSearches`).
+
+### Entregas
+
+- Factory baseada em `EF.Functions.Like(target, pattern)` (pacote relacional, provider-neutro), respeitando o wrap
+  (default estatico + override do criterion) e o `Case` (com `Insensitive`, `UPPER(...) LIKE UPPER(...)` na
+  ausencia de suporte nativo).
+- Avaliar o overload com escape char (`EF.Functions.Like(target, pattern, escapeChar)`) para permitir literal
+  `%`/`_` dentro do pattern.
 - Registro opt-in documentado (nao muda comportamento de quem nao registrar).
 
 ### Testes
 
-- E2E SQLite in-memory (o `LIKE` do SQLite honra `%`): usuario busca `jo%o` e encontra; comportamento de escape
-  conforme decisao da Questao 1.
+- E2E SQLite in-memory (o `LIKE` do SQLite honra `%`): usuario busca `jo%o` e encontra; paridade de semantica com
+  o helper portavel da Fase 3 (mesmos casos, mesmos resultados).
 
-## Fase 4 - Emissao Npgsql (`EF.Functions.ILike`)
+## Fase 5 - Pacote `RoyalCode.SmartSearch.EntityFramework.Npgsql` (`EF.Functions.ILike`)
 
 ### Objetivo
 
-`Case = Insensitive` em PG emitir `ILIKE` (nativo, melhor que normalizacao `ToUpper`).
+`Case = Insensitive` em PG emitir `ILIKE` (nativo, melhor que normalizacao `ToUpper`), em pacote novo (Questao 5).
 
 ### Entregas
 
-- Implementacao da factory com `EF.Functions.ILike` — local conforme Questao 5 (pacote novo
-  `RoyalCode.SmartSearch.EntityFramework.Npgsql` vs doc/receita para o app consumidor).
+- Novo projeto/pacote `RoyalCode.SmartSearch.EntityFramework.Npgsql` com a factory `EF.Functions.ILike` e extensao
+  de registro.
 - Documentacao comparando as tres estrategias para PG: `citext`/collation no banco (preserva indice, recomendada
   quando o schema e controlado), `ILike` (factory), normalizacao `ToUpper` (portavel, sem indice).
 
 ### Testes
 
-- Conforme Questao 4 (sem PG no repo hoje): no minimo assercao da arvore gerada; e2e real depende de decisao sobre
-  infra (ex.: Testcontainers).
+- Assercao da arvore gerada (sem PG no repo — Questao 4); e2e real com PG (ex.: .NET Aspire) adiado para iteracao
+  futura, sem complicar agora.
 
 ## Verificacao geral
 
@@ -242,16 +293,37 @@ Honrar curingas (`%`, `_`) digitados pelo usuario em providers relacionais, via 
 - Decidido: documentar como limitação, não será tratado `[WithFilter]`, `AddSpecifier`, `Predicate(...)`.
   Estas customizações são de competência do consumidor, não do core.
 
+### Novas questoes (implementacao — decorrentes da resposta da Questao 1)
+
+7. **Semantica exata do split portavel do `Like` (Fase 3).** Quebrar `jo%o` em `Contains("jo") && Contains("o")`
+   nao equivale ao `LIKE`: (a) perde a **ordem** dos segmentos (`b%a` daria match em "ab", que o `LIKE '%b%a%'`
+   nao daria); (b) segmento repetido (`a%a`) exige duas ocorrencias no `LIKE`, mas `Contains("a") && Contains("a")`
+   aceita uma; (c) sem wrap, o primeiro/ultimo segmento viram ancoras (`StartsWith`/`EndsWith`). Alternativa fiel e
+   ainda portavel: cadeia de `IndexOf` com posicao crescente (EF traduz `IndexOf` para `CHARINDEX`/`instr`),
+   garantindo ordem. Decidir: aproximacao por `Contains` documentada, ou fidelidade via `IndexOf`? O curinga `_`
+   fica fora do modo portavel em ambas (documentar).
+8. **Tri-state do override do wrap no `CriterionAttribute` (Fase 3).** Atributos nao aceitam `bool?`; para o
+   override distinguir "nao declarado" (segue o default estatico) de declaracao explicita, precisa de enum (ex.:
+   `LikeWrap { Default, Wrap, None }`) — nome a definir.
+9. **Casa unica dos defaults estaticos (Fase 3).** `DefaultStringOperator` e o default do wrap devem morar juntos
+   em um unico tipo de opcoes estaticas (evitar estaticos espalhados) — nome a definir (ex.: `CriterionDefaults`),
+   e definir se em `Abstractions` (onde esta o `CriterionAttribute`) ou no core Linq (onde esta o
+   `DiscoveryCriterionOperator`).
+
 ## Fora de escopo
 
 - Trocar a semantica de traducao de filtros de tipos nao-string.
 - Collation/citext no banco (decisao de schema do consumidor; sera apenas documentada como alternativa).
 - Ordenacao case-insensitive e `OrderByException` 400 (ja resolvidos, aguardando release).
 - Rewriter de `query.Expression` no pacote EF (alternativa rejeitada — nao ve a intencao declarada).
+- Isolamento do cache de specifiers por container (limitacao aceita — Questao 2).
+- E2E com PostgreSQL real (adiado — Questao 4; avaliar .NET Aspire em iteracao futura, sem complicar agora).
+- Curinga `_` no modo portavel do `Like` (Fase 3) — apenas `%`; `_` funciona no caminho EF (`EF.Functions.Like`).
 
 ## Ordem recomendada
 
-1. Fase 1 (intencao declarativa + fallback portavel) — independente das questoes abertas.
-2. Fase 2 (seam) — decidir Questoes 2 e 3 antes de iniciar.
-3. Discussao da Questao 1 -> Fase 3.
-4. Fase 4 apos decidir Questoes 4 e 5.
+1. Fase 1 (intencao declarativa + fallback portavel).
+2. Fase 2 (seam com a classe encapsuladora).
+3. Fase 3 (semantica `Like`/`Contains` no core) — decidir Questoes 7, 8 e 9 antes de iniciar.
+4. Fase 4 (factory `EF.Functions.Like`).
+5. Fase 5 (pacote Npgsql com `ILike`).
