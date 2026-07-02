@@ -22,11 +22,10 @@ Motivacao (descoberta pela demo do SmartCommands, laboratorio vivo das libs):
 
 ## Status
 
-**PLANEJADO. Nenhuma fase iniciada. Questoes 1-6 decididas pelo mantenedor (ver "Respostas") e incorporadas nas
-fases.** A decisao da Questao 1 (`Like` honra curingas, `Contains` literal, defaults estaticos configuraveis)
-desbloqueou e expandiu o escopo: a semantica de `Like`/`Contains` no core virou a Fase 3 propria, deslocando a
-factory EF para a Fase 4 e o pacote Npgsql para a Fase 5. Restam as questoes de implementacao 7-9 (novas), que nao
-bloqueiam as Fases 1-2.
+**PLANEJADO, PRONTO PARA EXECUCAO. Nenhuma fase iniciada. Todas as questoes (1-9) foram decididas pelo mantenedor
+(ver "Respostas" e as decisoes nas "Novas questoes").** A decisao da Questao 1 (`Like` honra curingas, `Contains`
+literal, defaults estaticos configuraveis) expandiu o escopo: a semantica de `Like`/`Contains` no core virou a
+Fase 3 propria, deslocando a factory EF para a Fase 4 e o pacote Npgsql para a Fase 5.
 
 Contexto relacionado (fora deste plano, ja resolvido no repo aguardando release): orderby case-insensitive
 (`DefaultOrderByGenerator` + `OrderByHandlersMap`) e falha de traducao de `ORDER BY` relancada como
@@ -167,23 +166,32 @@ do usuario honrado, com comportamento portavel (sem EF) e defaults configuraveis
 - Propriedade estatica publica com o operador default para strings, com `Like` como default; lida por
   `DiscoveryCriterionOperator` (valvula de escape para consumidores que preferem `Contains` literal como default).
 - Wrap `%valor%` opcional: default (true/false) em propriedade estatica publica + propriedade no
-  `CriterionAttribute` para sobrescrever por criterion (tri-state — Questao 8).
+  `CriterionAttribute` para sobrescrever por criterion (enum tri-state, ex.: `LikeWrap { Default, Wrap, None }` —
+  Questao 8; o enum mora em `Abstractions`, junto do atributo).
 - Gerador dinamico portavel do `Like` (sem EF): como o valor so existe na execucao e a funcao do specifier e
   compilada e cacheada por `(TModel, TFilter)`, a resolution emite chamada a um helper de runtime que inspeciona o
-  valor: sem `%`, aplica `Contains` direto; com `%`, quebra a string e compoe a expressao pelos segmentos
-  (semantica exata do split — Questao 7). O corpo do specifier ja e imperativo (`Expression.Block` com `Assign`),
-  o que comporta a chamada.
-- Interacao com `Case = Insensitive` (Fase 1): a normalizacao portavel (`ToUpper`) tambem se aplica ao caminho do
-  pattern.
-- Casa dos defaults estaticos (operador default de string + wrap): agrupados em um unico tipo de opcoes
-  (Questao 9).
+  valor: sem `%`, aplica `Contains` direto; com `%`, compoe o **casamento guloso** decidido na Questao 7 —
+  ancoras por `StartsWith`/`EndsWith` + guarda de `Length`, segmentos intermediarios em ordem via fatiamento
+  (`s.Substring(s.IndexOf(seg) + seg.Length)`), todas as pecas traduziveis pelos providers relacionais e
+  executaveis em memoria (a mesma arvore serve para os dois mundos). Corte em **5 `%`**: curingas excedentes tem
+  seus segmentos verificados por `Contains` sem fatiamento (aproximacao documentada). O corpo do specifier ja e
+  imperativo (`Expression.Block` com `Assign`), o que comporta a chamada.
+- Nota de implementacao (so do caminho portavel): os segmentos entram como `Constant` na arvore, entao viram
+  literais no SQL (um plano por padrao distinto). Aceito e documentado; no caminho EF (Fase 4) nao se aplica — o
+  pattern e um parametro unico do `EF.Functions.Like`.
+- Interacao com `Case = Insensitive` (Fase 1): a normalizacao portavel (`ToUpper`) e aplicada uma vez na base e
+  nos segmentos, antes da composicao.
+- Casa dos defaults estaticos (operador default de string + wrap): tipo unico de opcoes no pacote de uso —
+  `RoyalCode.SmartSearch.Linq` (Questao 9); se algum default for consumido por outro pacote, mora no outro.
 
 ### Testes
 
-- Unitarios do helper de runtime: valor sem `%` = `Contains`; com `%` compoe pelos segmentos; wrap on/off;
-  override por criterion vence o default estatico; `Insensitive` normaliza.
-- E2E SQLite: `?nome=jo%o` encontra "Joao" e nao encontra "Jono"... conforme semantica decidida na Questao 7;
-  `Contains` com `%` no valor segue literal (escapado).
+- Unitarios do helper de runtime: valor sem `%` = `Contains`; ancoras (`jo%`, `%jo`, `jo%o` com guarda de
+  comprimento — "jo" nao passa em `jo%o`); ordem dos segmentos (`%b%a%` nao da match em "ab"); segmento repetido
+  (`a%a` exige duas ocorrencias); corte em 5 `%` degrada para `Contains` nos excedentes; wrap on/off; override por
+  criterion vence o default estatico; `Insensitive` normaliza.
+- E2E SQLite: `?nome=jo%o` encontra "Joao" e "Jono", nao encontra "Joa"; `%b%a%` nao encontra "ab"; `Contains`
+  com `%` no valor segue literal (escapado).
 - Troca do default estatico para `Contains` restaura o comportamento anterior por completo.
 
 ## Fase 4 - Emissao EF relacional (`EF.Functions.Like`)
@@ -302,13 +310,26 @@ nativo), via factory em `RoyalCode.SmartSearch.EntityFramework` (opt-in no `AddE
    ainda portavel: cadeia de `IndexOf` com posicao crescente (EF traduz `IndexOf` para `CHARINDEX`/`instr`),
    garantindo ordem. Decidir: aproximacao por `Contains` documentada, ou fidelidade via `IndexOf`? O curinga `_`
    fica fora do modo portavel em ambas (documentar).
+
+   - Decidido: fidelidade via casamento guloso — ancoras por `StartsWith`/`EndsWith` + guarda de `Length`,
+     segmentos intermediarios em ordem via fatiamento (`Substring(IndexOf(seg) + seg.Length)`). A mesma arvore e
+     traduzivel pelos providers e executavel em memoria. **Corte em 5 `%`**: excedentes verificados por `Contains`
+     sem fatiamento (controla o crescimento exponencial da expressao). A nota de cache de plano do EF vale so para
+     o caminho portavel (segmentos como literais); com `EF.Functions.Like` (Fase 4) nao se aplica — o pattern e um
+     parametro unico.
 8. **Tri-state do override do wrap no `CriterionAttribute` (Fase 3).** Atributos nao aceitam `bool?`; para o
    override distinguir "nao declarado" (segue o default estatico) de declaracao explicita, precisa de enum (ex.:
    `LikeWrap { Default, Wrap, None }`) — nome a definir.
+
+   - Decidido: enum como sugerido (`LikeWrap { Default, Wrap, None }`); mora em `Abstractions`, junto do
+     `CriterionAttribute` que o expoe.
 9. **Casa unica dos defaults estaticos (Fase 3).** `DefaultStringOperator` e o default do wrap devem morar juntos
    em um unico tipo de opcoes estaticas (evitar estaticos espalhados) — nome a definir (ex.: `CriterionDefaults`),
    e definir se em `Abstractions` (onde esta o `CriterionAttribute`) ou no core Linq (onde esta o
    `DiscoveryCriterionOperator`).
+
+   - Decidido: no pacote de uso — `RoyalCode.SmartSearch.Linq` (onde estao `DiscoveryCriterionOperator` e o helper
+     do `Like`); se um default vier a ser consumido por outro pacote, mora no outro.
 
 ## Fora de escopo
 
@@ -324,6 +345,6 @@ nativo), via factory em `RoyalCode.SmartSearch.EntityFramework` (opt-in no `AddE
 
 1. Fase 1 (intencao declarativa + fallback portavel).
 2. Fase 2 (seam com a classe encapsuladora).
-3. Fase 3 (semantica `Like`/`Contains` no core) — decidir Questoes 7, 8 e 9 antes de iniciar.
+3. Fase 3 (semantica `Like`/`Contains` no core, com o casamento guloso da Questao 7).
 4. Fase 4 (factory `EF.Functions.Like`).
 5. Fase 5 (pacote Npgsql com `ILike`).
