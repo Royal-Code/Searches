@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RoyalCode.OperationHint.Abstractions;
+using RoyalCode.SmartSearch.Exceptions;
 using RoyalCode.SmartSearch.Filtering;
 using RoyalCode.SmartSearch.Hints;
 using RoyalCode.SmartSearch.Linq.Services;
@@ -223,6 +224,48 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
             : (int)Math.Ceiling((double)count / take);
     }
 
+    // A traducao da query pelo EF e lazy: quando o provider nao suporta o ORDER BY pedido (ex.: SQLite nao ordena
+    // DateTimeOffset/decimal/TimeSpan), a NotSupportedException so estoura aqui, na materializacao. Se ha ordenacao
+    // pedida pelo usuario (nao a default), o erro e atribuido a ela e relancado como OrderByException, para que as
+    // camadas HTTP (Performer) respondam 400 em vez de vazar 500. Trade-off deliberado: uma NotSupportedException de
+    // outra origem com ordenacao de usuario presente seria classificada como erro de ordenacao; falhas de traducao
+    // de filtros lancam InvalidOperationException, entao nao sao capturadas aqui.
+    private bool HasUserAppliedSorting() => appliedSorting.Any(s => s is not DefaultSorting);
+
+    private OrderByException CreateOrderByTranslationException(NotSupportedException inner)
+    {
+        var orderBy = string.Join(", ", appliedSorting.Where(s => s is not DefaultSorting).Select(s => s.OrderBy));
+        return new OrderByException(
+            $"The order by '{orderBy}' could not be translated by the query provider for the type '{typeof(TEntity).Name}'.",
+            orderBy,
+            typeof(TEntity).Name,
+            inner);
+    }
+
+    private T ExecuteGuardingSorting<T>(Func<T> execute)
+    {
+        try
+        {
+            return execute();
+        }
+        catch (NotSupportedException ex) when (HasUserAppliedSorting())
+        {
+            throw CreateOrderByTranslationException(ex);
+        }
+    }
+
+    private async Task<T> ExecuteGuardingSortingAsync<T>(Func<Task<T>> execute)
+    {
+        try
+        {
+            return await execute();
+        }
+        catch (NotSupportedException ex) when (HasUserAppliedSorting())
+        {
+            throw CreateOrderByTranslationException(ex);
+        }
+    }
+
     /// <inheritdoc />
     public bool Exists()
         => GetQueryableWithSkip().Any();
@@ -233,33 +276,35 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
 
     /// <inheritdoc />
     public TEntity? FirstOrDefault()
-        => GetQueryableWithSkip(applyHints: true).FirstOrDefault();
+        => ExecuteGuardingSorting(() => GetQueryableWithSkip(applyHints: true).FirstOrDefault());
 
     /// <inheritdoc />
     public Task<TEntity?> FirstOrDefaultAsync(CancellationToken ct = default)
-        => GetQueryableWithSkip(applyHints: true).FirstOrDefaultAsync(ct);
+        => ExecuteGuardingSortingAsync(() => GetQueryableWithSkip(applyHints: true).FirstOrDefaultAsync(ct));
 
     /// <inheritdoc />
     public TEntity Single()
-        => GetQueryableWithSkip(applyHints: true).Single();
+        => ExecuteGuardingSorting(() => GetQueryableWithSkip(applyHints: true).Single());
 
     /// <inheritdoc />
     public Task<TEntity> SingleAsync(CancellationToken ct = default)
-        => GetQueryableWithSkip(applyHints: true).SingleAsync(ct);
+        => ExecuteGuardingSortingAsync(() => GetQueryableWithSkip(applyHints: true).SingleAsync(ct));
 
     /// <inheritdoc />
-    public IReadOnlyList<TEntity> ToList() => GetQueryableWithSkipAndTake(false, applyHints: true).ToList();
+    public IReadOnlyList<TEntity> ToList()
+        => ExecuteGuardingSorting<IReadOnlyList<TEntity>>(() => GetQueryableWithSkipAndTake(false, applyHints: true).ToList());
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<TEntity>> ToListAsync(CancellationToken ct)
-        => await GetQueryableWithSkipAndTake(false, applyHints: true).ToListAsync(ct);
+        => await ExecuteGuardingSortingAsync<IReadOnlyList<TEntity>>(
+            async () => await GetQueryableWithSkipAndTake(false, applyHints: true).ToListAsync(ct));
 
     /// <inheritdoc />
     public IResultList<TEntity> ToResultList()
     {
         var executableQuery = GetQueryableWithSkipAndTake(true, applyHints: true);
 
-        var items = executableQuery.ToList();
+        var items = ExecuteGuardingSorting(() => executableQuery.ToList());
         var hasNextPage = take > 0 && items.Count > take;
         if (hasNextPage)
             items = items.Take(take).ToList();
@@ -294,7 +339,7 @@ public class CriteriaQuery<TEntity> : IPreparedQuery<TEntity>, IFilterHandler
     {
         var executableQuery = GetQueryableWithSkipAndTake(true, applyHints: true);
 
-        var items = await executableQuery.ToListAsync(ct);
+        var items = await ExecuteGuardingSortingAsync(() => executableQuery.ToListAsync(ct));
         var hasNextPage = take > 0 && items.Count > take;
         if (hasNextPage)
             items = items.Take(take).ToList();

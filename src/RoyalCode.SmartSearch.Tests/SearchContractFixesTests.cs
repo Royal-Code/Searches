@@ -14,13 +14,20 @@ public class SearchContractFixesTests
 		await sqlite.OpenAsync();
 		services.AddSingleton(sqlite);
 		services.AddDbContext<FixesDbContext>(b => b.UseSqlite(sqlite));
-		services.AddEntityFrameworkSearches<FixesDbContext>(s => s.Add<SimpleModel>());
+		services.AddEntityFrameworkSearches<FixesDbContext>(s =>
+		{
+			s.Add<SimpleModel>();
+			s.Add<TemporalModel>();
+		});
 		var provider = services.BuildServiceProvider();
 		using var scope = provider.CreateScope();
 		var db = scope.ServiceProvider.GetRequiredService<FixesDbContext>();
 		await db.Database.EnsureCreatedAsync();
 		for (var i = 1; i <= items; i++)
+		{
 			db.Add(new SimpleModel { Id = i, Name = $"N{i:00}" });
+			db.Add(new TemporalModel { Id = i, CriadoEm = DateTimeOffset.UtcNow.AddDays(-i) });
+		}
 		await db.SaveChangesAsync();
 		return provider;
 	}
@@ -58,11 +65,40 @@ public class SearchContractFixesTests
 		// a excecao de ordenacao invalida deve ser um OrderByException.
 		Assert.IsAssignableFrom<OrderByException>(ex);
 	}
+
+	[Fact]
+	public async Task OrderByNaoTraduzivel_Lanca_OrderByException_ComInnerDoProvider()
+	{
+		// O SQLite nao suporta ORDER BY em DateTimeOffset; a NotSupportedException do provider so estoura
+		// na materializacao (traducao lazy). Com ordenacao pedida pelo usuario, o erro deve ser atribuido
+		// a ela e relancado como OrderByException, permitindo ao Performer responder 400 em vez de 500.
+		var provider = await CreateProvider(3);
+		using var scope = provider.CreateScope();
+		var criteria = scope.ServiceProvider.GetRequiredService<ICriteria<TemporalModel>>();
+
+		var ex = await Assert.ThrowsAsync<OrderByException>(async () =>
+			await criteria
+				.OrderBy(new Sorting { OrderBy = "CriadoEm" })
+				.CollectAsync());
+
+		Assert.Equal("CriadoEm", ex.PropertyName);
+		Assert.IsType<NotSupportedException>(ex.InnerException);
+	}
 }
 
 file class FixesDbContext : DbContext
 {
 	public FixesDbContext(DbContextOptions<FixesDbContext> options) : base(options) { }
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.Entity<SimpleModel>();
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder.Entity<SimpleModel>();
+		modelBuilder.Entity<TemporalModel>();
+	}
+}
+
+public class TemporalModel
+{
+	public int Id { get; set; }
+	public DateTimeOffset CriadoEm { get; set; }
 }

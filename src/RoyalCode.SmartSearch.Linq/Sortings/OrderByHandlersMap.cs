@@ -12,7 +12,9 @@ internal sealed class OrderByHandlersMap
     // Cache de handlers de ordenacao por (tipo, propriedade). E um singleton de processo e o caminho de runtime
     // (OrderByProvider.GetHandler) escreve nele de forma concorrente; por isso usa ConcurrentDictionary. A geracao
     // do handler e deterministica, entao o caminho de runtime e idempotente (last-write-wins, sem lancar em duplicado).
-    private readonly ConcurrentDictionary<(Type, string), object> handlers = [];
+    // O nome do order by e comparado ignorando case: "preco" e "Preco" resolvem para o mesmo handler,
+    // tanto para registros manuais (AddOrderBy) quanto para o cache de runtime (evita entradas duplicadas).
+    private readonly ConcurrentDictionary<(Type, string), object> handlers = new(KeyComparer.Instance);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGet<TModel>(string orderBy, [NotNullWhen(true)] out IOrderByHandler<TModel>? handler)
@@ -45,5 +47,16 @@ internal sealed class OrderByHandlersMap
         var key = (typeof(TModel), orderBy);
         if (!handlers.TryAdd(key, new OrderByHandler<TModel, TProperty>(expression)))
             throw new ArgumentException($"Handler for {key} already exists.");
+    }
+
+    private sealed class KeyComparer : IEqualityComparer<(Type, string)>
+    {
+        public static KeyComparer Instance { get; } = new();
+
+        public bool Equals((Type, string) x, (Type, string) y)
+            => x.Item1 == y.Item1 && StringComparer.OrdinalIgnoreCase.Equals(x.Item2, y.Item2);
+
+        public int GetHashCode((Type, string) obj)
+            => HashCode.Combine(obj.Item1, StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Item2));
     }
 }
