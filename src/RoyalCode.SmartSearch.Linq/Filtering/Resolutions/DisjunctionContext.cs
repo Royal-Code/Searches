@@ -17,11 +17,43 @@ internal sealed class DisjunctionContext<TModel>
         var targetAccess = junction.ModelPropertySelection!.GetMemberAccess(LambdaParam);
         var valueExpr = Expression.Constant(value, typeof(TProperty));
 
-        Expression opExpr = ExpressionGenerator.CreateOperatorExpression(
+        // este caminho executa em runtime (valor real inline): as mesmas customizacoes da geracao
+        // (factories, Like portavel, case) devem valer aqui, senao filtros "NomeOrApelido" divergem.
+        var context = new CriterionOperatorContext(
             junction.Operator,
-            junction.Criterion.Negation,
+            criterion.Case,
+            criterion.Wrap,
+            criterion.Negation,
+            valueExpr,
             targetAccess,
-            valueExpr);
+            junction.FilterProperty.Info,
+            typeof(TModel));
+
+        var opExpr = junction.Factories.TryCreate(in context);
+
+        if (opExpr is null
+            && junction.Operator is CriterionOperator.Like
+            && targetAccess.Type == typeof(string)
+            && value is string stringValue)
+        {
+            opExpr = LikeExpressionGenerator.CreatePatternExpression(
+                targetAccess,
+                stringValue,
+                CriterionDefaults.ResolveWrap(criterion.Wrap),
+                criterion.Case == CriterionCase.Insensitive);
+
+            if (criterion.Negation)
+                opExpr = Expression.Not(opExpr);
+        }
+
+        // ordem dos operandos corrigida: antes o valor ia na posicao do alvo (gerava "valor".Contains(e.Prop)
+        // e "valor > e.Prop"), invertendo a semantica em relacao ao caminho principal das resolutions.
+        opExpr ??= ExpressionGenerator.CreateOperatorExpression(
+            junction.Operator,
+            criterion.Negation,
+            valueExpr,
+            targetAccess,
+            criterion.Case);
 
         predicates.Add(opExpr);
     }
