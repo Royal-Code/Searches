@@ -15,13 +15,16 @@
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
 		<AspVer>8.0.2</AspVer>
 		<EFVer>8.0.10</EFVer>
+		<NpgsqlEFVer>8.0.11</NpgsqlEFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
 		<AspVer>9.0.0</AspVer>
 		<EFVer>9.0.0</EFVer>
+		<NpgsqlEFVer>9.0.4</NpgsqlEFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
 		<AspVer >10.0.0</AspVer>
 		<EFVer>10.0.0</EFVer>
+		<NpgsqlEFVer>10.0.0</NpgsqlEFVer>
 	</PropertyGroup>
 </Project>
