@@ -22,10 +22,25 @@ Motivacao (descoberta pela demo do SmartCommands, laboratorio vivo das libs):
 
 ## Status
 
-**PLANEJADO, PRONTO PARA EXECUCAO. Nenhuma fase iniciada. Todas as questoes (1-9) foram decididas pelo mantenedor
-(ver "Respostas" e as decisoes nas "Novas questoes").** A decisao da Questao 1 (`Like` honra curingas, `Contains`
+**IMPLEMENTADO — Fases 1 a 5 CONCLUIDAS na branch `feature/operator-expression-customization`; suite 248/248
+verde (net10). Aguarda revisao do mantenedor e release.** Todas as questoes (1-9) foram decididas pelo mantenedor
+(ver "Respostas" e as decisoes nas "Novas questoes"). A decisao da Questao 1 (`Like` honra curingas, `Contains`
 literal, defaults estaticos configuraveis) expandiu o escopo: a semantica de `Like`/`Contains` no core virou a
 Fase 3 propria, deslocando a factory EF para a Fase 4 e o pacote Npgsql para a Fase 5.
+
+Notas de implementacao (desvios e achados; ver tambem "Resultado" das fases):
+
+- **Bug latente corrigido no `DisjunctionContext`:** os operandos eram passados invertidos ao
+  `CreateOperatorExpression` (gerava `"valor".Contains(e.Prop)` e `"valor" > e.Prop`), divergindo do caminho
+  principal das resolutions. Os testes passavam por simetria dos dados. Corrigido junto com a Fase 2 (o caminho
+  runtime da disjuncao agora emite igual ao caminho principal); `OrTests`/`DisjunctionTests` continuam verdes.
+- **`Like` sem curinga e sem wrap = igualdade exata** (semantica do LIKE), e nao `Contains`: a frase da Questao 1
+  ("se nao tem % usar direto o Contains") vale no default (wrap ligado), onde `%valor%` reduz a `Contains`;
+  com `Wrap = None` a fidelidade ao LIKE foi mantida para preservar a paridade com `EF.Functions.Like`.
+- **Overload com escape char (`EF.Functions.Like(t, p, escape)`) avaliado e nao adotado:** o proposito do modo
+  Like e honrar os curingas do usuario; sem uma sintaxe de escape definida para o usuario final, o overload nao
+  agrega — pode ser retomado se surgir o requisito.
+- O `ToUpper()` da normalizacao portavel e o sem parametro (traduzivel); `ToUpperInvariant` nao e traduzido.
 
 Contexto relacionado (fora deste plano, ja resolvido no repo aguardando release): orderby case-insensitive
 (`DefaultOrderByGenerator` + `OrderByHandlersMap`) e falha de traducao de `ORDER BY` relancada como
@@ -109,6 +124,15 @@ O filtro poder declarar case sensitivity por propriedade, com comportamento port
   encontraria (ex.: "JOSE" vs "josé" — caso que hoje falha mesmo no SQLite).
 - Disjuncao (`NomeOrApelido`) com `Insensitive` tambem normaliza.
 
+### Resultado - CONCLUIDA
+
+`CriterionCase` e `LikeWrap` em `Abstractions`; `Case`/`Wrap` no `CriterionAttribute`; overload de
+`CreateOperatorExpression` com `CriterionCase` normalizando `Like`/`Contains`/`StartsWith`/`EndsWith` via
+`ToUpper()` (so operandos string; `Equal` e nao-string ignorados). Nota: a normalizacao no SQLite so vale para
+ASCII (o `UPPER()` do SQLite nao cobre acentos), entao o teste E2E usa divergencia de case ASCII (`nOtEbOoK`)
+em vez do exemplo com acento do plano; a cobertura insensitive com acentos fica nos testes em memoria.
+Testes: `CriterionCaseTests` (unitarios + in-memory + disjuncao + E2E SQLite).
+
 ## Fase 2 - Seam de emissao (`ICriterionOperatorExpressionFactory`)
 
 ### Objetivo
@@ -154,6 +178,17 @@ public readonly struct CriterionOperatorContext
   `null` cai no default, e que a ordem de registro decide (primeira-nao-null-vence via encapsuladora).
 - Disjuncao usa a factory (runtime path).
 
+### Resultado - CONCLUIDA
+
+`ICriterionOperatorExpressionFactory` + `CriterionOperatorContext` (readonly struct com `Operator`, `Case`,
+`Wrap`, `Negation`, acessos e `ModelType`) e a encapsuladora `CriterionOperatorExpressionFactories` no core
+Linq; registrada no DI por `AddSmartSearchLinq` (via `GetServices`, ordem de registro preservada);
+`DefaultSpecifierFunctionGenerator` recebe a encapsuladora e a repassa por `CriterionResolutions` ate
+`DefaultOperatorCriterionResolution`, `ComplexFilterCriterionResolution` (recursao) e `JunctionProperty` →
+`DisjunctionContext.Append` (runtime). De quebra, corrigiu-se a inversao de operandos do caminho da disjuncao
+(ver Notas de implementacao no Status). Testes: `CriterionOperatorFactoriesTests` (customizacao, fallback null,
+ordem, disjuncao runtime).
+
 ## Fase 3 - Semantica de `Like` e `Contains` no core (Questao 1)
 
 ### Objetivo
@@ -194,6 +229,19 @@ do usuario honrado, com comportamento portavel (sem EF) e defaults configuraveis
   com `%` no valor segue literal (escapado).
 - Troca do default estatico para `Contains` restaura o comportamento anterior por completo.
 
+### Resultado - CONCLUIDA
+
+`CriterionDefaults` (`DefaultStringOperator` = `Like`, `WrapLikeValue` = `true`, `ResolveWrap`) no Linq
+(Questao 9); `DiscoveryCriterionOperator` le o default configuravel; `LikeExpressionGenerator` com o casamento
+guloso decidido na Questao 7: ancora inicial via `StartsWith` + fatiamento, segmentos do meio em ordem via
+`Substring(IndexOf(seg) + len)`, ancora final via `EndsWith` **sobre a fatia restante** (o que subsume a guarda
+de comprimento e impede sobreposicao), `MaxSliceOperations = 5` com degradacao para `Contains`; sem curinga e
+sem wrap = igualdade exata (ver Notas de implementacao). `DefaultOperatorCriterionResolution` emite chamada ao
+helper de runtime (`Apply`) para `Like` string-string quando nenhuma factory customiza; a disjuncao usa
+`CreatePatternExpression` direto com o valor real. Testes: `LikePatternExpressionTests` (matriz do padrao,
+corte, negacao, valor vazio), `LikeSearchTests` (E2E SQLite: curinga do usuario, `Like` vs `Contains` com "100%",
+wrap None = exato, insensitive) e `LikeDefaultStringOperatorTests` (valvula de escape).
+
 ## Fase 4 - Emissao EF relacional (`EF.Functions.Like`)
 
 ### Objetivo
@@ -215,6 +263,17 @@ nativo), via factory em `RoyalCode.SmartSearch.EntityFramework` (opt-in no `AddE
 - E2E SQLite in-memory (o `LIKE` do SQLite honra `%`): usuario busca `jo%o` e encontra; paridade de semantica com
   o helper portavel da Fase 3 (mesmos casos, mesmos resultados).
 
+### Resultado - CONCLUIDA
+
+`EntityFrameworkLikeExpressionFactory` no pacote EntityFramework: `Like` string-string vira
+`EF.Functions.Like(target, pattern)` respeitando wrap (concat `%` em expressao, traduzivel) e `Case`
+(`Insensitive` → `UPPER(...) LIKE UPPER(...)`); registro opt-in `AddEntityFrameworkLikeOperator()`
+(`TryAddEnumerable`, sem duplicar). Overload com escape char avaliado e nao adotado (ver Notas). Testes:
+`EntityFrameworkLikeFactoryTests` — assercoes de arvore (metodo `Like`, `Concat` no wrap, `ToUpper` no
+insensitive, `Not` na negacao, null fora do escopo) + E2E SQLite de paridade com os mesmos casos da Fase 3
+(SQL confirmado: `WHERE "x"."Nome" LIKE @Concat` com `@Concat = '%Jo%o%'`). Achado de uso registrado:
+`ICriteria` e fluente/stateful — uma instancia nova por consulta nos testes.
+
 ## Fase 5 - Pacote `RoyalCode.SmartSearch.EntityFramework.Npgsql` (`EF.Functions.ILike`)
 
 ### Objetivo
@@ -232,6 +291,17 @@ nativo), via factory em `RoyalCode.SmartSearch.EntityFramework` (opt-in no `AddE
 
 - Assercao da arvore gerada (sem PG no repo — Questao 4); e2e real com PG (ex.: .NET Aspire) adiado para iteracao
   futura, sem complicar agora.
+
+### Resultado - CONCLUIDA
+
+Novo projeto/pacote `RoyalCode.SmartSearch.EntityFramework.Npgsql` (multi-target net8/9/10;
+`Npgsql.EntityFrameworkCore.PostgreSQL` 8.0.11/9.0.4/10.0.0 por TFM; adicionado a solution):
+`NpgsqlILikeExpressionFactory` emite `EF.Functions.ILike` para `Like` + `Insensitive` (respeitando wrap e
+negacao; devolve null fora desse escopo) e `AddNpgsqlLikeOperators()` registra ILike **antes** do EF Like
+(ordem primeira-nao-null). Documentacao em `smartsearch.md` (nova secao "Like, Contains e Case-Insensitive"
+com a comparacao das tres estrategias para PG: `citext`/collation, `ILIKE`, `ToUpper`). Testes:
+`NpgsqlILikeFactoryTests` (arvore: metodo `ILike`, wrap, negacao, null fora do escopo, ordem de registro
+via encapsuladora).
 
 ## Verificacao geral
 

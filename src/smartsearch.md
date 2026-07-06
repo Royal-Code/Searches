@@ -8,6 +8,7 @@ SmartSearch implementa busca declarativa para .NET usando filtros, specifiers, s
 - `RoyalCode.SmartSearch.Core`: implementacoes padrao, `Criteria`, `Search`, `CriteriaOptions`.
 - `RoyalCode.SmartSearch.Linq`: geracao de expressoes, specifiers, selectors e order-by.
 - `RoyalCode.SmartSearch.EntityFramework`: pipeline EF Core sobre `DbContext`.
+- `RoyalCode.SmartSearch.EntityFramework.Npgsql`: emissao PostgreSQL (`ILIKE` para filtros case-insensitive).
 - `RoyalCode.SmartSearch.AspNetCore`: helpers para endpoints.
 
 ## Setup Basico com EF Core
@@ -142,6 +143,67 @@ Caminhos aninhados podem ser passados pelo construtor ou por `TargetPropertyPath
 [Criterion("Customer.Email")]
 public string? Email { get; set; }
 ```
+
+## Like, Contains e Case-Insensitive
+
+`Like` e `Contains` tem semanticas diferentes para strings:
+
+- `Contains`: substring **literal** — curingas digitados pelo usuario sao tratados como texto.
+- `Like` (default para strings): **pattern** — o curinga `%` digitado pelo usuario e honrado
+  (`jo%o` encontra "Joao" e "Jono"). Por default o valor e envolvido em `%valor%` (wrap), entao valores
+  sem curinga se comportam como substring.
+
+Defaults globais (configurar no startup, antes de qualquer busca — sao lidos na geracao dos specifiers):
+
+```csharp
+CriterionDefaults.DefaultStringOperator = CriterionOperator.Contains; // restaura substring literal como default
+CriterionDefaults.WrapLikeValue = false; // valor e o pattern como esta (sem curinga = igualdade exata)
+```
+
+Overrides por criterio:
+
+```csharp
+public sealed class ProductFilter
+{
+    [Criterion(Wrap = LikeWrap.None)]                    // pattern como esta (ancoras/igualdade)
+    public string? Sku { get; set; }
+
+    [Criterion(Case = CriterionCase.Insensitive)]        // case-insensitive
+    public string? Name { get; set; }
+}
+```
+
+`Case = CriterionCase.Insensitive` vale para `Like`, `Contains`, `StartsWith` e `EndsWith`. A emissao
+portavel normaliza os dois lados com `ToUpper()` (traduzivel por qualquer provider relacional; nao usa
+indice comum). Sem declaracao (`Default`), o comportamento segue a collation do provider.
+
+Emissao portavel do `Like`: casamento guloso composto por `StartsWith`/`EndsWith`/`Contains`/`IndexOf`/
+`Substring` — traduzivel pelos providers e executavel em memoria. Limitacoes: o curinga `_` nao e
+suportado no modo portavel, e apos 5 fatiamentos os segmentos excedentes sao verificados por `Contains`
+sem garantia de ordem.
+
+### Emissao por provider (factories)
+
+A emissao dos operadores pode ser trocada em tempo de configuracao registrando
+`ICriterionOperatorExpressionFactory` (tentadas em ordem de registro; primeira-nao-null vence):
+
+```csharp
+// EF relacional: Like vira EF.Functions.Like (LIKE nativo; % e _ do usuario honrados)
+services.AddEntityFrameworkLikeOperator();
+
+// PostgreSQL (pacote RoyalCode.SmartSearch.EntityFramework.Npgsql):
+// Insensitive vira EF.Functions.ILike (ILIKE nativo) e os demais casos EF.Functions.Like
+services.AddNpgsqlLikeOperators();
+```
+
+Para case-insensitive no PostgreSQL, as tres estrategias em ordem de preferencia quando o schema e
+controlado: coluna `citext`/collation no banco (preserva indice, sem mudanca na lib), `ILIKE` via
+`AddNpgsqlLikeOperators`, normalizacao `ToUpper` (portavel, sem indice).
+
+Limitacoes: as factories cobrem criterios gerados (`[Criterion]` e disjuncoes) — expressoes manuais
+(`AddSpecifier`, `Predicate(...)`, metodos de filtro) sao competencia do consumidor. Os specifiers
+gerados sao cacheados por processo (chave modelo+filtro): na pratica, uma estrategia de emissao por
+modelo por processo.
 
 ## OR / Disjuncao
 
