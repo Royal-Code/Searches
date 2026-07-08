@@ -1,17 +1,17 @@
 # Plan: Correcao de typos de API e documentacao (`api-typos-e-documentacao`)
 
-## Status: EM ANDAMENTO - Fase 3 concluida
+## Status: CONCLUIDO
 
 ## Progresso
 
-`###-` **75%** - 3 de 4 fases
+`####` **100%** - 4 de 4 fases
 
 | Fase | Estado |
 |---|---|
 | Fase 1 - Renomear Disjuction para Disjunction | Concluida |
 | Fase 2 - Renomear FirstDefaultAsync | Concluida |
 | Fase 3 - Documentar Projection como reservado | Concluida |
-| Fase 4 - Versao, verificacao e fechamento | Pendente |
+| Fase 4 - Versao, verificacao e fechamento | Concluida |
 
 > **Manutencao deste plano:** ao concluir as tarefas de uma fase, marque cada tarefa com `- [x]`,
 > troque o **Estado** da fase para `Concluida` na tabela acima e atualize a barra de progresso
@@ -364,7 +364,7 @@ Desvios:
 
 Pendencias:
 
-- Fase 4 permanece pendente.
+- Fase 4 concluida posteriormente neste plano.
 
 ---
 
@@ -378,11 +378,11 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Atualizar `SearchesVer` para `0.11.0`.
-- [ ] Executar busca final por nomes removidos: `rg -n "Disjuction|FirstDefaultAsync"`.
-- [ ] Executar `dotnet build SmartSearch.sln --no-restore`.
-- [ ] Executar `dotnet test SmartSearch.sln --no-restore -v minimal`.
-- [ ] Registrar warnings conhecidos e novos warnings no resultado da fase.
+- [x] Atualizar `SearchesVer` para `0.11.0`.
+- [x] Executar busca final por nomes removidos: `rg -n "Disjuction|FirstDefaultAsync"`.
+- [x] Executar `dotnet build SmartSearch.sln --no-restore`.
+- [x] Executar `dotnet test SmartSearch.sln --no-restore -v minimal`.
+- [x] Registrar warnings conhecidos e novos warnings no resultado da fase.
 
 **Criterios de aceite:** versao `0.11.0`; build verde; testes verdes; nenhum uso indevido dos nomes removidos.
 
@@ -390,7 +390,44 @@ Pendencias:
 
 ### Resultado da Fase 4
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- `SearchesVer` atualizado para `0.11.0`.
+- Build gerou pacotes `0.11.0` para os projetos empacotaveis.
+- Verificacao final confirmou ausencia dos nomes removidos `Disjuction` e `FirstDefaultAsync`.
+- Build e testes finais passaram.
+
+Arquivos alterados:
+
+- `Directory.Build.props`.
+- `.ai/plans/plan-api-typos-e-documentacao.md`.
+
+Decisoes aplicadas:
+
+- DF4.
+- DF5.
+
+Verificacao:
+
+- `rg -n "Disjuction|FirstDefaultAsync"` nao retornou ocorrencias.
+- `rg -n "<SearchesVer>|0\.10\.5|0\.11\.0" Directory.Build.props pack.targets` confirmou `SearchesVer` = `0.11.0` e nenhuma ocorrencia de `0.10.5` nos arquivos verificados.
+- `dotnet build SmartSearch.sln --no-restore` passou: 0 erros, 7 avisos.
+- `dotnet test SmartSearch.sln --no-restore -v minimal` passou: 247 aprovados, 0 falhas, 0 ignorados.
+
+Warnings observados:
+
+- `NU5104` em `RoyalCode.SmartSearch.AspNetCore` por pacote estavel depender de `RoyalCode.SmartProblems.ApiResults` preview.
+- `CS8618` em modelos de teste de `ComplexTypeTests` para propriedades nao anulaveis sem inicializacao.
+
+Desvios:
+
+- Nenhum.
+
+Pendencias:
+
+- Nenhuma neste plano.
 
 ---
 
