@@ -1,16 +1,16 @@
 # Plan: Correcao de typos de API e documentacao (`api-typos-e-documentacao`)
 
-## Status: EM ANDAMENTO - Fase 2 concluida
+## Status: EM ANDAMENTO - Fase 3 concluida
 
 ## Progresso
 
-`##--` **50%** - 2 de 4 fases
+`###-` **75%** - 3 de 4 fases
 
 | Fase | Estado |
 |---|---|
 | Fase 1 - Renomear Disjuction para Disjunction | Concluida |
 | Fase 2 - Renomear FirstDefaultAsync | Concluida |
-| Fase 3 - Documentar Projection como reservado | Pendente |
+| Fase 3 - Documentar Projection como reservado | Concluida |
 | Fase 4 - Versao, verificacao e fechamento | Pendente |
 
 > **Manutencao deste plano:** ao concluir as tarefas de uma fase, marque cada tarefa com `- [x]`,
@@ -314,11 +314,11 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Atualizar XML docs de `IResultList.Projections` e `GetProjection<T>()` para avisar que a API ainda nao tem implementacao funcional.
-- [ ] Atualizar XML docs de `ResultList<T>.GetProjection<T>()` para registrar o estado atual.
-- [ ] Adicionar secao curta no `smartsearch.md` sobre "Projections reservadas para futuro".
-- [ ] Atualizar `README.md` com o mesmo aviso ou remover incentivo implicito ao uso.
-- [ ] Garantir que nenhum exemplo novo chame `GetProjection<T>()` como funcional.
+- [x] Atualizar XML docs de `IResultList.Projections` e `GetProjection<T>()` para avisar que a API ainda nao tem implementacao funcional.
+- [x] Atualizar XML docs de `ResultList<T>.GetProjection<T>()` para registrar o estado atual.
+- [x] Adicionar secao curta no `smartsearch.md` sobre "Projections reservadas para futuro".
+- [x] Atualizar `README.md` com o mesmo aviso ou remover incentivo implicito ao uso.
+- [x] Garantir que nenhum exemplo novo chame `GetProjection<T>()` como funcional.
 
 **Criterios de aceite:** uma IA lendo `smartsearch.md` entende que `GetProjection<T>()` nao deve ser usado ainda; o build continua verde.
 
@@ -326,7 +326,45 @@ Pendencias:
 
 ### Resultado da Fase 3
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- XML docs de `IResultList.Projections` e `IResultList<T>.GetProjection<T>()` explicitam que a API e reservada para suporte futuro.
+- XML docs de `ResultList<T>.Projections`, `ResultList<T>.GetProjection<T>()` e `AsyncResultList<T>.Projections` registram que o pipeline padrao ainda nao popula/implementa essas projecoes.
+- `smartsearch.md` ganhou secao "Projections / GetProjection reservados" alertando IA e humanos para nao gerar exemplos funcionais com `GetProjection<T>()`.
+- `README.md` ganhou aviso curto sobre `IResultList.Projections` e `GetProjection<T>()` serem reservados.
+
+Arquivos alterados:
+
+- `RoyalCode.SmartSearch.Abstractions/IResultList.cs`.
+- `RoyalCode.SmartSearch.Abstractions/ResultList.cs`.
+- `RoyalCode.SmartSearch.Abstractions/AsyncResultList.cs`.
+- `smartsearch.md`.
+- `README.md`.
+- `.ai/plans/plan-api-typos-e-documentacao.md`.
+
+Decisoes aplicadas:
+
+- DF3.
+
+Verificacao:
+
+- `rg -n -C 3 "GetProjection|Projections|reservad|reserved" smartsearch.md README.md RoyalCode.SmartSearch.Abstractions` confirmou os avisos nas docs e XML docs.
+- `dotnet build SmartSearch.sln --no-restore` passou na execucao final: 0 erros, 0 avisos.
+
+Warnings observados:
+
+- Nenhum na execucao final do build.
+- Em build anterior da fase, apareceram warnings conhecidos: `NU5104` em `RoyalCode.SmartSearch.AspNetCore` por pacote estavel depender de `RoyalCode.SmartProblems.ApiResults` preview e `CS8618` em modelos de teste de `ComplexTypeTests`.
+
+Desvios:
+
+- Tambem foi documentado `AsyncResultList<T>.Projections`, pois a propriedade faz parte da superficie publica de result lists.
+
+Pendencias:
+
+- Fase 4 permanece pendente.
 
 ---
 

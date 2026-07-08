@@ -34,13 +34,30 @@ public class ResultList<TModel> : IResultList<TModel>
     [JsonConverter(typeof(SortingsConverter))]
     public IReadOnlyList<ISorting> Sortings { get; init; } = null!;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Reserved for future query-level projections computed during the search.
+    /// </summary>
+    /// <remarks>
+    /// The default search pipeline does not populate this property yet.
+    /// </remarks>
     public Dictionary<string, object>? Projections { get; init; } = null!;
 
     /// <inheritdoc />
     public IReadOnlyList<TModel> Items { get; init; } = null!;
     
-    /// <inheritdoc />
+    /// <summary>
+    /// Reserved for future access to query-level projection values.
+    /// </summary>
+    /// <remarks>
+    /// This implementation is not functional yet.
+    /// </remarks>
+    /// <typeparam name="T">Projection value type.</typeparam>
+    /// <param name="name">Projection name.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <returns>The projection value, or the default value, when projection support is implemented.</returns>
+    /// <exception cref="NotImplementedException">
+    /// Always thrown until projection support is implemented.
+    /// </exception>
     public virtual T GetProjection<T>(string name, T? defaultValue = default)
     {
         throw new NotImplementedException();

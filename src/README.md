@@ -61,6 +61,12 @@ ResultList<MyEntity> result = ...;
 var items = result.Items;
 ```
 
+`IResultList.Projections` and `GetProjection<T>()` are reserved for future
+query-level projections or aggregates, such as a sum over the filtered query
+before paging is applied. Built-in result lists do not populate or implement
+them yet; use `Items`, `Count`, `Page`, `Pages`, and related metadata for current
+code.
+
 ### Search Configuration
 Use ISearchConfigurations to configure filters, sorting, and selectors:
 

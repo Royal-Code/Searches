@@ -431,6 +431,18 @@ var result = await criteria
     .ToListAsync(ct);
 ```
 
+### Projections / GetProjection reservados
+
+`IResultList.Projections` e `GetProjection<T>()` sao superficie reservada para
+uma funcionalidade futura de projecoes extras da consulta, por exemplo somatorios
+ou outros agregados calculados sobre a consulta filtrada antes da paginacao.
+
+Na implementacao atual do SmartSearch, os result lists padrao nao populam
+`Projections` e `ResultList<T>.GetProjection<T>()` ainda lanca
+`NotImplementedException`. Nao gere exemplos novos usando `GetProjection<T>()`
+como funcional. Para metadados atuais, use `Items`, `Count`, `Page`, `Pages`,
+`ItemsPerPage`, `Skipped`, `Taken` e `Sortings`.
+
 ### Exists
 
 Executa como existencia (`Any`). Nao aplica includes/hints.
