@@ -1,15 +1,15 @@
 # Plan: Correcao de typos de API e documentacao (`api-typos-e-documentacao`)
 
-## Status: EM ANDAMENTO - Fase 1 concluida
+## Status: EM ANDAMENTO - Fase 2 concluida
 
 ## Progresso
 
-`#---` **25%** - 1 de 4 fases
+`##--` **50%** - 2 de 4 fases
 
 | Fase | Estado |
 |---|---|
 | Fase 1 - Renomear Disjuction para Disjunction | Concluida |
-| Fase 2 - Renomear FirstDefaultAsync | Pendente |
+| Fase 2 - Renomear FirstDefaultAsync | Concluida |
 | Fase 3 - Documentar Projection como reservado | Pendente |
 | Fase 4 - Versao, verificacao e fechamento | Pendente |
 
@@ -254,11 +254,11 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Renomear `ISearch<TEntity>.FirstDefaultAsync` para `FirstOrDefaultAsync`.
-- [ ] Renomear a implementacao em `Search<TEntity>`.
-- [ ] Atualizar chamadas internas e testes, se existirem.
-- [ ] Atualizar documentacao para citar o nome correto quando falar de `ISearch<TEntity>`.
-- [ ] Executar `rg -n "FirstDefaultAsync"` e tratar todo resultado dentro do escopo.
+- [x] Renomear `ISearch<TEntity>.FirstDefaultAsync` para `FirstOrDefaultAsync`.
+- [x] Renomear a implementacao em `Search<TEntity>`.
+- [x] Atualizar chamadas internas e testes, se existirem.
+- [x] Atualizar documentacao para citar o nome correto quando falar de `ISearch<TEntity>`.
+- [x] Executar `rg -n "FirstDefaultAsync"` e tratar todo resultado dentro do escopo.
 
 **Criterios de aceite:** `FirstDefaultAsync` nao aparece mais no codigo; `ISearch<TEntity>`, `ICriteria<TEntity>` e `ISearch<TEntity, TDto>` usam nomenclatura consistente para `FirstOrDefaultAsync`.
 
@@ -266,7 +266,41 @@ Pendencias:
 
 ### Resultado da Fase 2
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- `ISearch<TEntity>` expoe `FirstOrDefaultAsync(CancellationToken cancellationToken = default)`.
+- `Search<TEntity>` implementa `FirstOrDefaultAsync` e delega para `IPreparedQuery<TEntity>.FirstOrDefaultAsync`.
+- `ISearch<TEntity>`, `ICriteria<TEntity>` e `ISearch<TEntity, TDto>` usam nomenclatura consistente para `FirstOrDefaultAsync`.
+
+Arquivos alterados:
+
+- `RoyalCode.SmartSearch.Abstractions/ISearch.cs`.
+- `RoyalCode.SmartSearch.Core/Defaults/Search.cs`.
+
+Decisoes aplicadas:
+
+- DF2.
+- DF5.
+
+Verificacao:
+
+- `rg -n "FirstDefaultAsync" --glob "!.ai/plans/plan-api-typos-e-documentacao.md"` nao retornou ocorrencias.
+- `dotnet test SmartSearch.sln --no-restore -v minimal` passou: 247 aprovados, 0 falhas, 0 ignorados.
+
+Warnings observados:
+
+- `NU5104` em `RoyalCode.SmartSearch.AspNetCore` por pacote estavel depender de `RoyalCode.SmartProblems.ApiResults` preview.
+- `CS8618` em modelos de teste de `ComplexTypeTests` para propriedades nao anulaveis sem inicializacao.
+
+Desvios:
+
+- Nenhum.
+
+Pendencias:
+
+- Fases 3 e 4 permanecem pendentes.
 
 ---
 
