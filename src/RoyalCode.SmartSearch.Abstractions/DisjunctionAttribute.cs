@@ -10,13 +10,13 @@
 /// <remarks>
 /// Constructor with the alias.
 /// </remarks>
-/// <param name="alias">The disjuction alias.</param>
+/// <param name="alias">The disjunction alias.</param>
 [AttributeUsage(AttributeTargets.Property)]
-public sealed class DisjuctionAttribute(string alias) : Attribute
+public sealed class DisjunctionAttribute(string alias) : Attribute
 {
     /// <summary>
     /// <para>
-    ///     Disjuction alias, used to group various properties in the same disjuction.
+    ///     Disjunction alias, used to group various properties in the same disjunction.
     /// </para>
     /// </summary>
     public string Alias { get; set; } = alias ?? throw new ArgumentNullException(nameof(alias));

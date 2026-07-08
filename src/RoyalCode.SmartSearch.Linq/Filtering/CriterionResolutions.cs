@@ -95,26 +95,26 @@ internal static class CriterionResolutions
         List<ICriterionResolution> resolutions,
         CriterionOperatorExpressionFactories factories)
     {
-        var disjuctionsElected = available
-            .Where(t => t.FilterProperty.Info.IsDefined(typeof(DisjuctionAttribute), true))
+        var disjunctionsElected = available
+            .Where(t => t.FilterProperty.Info.IsDefined(typeof(DisjunctionAttribute), true))
             .Select(t => new
             {
                 Property = t,
-                Group = t.FilterProperty.Info.GetCustomAttribute<DisjuctionAttribute>(true)!.Alias
+                Group = t.FilterProperty.Info.GetCustomAttribute<DisjunctionAttribute>(true)!.Alias
             })
             .ToList();
 
-        if (disjuctionsElected.Count is not 0)
+        if (disjunctionsElected.Count is not 0)
         {
-            var disjuctions = disjuctionsElected
+            var disjunctions = disjunctionsElected
                 .GroupBy(t => t.Group)
-                .Select(g => new DisjuctionCriterionResolution(
+                .Select(g => new DisjunctionCriterionResolution(
                     filterTarget,
                     [.. g.Select(t => new JunctionProperty(t.Property.FilterProperty, t.Property.Criterion, filterTarget, factories))]))
                 .ToList();
 
-            resolutions.AddRange(disjuctions);
-            disjuctionsElected.ForEach(de => available.Remove(de.Property));
+            resolutions.AddRange(disjunctions);
+            disjunctionsElected.ForEach(de => available.Remove(de.Property));
         }
     }
 
@@ -139,7 +139,7 @@ internal static class CriterionResolutions
         if (junctionsElected.Count is not 0)
         {
             var junctions = junctionsElected
-                .Select(j => new DisjuctionCriterionResolution(
+                .Select(j => new DisjunctionCriterionResolution(
                     filterTarget,
                     [.. j.Parts.Select(part => new JunctionProperty(
                         j.Property.FilterProperty,

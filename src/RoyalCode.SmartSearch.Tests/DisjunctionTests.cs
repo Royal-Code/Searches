@@ -117,9 +117,9 @@ public class DisjunctionEntity
 
 public class DisjunctionFilter
 {
-    [Disjuction("g1")] 
+    [Disjunction("g1")] 
     public string? P1 { get; set; }
 
-    [Disjuction("g1")] 
+    [Disjunction("g1")] 
     public string? P2 { get; set; }
 }

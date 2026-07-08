@@ -207,15 +207,15 @@ modelo por processo.
 
 ## OR / Disjuncao
 
-Use `[Disjuction("grupo")]` para combinar membros em OR:
+Use `[Disjunction("grupo")]` para combinar membros em OR:
 
 ```csharp
 public sealed class ContactFilter
 {
-    [Disjuction("contact")]
+    [Disjunction("contact")]
     public string? Email { get; set; }
 
-    [Disjuction("contact")]
+    [Disjunction("contact")]
     public string? Phone { get; set; }
 }
 ```
