@@ -364,6 +364,7 @@ var res = entry.ToResult("id");
 Os tipos `OkMatch`, `NoContentMatch` e `CreatedMatch` permitem mapear `Result`/`Result<T>` para respostas HTTP padronizadas, convertendo automaticamente problemas em `ProblemDetails` (RFC 9457) quando necessário.
 
 Exemplos baseados em `MatchApi`:
+
 ```csharp
 // POST: cria e retorna 201 com Location e corpo
 private static async Task<CreatedMatch<PersonDetails>> CreatePerson(PersonCreate create)

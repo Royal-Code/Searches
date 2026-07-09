@@ -1,0 +1,81 @@
+@host = http://localhost:5080
+
+### OpenAPI document
+GET {{host}}/openapi/v1.json
+
+############################################################
+# Mapped endpoints (AspNetCore helpers)
+############################################################
+
+### Customers: Contains + case-insensitive over Name
+GET {{host}}/api/customers?name=maria
+
+### Customers: OR inferred from the property name (Name OR Email)
+GET {{host}}/api/customers?nameOrEmail=mario
+
+### Customers: nested owned-address path (MainAddress.State)
+GET {{host}}/api/customers?state=NY
+
+### Customers: paged (UsePages via SearchOptions)
+GET {{host}}/api/customers?page=1&itemsPerPage=2
+
+### Customers: first DTO
+GET {{host}}/api/customers/first?state=CA
+
+### Products: equality + numeric range
+GET {{host}}/api/products?active=true&priceMin=50&priceMax=200
+
+### Products: anchored Like (Wrap=None) -> SKUs starting with ABC
+GET {{host}}/api/products?sku=ABC%25
+
+### Products: [Disjunction] -> Name contains X OR Sku contains Y
+GET {{host}}/api/products?textInName=mo&textInSku=xyz
+
+### Products: first entity
+GET {{host}}/api/products/first?active=true
+
+### Orders: paged DTO search, sorted (named sorting createdAt, desc)
+GET {{host}}/api/orders?status=Paid&orderby=createdAt-desc
+
+### Orders: date range
+GET {{host}}/api/orders?createdAtFrom=2026-02-01&createdAtTo=2026-05-31
+
+### Orders: nested navigation path (Customer.Name)
+GET {{host}}/api/orders?customerName=maria
+
+### Orders: negation (exclude Cancelled)
+GET {{host}}/api/orders?notStatus=Cancelled
+
+### Orders: paged
+GET {{host}}/api/orders?page=1&itemsPerPage=2
+
+### Orders: invalid order by -> 400 ProblemDetails
+GET {{host}}/api/orders?orderby=bogusField
+
+############################################################
+# Manual endpoints (ICriteria)
+############################################################
+
+### Manual customers: explicit Select expression
+GET {{host}}/manual/customers?name=maria
+
+### Manual customers: [ComplexFilter] over owned Address
+GET {{host}}/manual/customers/by-address?city=NYC&state=NY
+
+### Manual orders: same query as mapped GET /api/orders (compare)
+GET {{host}}/manual/orders?status=Paid&orderby=createdAt-desc
+
+### Manual orders: In operator (Status in [Paid, Shipped])
+GET {{host}}/manual/orders/by-status?statuses=Paid&statuses=Shipped
+
+### Manual orders: Skip/Take + UseCount(false)
+GET {{host}}/manual/orders/page?skip=2&take=2&count=false
+
+### Manual orders: Exists
+GET {{host}}/manual/orders/exists?number=1002
+
+### Manual orders: Single by unique number (+ hints)
+GET {{host}}/manual/orders/by-number/ORD-1001
+
+### Manual orders: FirstOrDefault by id (+ hints load Customer and Items)
+GET {{host}}/manual/orders/1

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\tests.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\RoyalCode.SmartSearch.Demo\RoyalCode.SmartSearch.Demo.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,18 +1,18 @@
 # Plan: Projeto demo WebAPI do SmartSearch (`smartsearch-demo`)
 
-## Status: PRONTO PARA IMPLEMENTAR - Fase 1 concluida
+## Status: CONCLUIDO - Fases 1 a 5 concluidas
 
 ## Progresso
 
-`#----` **20%** - 1 de 5 fases
+`#####` **100%** - 5 de 5 fases
 
 | Fase | Estado |
 |---|---|
 | Fase 1 - Fechar escopo do demo | Concluida |
-| Fase 2 - Criar projeto e infraestrutura | Pendente |
-| Fase 3 - Modelar dominio, filtros e DTOs | Pendente |
-| Fase 4 - Implementar endpoints de exemplo | Pendente |
-| Fase 5 - Documentar e validar o demo | Pendente |
+| Fase 2 - Criar projeto e infraestrutura | Concluida |
+| Fase 3 - Modelar dominio, filtros e DTOs | Concluida |
+| Fase 4 - Implementar endpoints de exemplo | Concluida |
+| Fase 5 - Documentar e validar o demo | Concluida |
 
 > **Manutencao deste plano:** ao concluir as tarefas de uma fase, marque cada tarefa com `- [x]`,
 > troque o **Estado** da fase para `Concluida` na tabela acima e atualize a barra de progresso
@@ -307,7 +307,7 @@ sao confirmadas na Fase 4 (binding de `SearchOptions`/`Sorting[]`/filtros); ate 
 | TargetPropertyPath aninhado | `[Criterion("Customer.Name")] CustomerName` | `GET /orders` | `?customerName=maria` |
 | Negation | `[Criterion(Negation=true)]` | `GET /orders` | `?...` |
 | Sorting nomeado | `AddOrderBy("total", ...)` | qualquer | `?sort=total desc` |
-| Paginacao (UsePages) | helper padrao | `GET /orders` | `?page=2&pageSize=20` |
+| Paginacao (UsePages) | helper padrao | `GET /orders` | `?page=1&itemsPerPage=2` |
 | Paginacao (Skip/Take) | endpoint manual | `GET /manual/orders` | `?skip=20&take=20` |
 | UseCount(false) | endpoint manual sem total | `GET /manual/orders` | `?count=false` |
 | Projecao convencao + `AddSelector` | `MapSearch<Order,OrderSummaryDto,OrderFilter>` | `GET /orders/summary` | `?...` |
@@ -407,17 +407,17 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Criar projeto WebAPI `RoyalCode.SmartSearch.Demo` em `net10.0`.
-- [ ] Adicionar o projeto ao `SmartSearch.sln`.
-- [ ] Configurar project references locais para os projetos SmartSearch necessarios.
-- [ ] Adicionar dependencias de SQLite e Swagger se necessario.
-- [ ] Criar `AppDbContext` e configuracao de connection string.
-- [ ] Configurar `AddDbContext<AppDbContext>()` com SQLite in-memory.
-- [ ] Configurar conexao SQLite unica aberta durante a vida do host.
-- [ ] Configurar `AddEntityFrameworkSearches<AppDbContext>()`.
-- [ ] Configurar `AddEntityFrameworkLikeOperator()`.
-- [ ] Configurar seed deterministico em banco zerado por execucao.
-- [ ] Garantir que o demo nao gere pacote NuGet.
+- [x] Criar projeto WebAPI `RoyalCode.SmartSearch.Demo` em `net10.0`.
+- [x] Adicionar o projeto ao `SmartSearch.sln`.
+- [x] Configurar project references locais para os projetos SmartSearch necessarios.
+- [x] Adicionar dependencias de SQLite e Swagger se necessario.
+- [x] Criar `AppDbContext` e configuracao de connection string.
+- [x] Configurar `AddDbContext<AppDbContext>()` com SQLite in-memory.
+- [x] Configurar conexao SQLite unica aberta durante a vida do host.
+- [x] Configurar `AddEntityFrameworkSearches<AppDbContext>()`.
+- [x] Configurar `AddEntityFrameworkLikeOperator()`.
+- [x] Configurar seed deterministico em banco zerado por execucao.
+- [x] Garantir que o demo nao gere pacote NuGet.
 
 **Criterios de aceite:** `dotnet build SmartSearch.sln --no-restore` compila com o novo projeto; `dotnet run --project .\RoyalCode.SmartSearch.Demo\RoyalCode.SmartSearch.Demo.csproj` sobe localmente.
 
@@ -425,7 +425,25 @@ Pendencias:
 
 ### Resultado da Fase 2
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- Projeto `RoyalCode.SmartSearch.Demo` (WebAPI, `Microsoft.NET.Sdk.Web`) criado e adicionado ao `SmartSearch.sln` (pasta de solucao `Samples`).
+- SQLite in-memory com conexao unica aberta (singleton) e `AddDbContext<AppDbContext>` sobre ela; `EnsureCreated` + seed deterministico no startup (DF8).
+- DI de busca via `AddDemoSearches()`: `AddEntityFrameworkSearches<AppDbContext>`, `AddEntityFrameworkLikeOperator`, `ConfigureOperationHints`.
+- OpenAPI via `AddOpenApi`/`MapOpenApi`; `AddProblemDetails`; raiz `/` redireciona para o documento OpenAPI.
+- `IsPackable=false` (DF4); project references locais (DF6).
+
+Verificacao:
+
+- `dotnet build RoyalCode.SmartSearch.Demo` -> 0 erros, 0 avisos.
+- `dotnet run` sobe em `http://localhost:5080` e serve `/openapi/v1.json` (200).
+
+Desvios:
+
+- **TFM plural obrigatorio:** `Directory.Build.props` define `AspVer`/`EFVer` condicionais a `TargetFramework`, que so resolve no inner build por-TFM. Usar `<TargetFramework>` singular quebrou o restore (NU1015); a solucao foi `<TargetFrameworks>net10.0</TargetFrameworks>` (plural), como os demais projetos.
+- **Advisory Microsoft.OpenApi (NU1903):** o transitivo `Microsoft.OpenApi` 2.0.0 tem advisory; foi promovido para `2.4.0` (ainda no range) e por fim `2.10.0` (dentro da major 2.x, sem quebra), zerando avisos.
 
 ---
 
@@ -439,17 +457,17 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Criar entidades `Customer`, `Address`, `Product`, `Order` e `OrderItem` e o enum `OrderStatus`.
-- [ ] Mapear entidades no `AppDbContext`; mapear `Address` como owned via `OwnsOne` e anota-lo com `[ComplexFilter]` (DF9).
-- [ ] `CustomerFilter`: `Name` com `[Criterion(Contains, Case=Insensitive)]`; OR por nome (`NameOrEmail`); um par `[Disjunction("contato")]`; `[ComplexFilter] AddressFilter Address`.
-- [ ] `AddressFilter`: `[ComplexFilter]` sobre owned `Address`, filtrando por `City`/`State` (path aninhado).
-- [ ] `ProductFilter`: `Active` (igualdade), `PriceMin`/`PriceMax` (range via `GreaterThanOrEqual`/`LessThanOrEqual`), `Sku` com `[Criterion(Like, Wrap=None)]`.
-- [ ] `OrderFilter` (kitchen-sink, fortemente comentado): `Statuses` com `CriterionOperator.In`; `CreatedAtFrom`/`CreatedAtTo` (range de data); `CustomerName` com `[Criterion("Customer.Name")]` (TargetPropertyPath aninhado); um exemplo de `Negation`; um exemplo de `DisableOrFromName` documentando a armadilha do token "Or".
-- [ ] Criar DTOs `CustomerDto`, `ProductDto` e `OrderSummaryDto`.
-- [ ] Registrar selector por convencao via `AddSelector` (para `OrderSummaryDto`) e demonstrar `Select<TDto>(expr)` explicito em um endpoint manual.
-- [ ] Registrar sortings nomeados via `AddOrderBy` (ex.: `total`, `createdAt`).
-- [ ] Criar `Search/OrderHints.cs` (enum) e `Search/OperationHintsSetup.cs` com `ConfigureOperationHints` + `AddIncludesHandler<Order, OrderHints>` usando `IncludeReference(o => o.Customer)` e `IncludeCollection(o => o.Items)`.
-- [ ] Popular seed deterministico com casos que provem: OR (nome e disjunction), case-insensitive, `In` de status, ranges, `[ComplexFilter]` de Address, sorting e paginacao.
+- [x] Criar entidades `Customer`, `Address`, `Product`, `Order` e `OrderItem` e o enum `OrderStatus`.
+- [x] Mapear entidades no `AppDbContext`; mapear `Address` como owned via `OwnsOne` e anota-lo com `[ComplexFilter]` (DF9).
+- [x] `CustomerFilter`: `Name` com `[Criterion(Contains, Case=Insensitive)]`; OR por nome (`NameOrEmail`); um par `[Disjunction("contato")]`; `[ComplexFilter] AddressFilter Address`.
+- [x] `AddressFilter`: `[ComplexFilter]` sobre owned `Address`, filtrando por `City`/`State` (path aninhado).
+- [x] `ProductFilter`: `Active` (igualdade), `PriceMin`/`PriceMax` (range via `GreaterThanOrEqual`/`LessThanOrEqual`), `Sku` com `[Criterion(Like, Wrap=None)]`.
+- [x] `OrderFilter` (kitchen-sink, fortemente comentado): `Statuses` com `CriterionOperator.In`; `CreatedAtFrom`/`CreatedAtTo` (range de data); `CustomerName` com `[Criterion("Customer.Name")]` (TargetPropertyPath aninhado); um exemplo de `Negation`; um exemplo de `DisableOrFromName` documentando a armadilha do token "Or".
+- [x] Criar DTOs `CustomerDto`, `ProductDto` e `OrderSummaryDto`.
+- [x] Registrar selector por convencao via `AddSelector` (para `OrderSummaryDto`) e demonstrar `Select<TDto>(expr)` explicito em um endpoint manual.
+- [x] Registrar sortings nomeados via `AddOrderBy` (ex.: `total`, `createdAt`).
+- [x] Criar `Search/OrderHints.cs` (enum) e `Search/OperationHintsSetup.cs` com `ConfigureOperationHints` + `AddIncludesHandler<Order, OrderHints>` usando `IncludeReference(o => o.Customer)` e `IncludeCollection(o => o.Items)`.
+- [x] Popular seed deterministico com casos que provem: OR (nome e disjunction), case-insensitive, `In` de status, ranges, `[ComplexFilter]` de Address, sorting e paginacao.
 
 **Criterios de aceite:** o demo tem exemplos compilaveis para cada recurso da matriz de cobertura; seed contem dados que retornam resultados distintos para os filtros documentados.
 
@@ -457,7 +475,23 @@ Pendencias:
 
 ### Resultado da Fase 3
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- Entidades `Customer`, `Address`, `Product`, `Order`, `OrderItem` e enum `OrderStatus`; `Address` owned via `OwnsOne` + `[ComplexFilter]` (DF9).
+- Filtros: `CustomerFilter` (Contains+Insensitive, OR por nome, path aninhado), `AddressFilter`/`CustomerAddressFilter` (`[ComplexFilter]`), `ProductFilter` (igualdade, range, Like `Wrap=None`, `[Disjunction]`), `OrderFilter` (kitchen-sink: range de data, `Customer.Name` aninhado, Negation, `DisableOrFromName`), `OrderStatusesFilter` (`In` com `IEnumerable<>`), `OrderLookupFilters` (Equal).
+- DTOs: `ProductDto` (convencao), `CustomerDto` e `OrderSummaryDto` (selectors registrados via `AddSelector`).
+- `AddOrderBy` nomeados (`createdAt`, `number`, `customer`, `price`, `name`); `OrderHints` + `ConfigureOperationHints`/`AddIncludesHandler` com `IncludeReference`/`IncludeCollection`.
+- Seed deterministico com 5 clientes, 5 produtos, 5 pedidos, cobrindo OR, case-insensitive, In, ranges, complex filter, sorting e paginacao.
+
+Verificacao:
+
+- `dotnet build` do demo -> 0 erros. Comportamento confirmado em runtime na Fase 4.
+
+Desvios:
+
+- **`In` exige `IEnumerable<T>` exato:** `List<T>`/`T[]` lancam `InvalidOperationException`. Por isso a propriedade e `IEnumerable<OrderStatus>?` e o endpoint manual recebe um array e atribui a ela.
 
 ---
 
@@ -471,17 +505,17 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Criar grupo `/manual/customers` usando `ICriteria<Customer>` diretamente (FilterBy + Collect/ToListAsync).
-- [ ] Criar grupo `/manual/orders` demonstrando `UseHints`, `Select<TDto>(expr)`, paginacao por `Skip`/`Take`, `UseCount(false)`, `OrderBy` e `AsSearch().ToListAsync()`.
-- [ ] Criar `/manual/orders/exists` (`ExistsAsync`) e `/manual/orders/{id}` (`SingleAsync`) para demonstrar os terminais e contrastar com `FirstOrDefault`.
-- [ ] Escolher uma consulta (ex.: orders por `CustomerName` + range de data) e implementa-la nas **duas formas** (manual e via helper) para comparacao lado a lado (DF10).
-- [ ] Criar endpoints via `MapSearch` para lista paginada de DTO (`UsePages`).
-- [ ] Criar endpoints via `MapList` para lista simples.
-- [ ] Criar endpoints via `MapFirst` ou `MapSelectFirst` para primeiro item.
-- [ ] Demonstrar query string de `SearchOptions` e `Sorting[]` e confirmar as chaves exatas de binding (fecha a coluna "query string" da matriz de cobertura).
-- [ ] Garantir que endpoints de DTO nao dependem de `UseHints` (hint ignorado em projecao).
-- [ ] Garantir que endpoints de entidade com hints carregam navegacoes esperadas (`Customer`, `Items`).
-- [ ] Tratar casos de 204 e erro de order by invalido (`OrderByException` -> ProblemDetails 400) pelo pipeline existente.
+- [x] Criar grupo `/manual/customers` usando `ICriteria<Customer>` diretamente (FilterBy + Collect/ToListAsync).
+- [x] Criar grupo `/manual/orders` demonstrando `UseHints`, `Select<TDto>(expr)`, paginacao por `Skip`/`Take`, `UseCount(false)`, `OrderBy` e `AsSearch().ToListAsync()`.
+- [x] Criar `/manual/orders/exists` (`ExistsAsync`) e `/manual/orders/{id}` (`SingleAsync`) para demonstrar os terminais e contrastar com `FirstOrDefault`.
+- [x] Escolher uma consulta (ex.: orders por `CustomerName` + range de data) e implementa-la nas **duas formas** (manual e via helper) para comparacao lado a lado (DF10).
+- [x] Criar endpoints via `MapSearch` para lista paginada de DTO (`UsePages`).
+- [x] Criar endpoints via `MapList` para lista simples.
+- [x] Criar endpoints via `MapFirst` ou `MapSelectFirst` para primeiro item.
+- [x] Demonstrar query string de `SearchOptions` e `Sorting[]` e confirmar as chaves exatas de binding (fecha a coluna "query string" da matriz de cobertura).
+- [x] Garantir que endpoints de DTO nao dependem de `UseHints` (hint ignorado em projecao).
+- [x] Garantir que endpoints de entidade com hints carregam navegacoes esperadas (`Customer`, `Items`).
+- [x] Tratar casos de 204 e erro de order by invalido (`OrderByException` -> ProblemDetails 400) pelo pipeline existente.
 
 **Criterios de aceite:** cada familia de endpoint tem ao menos um exemplo que retorna 200 com dados seeded; a consulta espelhada manual/mapped retorna o mesmo resultado; order by invalido retorna problema 400 quando passar pelo `Performer`.
 
@@ -489,7 +523,25 @@ Pendencias:
 
 ### Resultado da Fase 4
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- Grupo manual `/manual/*` (`ICriteria`): `customers` (Select expr), `customers/by-address` (`[ComplexFilter]` + `Select<CustomerDto>()`), `orders` (espelho do mapeado), `orders/by-status` (`In`), `orders/page` (`Skip`/`Take` + `UseCount(false)`), `orders/exists` (`Exists`), `orders/by-number/{number}` (`Single` + hints), `orders/{id}` (`FirstOrDefault` + hints).
+- Grupo mapeado (helpers): `MapSearch<Order,OrderSummaryDto,OrderFilter>` (`/orders`), `MapSearch<Customer,CustomerDto,CustomerFilter>` (`/customers`), `MapList<Product,ProductDto,ProductFilter>` (`/products`), `MapFirst<Product,ProductFilter>` (`/products/first`), `MapSelectFirst<Customer,CustomerDto,CustomerFilter>` (`/customers/first`).
+- Query strings de `SearchOptions` (`page`/`itemsPerPage`/`skip`/`take`/`count`) e `Sorting[]` (`orderby=<nome>-desc`) confirmadas.
+
+Verificacao (smoke via curl em `http://localhost:5080`, todos 200/esperado):
+
+- Contains+Insensitive, OR por nome, path aninhado owned, range numerico/de data, `In`, Like `Wrap=None` ancorado, `[Disjunction]`, Negation, sorting nomeado.
+- `[ComplexFilter]` (`by-address`) retorna owned filtrado; hints carregam `customer`+`items` e deixam `items[].product` = null (nao pedido); `Exists` true/false; `Single` por numero unico; `FirstOrDefault` id inexistente -> 404.
+- `Skip/Take` + `UseCount(false)` retorna `count:0` (nao computado).
+- Order by invalido -> 400 ProblemDetails (SmartProblems) com `propertyName`/`typeName`/`pointer`.
+- Endpoint manual `/manual/orders` e mapeado `/orders` retornam JSON identico para a mesma query (DF10).
+
+Desvios:
+
+- **Binding de filtros complexos:** `[AsParameters]` nao popula objetos aninhados; o exemplo de `[ComplexFilter]` fica no endpoint manual (constroi o filtro a mao). Os endpoints mapeados usam filtros planos.
 
 ---
 
@@ -503,17 +555,17 @@ Pendencias:
 
 **Tarefas:**
 
-- [ ] Criar `RoyalCode.SmartSearch.Demo/README.md` com objetivo, setup, endpoints e exemplos.
-- [ ] Incluir no README a **matriz de cobertura** (recurso -> filtro/endpoint -> query string -> resultado esperado) preenchida com as chaves confirmadas na Fase 4.
-- [ ] Documentar a forma do `ProblemDetails` para `OrderBy` invalido (`OrderByException` -> 400).
-- [ ] Criar `RoyalCode.SmartSearch.Demo/RoyalCode.SmartSearch.Demo.http` com chamadas principais (incluindo a consulta espelhada manual/mapped).
-- [ ] Documentar quais endpoints mostram cada recurso do SmartSearch.
-- [ ] Criar projeto `RoyalCode.SmartSearch.Demo.Tests`.
-- [ ] Adicionar testes `WebApplicationFactory` para smoke tests HTTP dos endpoints principais.
-- [ ] Executar `dotnet build SmartSearch.sln --no-restore`.
-- [ ] Executar `dotnet test SmartSearch.sln --no-restore -v minimal`.
-- [ ] Executar o demo e validar ao menos uma chamada por familia de endpoint.
-- [ ] Atualizar `smartsearch.md` para apontar o demo como referencia executavel, se desejado.
+- [x] Criar `RoyalCode.SmartSearch.Demo/README.md` com objetivo, setup, endpoints e exemplos.
+- [x] Incluir no README a **matriz de cobertura** (recurso -> filtro/endpoint -> query string -> resultado esperado) preenchida com as chaves confirmadas na Fase 4.
+- [x] Documentar a forma do `ProblemDetails` para `OrderBy` invalido (`OrderByException` -> 400).
+- [x] Criar `RoyalCode.SmartSearch.Demo/RoyalCode.SmartSearch.Demo.http` com chamadas principais (incluindo a consulta espelhada manual/mapped).
+- [x] Documentar quais endpoints mostram cada recurso do SmartSearch.
+- [x] Criar projeto `RoyalCode.SmartSearch.Demo.Tests`.
+- [x] Adicionar testes `WebApplicationFactory` para smoke tests HTTP dos endpoints principais.
+- [x] Executar `dotnet build SmartSearch.sln --no-restore`.
+- [x] Executar `dotnet test SmartSearch.sln --no-restore -v minimal`.
+- [x] Executar o demo e validar ao menos uma chamada por familia de endpoint.
+- [x] Atualizar `smartsearch.md` para apontar o demo como referencia executavel, se desejado.
 
 **Criterios de aceite:** uma pessoa ou IA consegue subir o demo e chamar endpoints documentados sem ler codigo interno; build e testes passam.
 
@@ -521,7 +573,22 @@ Pendencias:
 
 ### Resultado da Fase 5
 
-*a preencher*
+Concluida em 2026-07-08.
+
+Entregaveis:
+
+- `RoyalCode.SmartSearch.Demo/README.md` com objetivo, setup, os dois modos de busca, a **matriz de cobertura** preenchida (recurso -> endpoint -> query string -> resultado, com chaves confirmadas), e notas sobre o trio de OR, `[ComplexFilter]`, hints e o `ProblemDetails` de order by invalido.
+- `RoyalCode.SmartSearch.Demo.http` com chamadas para todas as familias (manual e mapeado), incluindo a consulta espelhada.
+- Projeto `RoyalCode.SmartSearch.Demo.Tests` (`WebApplicationFactory<Program>`) com 19 smoke tests (customers, products, orders), incluindo a igualdade manual-vs-mapped e o 400 de order by invalido; adicionado ao `SmartSearch.sln`.
+
+Verificacao:
+
+- `dotnet build SmartSearch.sln --no-restore` -> 0 erros (7 avisos CS8618 pre-existentes no projeto de testes da lib).
+- `dotnet test SmartSearch.sln --no-build` -> **266 aprovados** (247 lib + 19 demo), 0 falhas.
+
+Desvios:
+
+- **Maps estaticos globais:** `SelectorsMap`/`OrderByHandlersMap` sao singletons de processo; configurar dois hosts no mesmo processo lanca "Selector already exists". Os testes usam uma unica factory compartilhada via `ICollectionFixture` (um host por processo), o que tambem reflete o uso real (configurar uma vez).
 
 ---
 
