@@ -10,7 +10,7 @@
 	<PropertyGroup>
 		<PropSelVer>1.0.3</PropSelVer>
 		<OpHintVer>1.0.0</OpHintVer>
-		<ProblemsVer>1.0.0-preview-6.0</ProblemsVer>
+		<ProblemsVer>1.0.0-preview-7.0</ProblemsVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
 		<AspVer>8.0.2</AspVer>
