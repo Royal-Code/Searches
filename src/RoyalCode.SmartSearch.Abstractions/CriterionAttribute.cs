@@ -55,6 +55,30 @@ public sealed class CriterionAttribute : Attribute
 
     /// <summary>
     /// <para>
+    ///     The intended case sensitivity for string operators
+    ///     (<see cref="CriterionOperator.Like"/>, <see cref="CriterionOperator.Contains"/>,
+    ///     <see cref="CriterionOperator.StartsWith"/>, <see cref="CriterionOperator.EndsWith"/>).
+    /// </para>
+    /// <para>
+    ///     Ignored for non-string operators. See <see cref="CriterionCase"/>.
+    /// </para>
+    /// </summary>
+    public CriterionCase Case { get; set; }
+
+    /// <summary>
+    /// <para>
+    ///     Overrides, for this criterion, whether the <see cref="CriterionOperator.Like"/> value is wrapped
+    ///     with wildcards (<c>%value%</c>) before matching. When <see cref="LikeWrap.Default"/>, the global
+    ///     default is used (<c>CriterionDefaults.WrapLikeValue</c>, in the Linq package).
+    /// </para>
+    /// <para>
+    ///     Ignored for operators other than <see cref="CriterionOperator.Like"/>. See <see cref="LikeWrap"/>.
+    /// </para>
+    /// </summary>
+    public LikeWrap Wrap { get; set; }
+
+    /// <summary>
+    /// <para>
     ///     Requires the use of the Not operator
     /// </para>
     /// </summary>

@@ -50,8 +50,12 @@ public interface IResultList
     IReadOnlyList<ISorting> Sortings { get; }
 
     /// <summary>
-    /// Projections carried out during the research.
+    /// Reserved for future query-level projections computed during the search.
     /// </summary>
+    /// <remarks>
+    /// Current built-in searches do not populate this value. It is intended for future extra values,
+    /// such as aggregates over the filtered query before paging is applied.
+    /// </remarks>
     Dictionary<string, object>? Projections { get; }
 }
 
@@ -67,12 +71,15 @@ public interface IResultList<out TModel> : IResultList
     IReadOnlyList<TModel> Items { get; }
 
     /// <summary>
-    /// Gets a value from the projection if it exists and is of the type entered,
-    /// or returns the default value if the value does not exist or the type is different.
+    /// Reserved for future access to query-level projection values.
     /// </summary>
+    /// <remarks>
+    /// Current built-in result lists do not provide functional projection lookup. Do not rely on this
+    /// method until projection support is implemented.
+    /// </remarks>
     /// <typeparam name="T">Projection value type.</typeparam>
     /// <param name="name">Projection name.</param>
     /// <param name="defaultValue">Default value.</param>
-    /// <returns>The projection value, or default value.</returns>
+    /// <returns>The projection value, or the default value, when projection support is implemented.</returns>
     T GetProjection<T>(string name, T? defaultValue = default);
 }

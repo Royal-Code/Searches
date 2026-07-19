@@ -63,6 +63,12 @@ public static class ExpressionGenerator
         .GetMethod(nameof(string.EndsWith), [typeof(string)])!;
 
     /// <summary>
+    /// ToUpper Method of string, without parameters (translatable by relational providers).
+    /// </summary>
+    public static readonly MethodInfo ToUpperMethod = typeof(string)
+        .GetMethod(nameof(string.ToUpper), Type.EmptyTypes)!;
+
+    /// <summary>
     /// Where method of <see cref="Enumerable"/> to call over <see cref="IEnumerable{T}"/>.
     /// </summary>
     internal static readonly MethodInfo InMethod = typeof(Enumerable).GetMethods()
@@ -84,6 +90,48 @@ public static class ExpressionGenerator
     ];
 
     #endregion
+
+    /// <summary>
+    /// <para>
+    ///     Creates the expression that performs the comparison between the model property and the filter
+    ///     property, applying the declared case sensitivity for string operators.
+    /// </para>
+    /// <para>
+    ///     With <see cref="CriterionCase.Insensitive"/> and string operands, both sides are normalized with
+    ///     <c>ToUpper()</c> (portable fallback; translatable by relational providers). For non-string
+    ///     operands or other operators, the case declaration is ignored.
+    /// </para>
+    /// </summary>
+    /// <param name="operator">The operator to be used in the comparison.</param>
+    /// <param name="negation">Indicates whether the comparison should be negated.</param>
+    /// <param name="filterMemberAccess">The expression that represents the filter property.</param>
+    /// <param name="targetMemberAccess">The expression that represents the model property.</param>
+    /// <param name="criterionCase">The declared case sensitivity.</param>
+    /// <returns>The expression that performs the comparison.</returns>
+    /// <exception cref="InvalidOperationException">
+    ///     The operator is not supported.
+    /// </exception>
+    public static Expression CreateOperatorExpression(
+        CriterionOperator @operator,
+        bool negation,
+        Expression filterMemberAccess,
+        Expression targetMemberAccess,
+        CriterionCase criterionCase)
+    {
+        if (criterionCase == CriterionCase.Insensitive
+            && targetMemberAccess.Type == typeof(string)
+            && filterMemberAccess.Type == typeof(string)
+            && @operator is CriterionOperator.Like
+                or CriterionOperator.Contains
+                or CriterionOperator.StartsWith
+                or CriterionOperator.EndsWith)
+        {
+            targetMemberAccess = Expression.Call(targetMemberAccess, ToUpperMethod);
+            filterMemberAccess = Expression.Call(filterMemberAccess, ToUpperMethod);
+        }
+
+        return CreateOperatorExpression(@operator, negation, filterMemberAccess, targetMemberAccess);
+    }
 
     /// <summary>
     /// <para>
@@ -185,7 +233,8 @@ public static class ExpressionGenerator
         }
         if (filterProperty.PropertyType == typeof(string))
         {
-            return CriterionOperator.Like;
+            // configuravel: Like (default, curingas honrados) ou Contains (substring literal)
+            return CriterionDefaults.DefaultStringOperator;
         }
         else if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType))
         {

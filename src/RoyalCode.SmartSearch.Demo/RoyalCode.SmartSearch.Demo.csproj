@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>false</IsPackable>
+		<!-- This project intentionally has no XML docs on every public member. -->
+		<NoWarn>$(NoWarn);1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="$(AspVer)" />
+		<!-- Promote the transitive Microsoft.OpenApi past the advisory (NU1903); stays within major 2.x. -->
+		<PackageReference Include="Microsoft.OpenApi" Version="2.10.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EFVer)" />
+		<PackageReference Include="RoyalCode.SmartProblems.EntityFramework" Version="$(ProblemsVer)" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.16.11" />
+		<PackageReference Include="RoyalCode.OperationHint.EntityFramework" Version="$(OpHintVer)" />
+		<!-- Promote the transitive SQLitePCLRaw native bundle past the 2.1.11 advisory (NU1903). -->
+		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RoyalCode.SmartSearch.Abstractions\RoyalCode.SmartSearch.Abstractions.csproj" />
+		<ProjectReference Include="..\RoyalCode.SmartSearch.Core\RoyalCode.SmartSearch.Core.csproj" />
+		<ProjectReference Include="..\RoyalCode.SmartSearch.Linq\RoyalCode.SmartSearch.Linq.csproj" />
+		<ProjectReference Include="..\RoyalCode.SmartSearch.EntityFramework\RoyalCode.SmartSearch.EntityFramework.csproj" />
+		<ProjectReference Include="..\RoyalCode.SmartSearch.AspNetCore\RoyalCode.SmartSearch.AspNetCore.csproj" />
+	</ItemGroup>
+
+</Project>

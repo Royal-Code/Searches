@@ -32,7 +32,12 @@ public sealed class AsyncResultList<TModel> : IAsyncResultList<TModel>
     [JsonConverter(typeof(SortingsConverter))]
     public IReadOnlyList<ISorting> Sortings { get; init; } = null!;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Reserved for future query-level projections computed during the async search.
+    /// </summary>
+    /// <remarks>
+    /// The default search pipeline does not populate this property yet.
+    /// </remarks>
     public Dictionary<string, object> Projections { get; init; } = null!;
 
     /// <inheritdoc />

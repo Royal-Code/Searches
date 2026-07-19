@@ -7,10 +7,15 @@ internal class JunctionProperty
 {
     private readonly Lack? lack;
 
-    public JunctionProperty(PropertySelection property, CriterionAttribute criterion, FilterTarget filterTarget)
+    public JunctionProperty(
+        PropertySelection property,
+        CriterionAttribute criterion,
+        FilterTarget filterTarget,
+        CriterionOperatorExpressionFactories factories)
     {
         FilterProperty = property;
         Criterion = criterion;
+        Factories = factories;
 
         var propertySelection = GetPropertySelection(filterTarget);
         if (propertySelection is null)
@@ -30,6 +35,8 @@ internal class JunctionProperty
     public PropertySelection FilterProperty { get; }
 
     public CriterionAttribute Criterion { get; }
+
+    public CriterionOperatorExpressionFactories Factories { get; }
 
     public PropertySelection? ModelPropertySelection { get; }
 

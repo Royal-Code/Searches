@@ -29,6 +29,10 @@ public static class SearchesServiceCollectionExtensions
         services.AddSingleton(OrderByHandlersMap.Instance);
         services.AddSingleton(SelectorsMap.Instance);
 
+        // encapsula as ICriterionOperatorExpressionFactory registradas (ordem de registro, primeira-nao-null-vence)
+        services.AddSingleton(static sp => new CriterionOperatorExpressionFactories(
+            sp.GetServices<ICriterionOperatorExpressionFactory>()));
+
         services.AddSingleton<ISpecifierGenerator, DefaultSpecifierGenerator>();
         services.AddSingleton<ISpecifierFunctionGenerator, DefaultSpecifierFunctionGenerator>();
         services.AddSingleton<IOrderByGenerator, DefaultOrderByGenerator>();

@@ -61,6 +61,12 @@ ResultList<MyEntity> result = ...;
 var items = result.Items;
 ```
 
+`IResultList.Projections` and `GetProjection<T>()` are reserved for future
+query-level projections or aggregates, such as a sum over the filtered query
+before paging is applied. Built-in result lists do not populate or implement
+them yet; use `Items`, `Count`, `Page`, `Pages`, and related metadata for current
+code.
+
 ### Search Configuration
 Use ISearchConfigurations to configure filters, sorting, and selectors:
 
@@ -74,13 +80,13 @@ services.AddEntityFrameworkSearches<MyDbContext>(cfg =>
 ```
 
 ### 6. Disjunction filters (grouped OR)
-Use `[Disjuction("alias")]` to group multiple filter properties into an OR clause:
+Use `[Disjunction("alias")]` to group multiple filter properties into an OR clause:
 
 ```csharp
 public class DisjunctionFilter
 {
-    [Disjuction("g1")] public string? P1 { get; set; }
-    [Disjuction("g1")] public string? P2 { get; set; }
+    [Disjunction("g1")] public string? P1 { get; set; }
+    [Disjunction("g1")] public string? P2 { get; set; }
 }
 
 // When both are empty: no WHERE is applied.
@@ -163,7 +169,7 @@ public class UserFilter
 Behavior notes:
 - Empty/null values are ignored when `IgnoreIfIsEmpty` applies (strings blank, nullables not set, empty collections).
 - Complex filters support AND across provided subfields; only non-empty subfields are applied.
-- OR semantics can be declared via `[Disjuction]` groups or inferred from `Or` in names/paths.
+- OR semantics can be declared via `[Disjunction]` groups or inferred from `Or` in names/paths.
 
 ### 9. FilterExpressionGenerator for complex filter logic
 Use `[FilterExpressionGenerator<TGenerator>]` to delegate expression creation to a custom generator that implements `ISpecifierExpressionGenerator`.

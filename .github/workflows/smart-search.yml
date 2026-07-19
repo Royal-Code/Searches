@@ -35,5 +35,8 @@ jobs:
       - name: Build and pack SmartSearch AspNetCore
         run: dotnet build ./src/RoyalCode.SmartSearch.AspNetCore/RoyalCode.SmartSearch.AspNetCore.csproj -c Release
 
+      - name: Build and pack SmartSearch AspNetCore Npgsql
+        run: dotnet build ./src/RoyalCode.SmartSearch.EntityFramework.Npgsql/RoyalCode.SmartSearch.EntityFramework.Npgsql.csproj -c Release
+
       - name: Publish
         run: dotnet nuget push ./**/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

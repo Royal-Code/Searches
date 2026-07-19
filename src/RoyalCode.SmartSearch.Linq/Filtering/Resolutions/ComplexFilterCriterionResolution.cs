@@ -10,6 +10,7 @@ internal class ComplexFilterCriterionResolution : ICriterionResolution
     private readonly Type? filterPropertyUnderlyingType;
     private readonly CriterionAttribute criterion;
     private readonly FilterTarget filterTarget;
+    private readonly CriterionOperatorExpressionFactories factories;
     private readonly IReadOnlyList<ICriterionResolution> internalResolutions;
 
     private Lack? lack;
@@ -17,11 +18,13 @@ internal class ComplexFilterCriterionResolution : ICriterionResolution
     public ComplexFilterCriterionResolution(
         PropertySelection filterProperty,
         CriterionAttribute criterion,
-        FilterTarget filterTarget)
+        FilterTarget filterTarget,
+        CriterionOperatorExpressionFactories factories)
     {
         this.filterProperty = filterProperty;
         this.criterion = criterion;
         this.filterTarget = filterTarget;
+        this.factories = factories;
 
         filterPropertyUnderlyingType = Nullable.GetUnderlyingType(filterProperty.PropertyType);
         internalResolutions = CreateInternalCriterionResolution();
@@ -99,6 +102,6 @@ internal class ComplexFilterCriterionResolution : ICriterionResolution
             : filterProperty;
 
         // return resolutions for the filter property and the new filter target
-        return CriterionResolutions.CreateResolutions(previousFilterProperty, newFilterTarget);
+        return CriterionResolutions.CreateResolutions(previousFilterProperty, newFilterTarget, factories);
     }
 }

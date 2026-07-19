@@ -58,7 +58,7 @@ public class Search<TEntity> : ISearch<TEntity>
     public TEntity? FirstOrDefault() => performer.Prepare(options).FirstOrDefault();
 
     /// <inheritdoc />
-    public Task<TEntity?> FirstDefaultAsync(CancellationToken cancellationToken = default)
+    public Task<TEntity?> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
         => performer.Prepare(options).FirstOrDefaultAsync(cancellationToken);
 
     /// <inheritdoc />

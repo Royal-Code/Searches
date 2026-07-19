@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\pack.targets" />
+
+	<PropertyGroup>
+		<TargetFrameworks>$(AspTargets)</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Description>
+			PostgreSQL (Npgsql) emission for SmartSearch criteria,
+			including ILIKE for case-insensitive Like filters.
+		</Description>
+		<PackageTags>
+			RoyalCode Enterprise-Patterns Persistence Searchable Search Filter-Specifier-Pattern PostgreSQL Npgsql
+		</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(NpgsqlEFVer)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RoyalCode.SmartSearch.EntityFramework\RoyalCode.SmartSearch.EntityFramework.csproj" />
+	</ItemGroup>
+
+</Project>

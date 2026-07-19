@@ -10,12 +10,26 @@ namespace RoyalCode.SmartSearch.Linq.Filtering;
 /// </summary>
 public sealed class DefaultSpecifierFunctionGenerator : ISpecifierFunctionGenerator
 {
+    private readonly CriterionOperatorExpressionFactories operatorFactories;
+
+    /// <summary>
+    ///     Creates a new generator.
+    /// </summary>
+    /// <param name="operatorFactories">
+    ///     Optional factories that customize the emission of criterion operator expressions
+    ///     (first-non-null-wins, in registration order).
+    /// </param>
+    public DefaultSpecifierFunctionGenerator(CriterionOperatorExpressionFactories? operatorFactories = null)
+    {
+        this.operatorFactories = operatorFactories ?? CriterionOperatorExpressionFactories.Empty;
+    }
+
     /// <inheritdoc />
     public SpecifierFunctionGenerationResult<TModel, TFilter> Generate<TModel, TFilter>()
         where TModel : class
         where TFilter : class
     {
-        var resolutions = CriterionResolutions.CreateResolutions<TModel, TFilter>();
+        var resolutions = CriterionResolutions.CreateResolutions<TModel, TFilter>(operatorFactories);
 
         // check if all resolution are satisfied, if any lack, then return.
         if (Lack.CheckLacks(out var lacks, resolutions))

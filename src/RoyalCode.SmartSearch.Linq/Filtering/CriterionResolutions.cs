@@ -8,6 +8,7 @@ namespace RoyalCode.SmartSearch.Linq.Filtering;
 internal static class CriterionResolutions
 {
     public static IReadOnlyList<ICriterionResolution> CreateResolutions<TModel, TFilter>(
+        CriterionOperatorExpressionFactories factories,
         PropertySelection? previousFilterProperty = null, FilterTarget? filterTarget = null)
         where TModel : class
         where TFilter : class
@@ -18,26 +19,27 @@ internal static class CriterionResolutions
         var available = BuildAvailableFilterProperties(typeof(TFilter), previousFilterProperty);
 
         ApplyCustomPredicateFactories<TModel, TFilter>(available, filterTarget, resolutions);
-        BuildDisjunctionsFromAttributes(available, filterTarget, resolutions);
-        BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions);
-        BuildComplexFilterResolutions(available, filterTarget, resolutions);
+        BuildDisjunctionsFromAttributes(available, filterTarget, resolutions, factories);
+        BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions, factories);
+        BuildComplexFilterResolutions(available, filterTarget, resolutions, factories);
         BuildFilterExpressionGenerator(available, filterTarget, resolutions);
-        BuildDefaultOperatorResolutions(available, filterTarget, resolutions);
+        BuildDefaultOperatorResolutions(available, filterTarget, resolutions, factories);
 
         return resolutions;
     }
 
     public static IReadOnlyList<ICriterionResolution> CreateResolutions(
-        PropertySelection previousFilterProperty, FilterTarget filterTarget)
+        PropertySelection previousFilterProperty, FilterTarget filterTarget,
+        CriterionOperatorExpressionFactories factories)
     {
         List<ICriterionResolution> resolutions = [];
         var available = BuildAvailableFilterProperties(previousFilterProperty.Info.PropertyType, previousFilterProperty);
 
-        BuildDisjunctionsFromAttributes(available, filterTarget, resolutions);
-        BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions);
-        BuildComplexFilterResolutions(available, filterTarget, resolutions);
+        BuildDisjunctionsFromAttributes(available, filterTarget, resolutions, factories);
+        BuildDisjunctionsFromNameOrTargetPath(available, filterTarget, resolutions, factories);
+        BuildComplexFilterResolutions(available, filterTarget, resolutions, factories);
         BuildFilterExpressionGenerator(available, filterTarget, resolutions);
-        BuildDefaultOperatorResolutions(available, filterTarget, resolutions);
+        BuildDefaultOperatorResolutions(available, filterTarget, resolutions, factories);
 
         return resolutions;
     }
@@ -88,37 +90,39 @@ internal static class CriterionResolutions
     }
 
     private static void BuildDisjunctionsFromAttributes(
-        List<AvailableFilterProperty> available, 
-        FilterTarget filterTarget, 
-        List<ICriterionResolution> resolutions)
+        List<AvailableFilterProperty> available,
+        FilterTarget filterTarget,
+        List<ICriterionResolution> resolutions,
+        CriterionOperatorExpressionFactories factories)
     {
-        var disjuctionsElected = available
-            .Where(t => t.FilterProperty.Info.IsDefined(typeof(DisjuctionAttribute), true))
+        var disjunctionsElected = available
+            .Where(t => t.FilterProperty.Info.IsDefined(typeof(DisjunctionAttribute), true))
             .Select(t => new
             {
                 Property = t,
-                Group = t.FilterProperty.Info.GetCustomAttribute<DisjuctionAttribute>(true)!.Alias
+                Group = t.FilterProperty.Info.GetCustomAttribute<DisjunctionAttribute>(true)!.Alias
             })
             .ToList();
 
-        if (disjuctionsElected.Count is not 0)
+        if (disjunctionsElected.Count is not 0)
         {
-            var disjuctions = disjuctionsElected
+            var disjunctions = disjunctionsElected
                 .GroupBy(t => t.Group)
-                .Select(g => new DisjuctionCriterionResolution(
+                .Select(g => new DisjunctionCriterionResolution(
                     filterTarget,
-                    [.. g.Select(t => new JunctionProperty(t.Property.FilterProperty, t.Property.Criterion, filterTarget))]))
+                    [.. g.Select(t => new JunctionProperty(t.Property.FilterProperty, t.Property.Criterion, filterTarget, factories))]))
                 .ToList();
 
-            resolutions.AddRange(disjuctions);
-            disjuctionsElected.ForEach(de => available.Remove(de.Property));
+            resolutions.AddRange(disjunctions);
+            disjunctionsElected.ForEach(de => available.Remove(de.Property));
         }
     }
 
     private static void BuildDisjunctionsFromNameOrTargetPath(
         List<AvailableFilterProperty> available,
         FilterTarget filterTarget,
-        List<ICriterionResolution> resolutions)
+        List<ICriterionResolution> resolutions,
+        CriterionOperatorExpressionFactories factories)
     {
         var junctionsElected = available
             .Where(t => t.Criterion.DisableOrFromName is false)
@@ -135,7 +139,7 @@ internal static class CriterionResolutions
         if (junctionsElected.Count is not 0)
         {
             var junctions = junctionsElected
-                .Select(j => new DisjuctionCriterionResolution(
+                .Select(j => new DisjunctionCriterionResolution(
                     filterTarget,
                     [.. j.Parts.Select(part => new JunctionProperty(
                         j.Property.FilterProperty,
@@ -145,8 +149,11 @@ internal static class CriterionResolutions
                             Negation = j.Property.Criterion.Negation,
                             IgnoreIfIsEmpty = j.Property.Criterion.IgnoreIfIsEmpty,
                             TargetPropertyPath = part,
+                            Case = j.Property.Criterion.Case,
+                            Wrap = j.Property.Criterion.Wrap,
                         },
-                        filterTarget))
+                        filterTarget,
+                        factories))
                     ]))
                 .ToList();
 
@@ -157,8 +164,9 @@ internal static class CriterionResolutions
 
     private static void BuildComplexFilterResolutions(
         List<AvailableFilterProperty> available,
-        FilterTarget filterTarget, 
-        List<ICriterionResolution> resolutions)
+        FilterTarget filterTarget,
+        List<ICriterionResolution> resolutions,
+        CriterionOperatorExpressionFactories factories)
     {
         var complexElected = available
             .Where(t =>
@@ -172,7 +180,8 @@ internal static class CriterionResolutions
                 .Select(t => new ComplexFilterCriterionResolution(
                     t.FilterProperty,
                     t.Criterion,
-                    filterTarget))
+                    filterTarget,
+                    factories))
                 .ToList();
 
             resolutions.AddRange(complexResolutions);
@@ -218,12 +227,13 @@ internal static class CriterionResolutions
 
     private static void BuildDefaultOperatorResolutions(
         List<AvailableFilterProperty> available,
-        FilterTarget filterTarget, 
-        List<ICriterionResolution> resolutions)
+        FilterTarget filterTarget,
+        List<ICriterionResolution> resolutions,
+        CriterionOperatorExpressionFactories factories)
     {
         foreach (var t in available)
         {
-            resolutions.Add(new DefaultOperatorCriterionResolution(t.FilterProperty, t.Criterion, filterTarget));
+            resolutions.Add(new DefaultOperatorCriterionResolution(t.FilterProperty, t.Criterion, filterTarget, factories));
         }
     }
 

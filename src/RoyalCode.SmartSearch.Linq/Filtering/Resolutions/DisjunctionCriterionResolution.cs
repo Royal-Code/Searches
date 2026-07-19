@@ -3,13 +3,13 @@ using System.Linq.Expressions;
 
 namespace RoyalCode.SmartSearch.Linq.Filtering.Resolutions;
 
-internal class DisjuctionCriterionResolution : ICriterionResolution
+internal class DisjunctionCriterionResolution : ICriterionResolution
 {
     private readonly FilterTarget filterTarget;
     private readonly IReadOnlyList<JunctionProperty> group;
     private readonly Lack? lack;
 
-    public DisjuctionCriterionResolution(FilterTarget filterTarget, IReadOnlyList<JunctionProperty> group)
+    public DisjunctionCriterionResolution(FilterTarget filterTarget, IReadOnlyList<JunctionProperty> group)
     {
         this.filterTarget = filterTarget;
         this.group = group;

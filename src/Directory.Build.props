@@ -4,24 +4,27 @@
 		<AspTargets>net8.0;net9.0;net10.0</AspTargets>
 	</PropertyGroup>
 	<PropertyGroup>
-		<SearchesVer>0.10.5</SearchesVer>
+		<SearchesVer>0.11.1</SearchesVer>
 		<SearchesPreview></SearchesPreview>
 	</PropertyGroup>
 	<PropertyGroup>
 		<PropSelVer>1.0.3</PropSelVer>
 		<OpHintVer>1.0.0</OpHintVer>
-		<ProblemsVer>1.0.0-preview-6.0</ProblemsVer>
+		<ProblemsVer>1.0.0-preview-8.0</ProblemsVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
 		<AspVer>8.0.2</AspVer>
 		<EFVer>8.0.10</EFVer>
+		<NpgsqlEFVer>8.0.11</NpgsqlEFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
 		<AspVer>9.0.0</AspVer>
 		<EFVer>9.0.0</EFVer>
+		<NpgsqlEFVer>9.0.4</NpgsqlEFVer>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
 		<AspVer >10.0.0</AspVer>
 		<EFVer>10.0.0</EFVer>
+		<NpgsqlEFVer>10.0.0</NpgsqlEFVer>
 	</PropertyGroup>
 </Project>

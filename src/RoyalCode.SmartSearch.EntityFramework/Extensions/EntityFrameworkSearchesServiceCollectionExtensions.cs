@@ -2,8 +2,10 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RoyalCode.SmartSearch;
 using RoyalCode.SmartSearch.EntityFramework.Configurations;
+using RoyalCode.SmartSearch.EntityFramework.Filtering;
 using RoyalCode.SmartSearch.EntityFramework.Services;
 using RoyalCode.SmartSearch.Linq;
+using RoyalCode.SmartSearch.Linq.Filtering;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -66,6 +68,25 @@ public static class EntityFrameworkSearchesServiceCollectionExtensions
         services.TryAddTransient<ISearchManager<TDbContext>, SearchManager<TDbContext>>();
         services.TryAddTransient<ISearchManager, SearchManager<TDbContext>>();
 
+        return services;
+    }
+
+    /// <summary>
+    /// <para>
+    ///     Adds the emission of <see cref="CriterionOperator.Like"/> criteria as
+    ///     <c>EF.Functions.Like(target, pattern)</c> (native <c>LIKE</c>, user wildcards honored by the
+    ///     provider). Opt-in: without this registration the portable emission is used.
+    /// </para>
+    /// <para>
+    ///     See <see cref="EntityFrameworkLikeExpressionFactory"/>.
+    /// </para>
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
+    public static IServiceCollection AddEntityFrameworkLikeOperator(this IServiceCollection services)
+    {
+        services.TryAddEnumerable(ServiceDescriptor
+            .Singleton<ICriterionOperatorExpressionFactory, EntityFrameworkLikeExpressionFactory>());
         return services;
     }
 }
